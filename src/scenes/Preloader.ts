@@ -9,15 +9,7 @@ export default class Preloader extends Phaser.Scene {
     init(data) {
         console.log("Language selected:", data.language)
         this.lang = data.language
-
-        //  Inject our CSS
-        const styleEl = document.createElement("style")
-        document.head.appendChild(styleEl);
-        const sheet = styleEl.sheet
-        let styles = "@font-face { font-family: 'troika'; src: url('fonts/troika.otf') format('opentype'); }\n"
-        sheet.insertRule(styles, 0);
-        styles = "@font-face { font-family: 'Elite'; src: url('fonts/special-elite.ttf') format('truetype'); }"
-        sheet.insertRule(styles, 0);
+        this.launchLegalText()
     }
 
     preload() {
@@ -32,24 +24,32 @@ export default class Preloader extends Phaser.Scene {
         })
         jaws.play("jaws-swim")
 
+        let position = { x: 0 }
+        let tweenJaws
+
         this.load.on(Phaser.Loader.Events.PROGRESS, (value) => {
-            progress.clear()
             progress.fillStyle(0x0058f8, 1)
-            progress.fillRect(0, 540, this.cameras.main.width * value, 40)
-            jaws.x = this.cameras.main.width * value
-        })
+
+            if (tweenJaws) { tweenJaws.stop() }
+            tweenJaws = this.tweens.add({
+                targets: position,
+                x: this.cameras.main.width * value
+                duration: 666,
+                ease: Phaser.Math.Easing.Expo,
+                onUpdate: () => {
+                    progress.fillRect(0, 540, position.x + 80, 40)
+                    jaws.x = position.x
+                }
+            })           
+        }, this)
 
         this.load.on(Phaser.Loader.Events.COMPLETE, () => {
             progress.destroy()
-            this.time.delayedCall(3000, () => {
-                this.scene.start(SceneKeys.Intro)
+            this.time.delayedCall(1500, () => {
+                this.scene.start(SceneKeys.StudiosLogo, { language: this.lang })
             }, [], this)
-        })
-
-        this.load.setPath("scripts/")            
-            // fonts
-            .script("webfont", "webfont.js")
-        
+        }, this)
+       
             .setPath("img/")
             // map zones
             .image("amityBg", "map_complete.png")
@@ -78,70 +78,80 @@ export default class Preloader extends Phaser.Scene {
             .image("corals", "corals.png")
             .image("shallow_sea", "shallow_sea.png")
             .image("orca", "orca.png")
+            .image("jawsInWater", "jaws_in_water.png")
+            .image("jawsTitle", "jaws_title_alt.png")
+            .image("waterMovement", "water_movement1.png")
+            .image("waterMovement2", "water_movement2.png")
             .spritesheet("diver", "diver_sprite.png", { frameWidth: 72, frameHeight: 60 })
+            .spritesheet("jawsShadow", "jaws_shadow_sprite.png", { frameWidth: 140, frameHeight: 142 })
+            .spritesheet("studiosLogo", "carpenterSoft_logo_200.png", { frameWidth: 200, frameHeight: 200 })
 
             // audio
             .setPath("audio/")
             .audio("jaws_theme", [
                 "jaws_theme.ogg",
                 "jaws_theme.mp3"
-            ]);
+            ])
+            .audio("splash", [
+                "splash.ogg",
+                "splash.mp3"
+            ])
     }
 
     create() {
-        WebFont.load({
-            custom: {
-                families: [ "Elite", "troika" ]
-            },
-            active: () => {
-                const legalTextEN = [
-                    "The following APP is a NON PROFIT tool for entertaiment and educational purposes only.",
-                    "",
-                    "You need to OWN the board game physically to find this tool useful.",
-                    "",
-                    "All CHARACTERS, all related MARKS, LOGOS and associated NAMES and REFERENCES are",
-                    "copyright and trademark of their respective holders.",
-                    "",
-                    "This FAN PRODUCTION is not open to commercial ADS, and not intended for sales of any sort.",
-                    "",
-                    "No commercial exhibition or distribution is permitted (neither this APP",
-                    "or its SOURCE CODE).",
-                    "",
-                    "The content of this APP (or its SOURCE CODE) could not be sold, rented or",
-                    "used for any commercial enterprise in any way.",
-                    "",
-                    "This APP is free and ADS free. And it will stay that way forever.",
-                    "",
-                    "",
-                    "Enjoy."
-                ]
-            
-                const legalTextES = [
-                    "Esta APP es una herramienta SIN ÁNIMO DE LUCRO y su propósito es la educación y el",
-                    "entretenimiento.",
-                    "",
-                    "Es necesario ser DUEÑO de una copia del juego de tablero físico para que",
-                    "la herramienta sea útil.",
-                    "",
-                    "Todos los PERSONAJES, MARCAS, LOGOTIPOS, NOMBRES y REFERENCIAS asociadas son copyright",
-                    "y marca registrada de sus respectivos titulares.",
-                    "",
-                    "Este trabajo hecho por un FAN no incluye ANUNCIOS, ni ventas de ningún tipo.",
-                    "",
-                    "No se permite su distribución o exhibición comercial (ni de la APP ni de",
-                    "su CÓDIGO FUENTE).",
-                    "",
-                    "El contendido de esta APP (o su CÓDIGO FUENTE) no puede ser vendido, alquilado o usado en",
-                    "empresa comercial de ningún tipo.",
-                    "",
-                    "Esta APP es GRATUITA y no contiene ANUNCIOS. Siempre será así.",
-                    "",
-                    "",
-                    "Que lo disfruten."
-                ]            
-
-                this.add.text(50, 50, this.lang == "ES" ? legalTextES : legalTextEN , { fontFamily: "Elite", color: "#5656ee", align: "left", fontSize: 20 })
-            }
+        this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
+            this.scene.start(SceneKeys.StudiosLogo)
         })
+    }
+
+    launchLegalText() {
+        const legalTextEN = [
+            "The following APP is a NON PROFIT tool for entertaiment and educational purposes only.",
+            "",
+            "You need to OWN the board game physically to find this tool useful.",
+            "",
+            "All CHARACTERS, all related MARKS, LOGOS and associated NAMES and REFERENCES are",
+            "copyright and trademark of their respective holders.",
+            "",
+            "This FAN PRODUCTION is not open to commercial ADS, and not intended for sales of any sort.",
+            "",
+            "No commercial exhibition or distribution is permitted (neither this APP",
+            "or its SOURCE CODE).",
+            "",
+            "The content of this APP (or its SOURCE CODE) could not be sold, rented or",
+            "used for any commercial enterprise in any way.",
+            "",
+            "This APP is free and ADS free. And it will stay that way forever.",
+            "",
+            "",
+            "Enjoy."
+        ]
+    
+        const legalTextES = [
+            "Esta APP es una herramienta SIN ÁNIMO DE LUCRO y su propósito es la educación y el",
+            "entretenimiento.",
+            "",
+            "Es necesario ser DUEÑO de una copia física del juego de tablero para que",
+            "esta herramienta resulte útil.",
+            "",
+            "Todos los PERSONAJES, MARCAS, LOGOTIPOS, NOMBRES y REFERENCIAS asociadas son copyright",
+            "y marca registrada de sus respectivos titulares.",
+            "",
+            "Este trabajo hecho por un FAN no incluye ANUNCIOS, ni ventas de ningún tipo.",
+            "",
+            "No se permite su distribución o exhibición comercial (ni de la APP ni de",
+            "su CÓDIGO FUENTE).",
+            "",
+            "El contendido de esta APP (o su CÓDIGO FUENTE) no puede ser vendido, alquilado o usado en",
+            "empresa comercial de ningún tipo.",
+            "",
+            "Esta APP es GRATUITA y no contiene ANUNCIOS. Siempre será así.",
+            "",
+            "",
+            "Que lo disfruten."
+        ]            
+
+        this.add.text(50, 50, this.lang == "ES" ? legalTextES : legalTextEN , { fontFamily: "Elite", color: "#5656ee", align: "left", fontSize: 20 })
+
     }
 }

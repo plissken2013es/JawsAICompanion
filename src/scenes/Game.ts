@@ -10,6 +10,16 @@ export default class Game extends Phaser.Scene
     
     init(data) {
         console.log("Language selected:", data.language)
+        this.lang = data.language
+        this.music = data.music
+        this.tweens.add({
+            targets: this.music,
+            volume: 0,
+            duration: 2000,
+            onComplete: () => {
+                this.music.stop()
+            }
+        })
     }
 
 	preload() {}
