@@ -12,9 +12,9 @@ export default class LanguageSelection extends Phaser.Scene {
         document.head.appendChild(styleEl)
         const sheet = styleEl.sheet
         let styles = "@font-face { font-family: 'troika'; src: url('fonts/troika.otf') format('opentype'); }\n"
-        sheet.insertRule(styles, 0);
+        if (sheet) sheet.insertRule(styles, 0);
         styles = "@font-face { font-family: 'Elite'; src: url('fonts/special-elite.ttf') format('truetype'); }"
-        sheet.insertRule(styles, 0);
+        if (sheet) sheet.insertRule(styles, 0);
     }
 
     preload() {

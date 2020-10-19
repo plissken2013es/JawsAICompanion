@@ -1,5 +1,4 @@
-enum SceneKeys
-{
+enum SceneKeys {
     Preloader = "preloader",
     LanguageSelection = "languageSelection",
     StudiosLogo = "carpenterStudios",

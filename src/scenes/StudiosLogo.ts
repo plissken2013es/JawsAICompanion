@@ -2,6 +2,9 @@ import Phaser from "phaser"
 import SceneKeys from "~/consts/SceneKeys"
 
 export default class StudiosLogo extends Phaser.Scene {
+
+    private lang: string = "EN"
+
     constructor() {
         super(SceneKeys.StudiosLogo)
     }
@@ -14,7 +17,7 @@ export default class StudiosLogo extends Phaser.Scene {
         let logo = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, "studiosLogo").setOrigin(0.5)
         const logoAnim = this.anims.create({
             key: "logo",
-            frames: this.anims.generateFrameNumbers("studiosLogo"),
+            frames: this.anims.generateFrameNumbers("studiosLogo", {}),
             frameRate: 8,
             repeat: 0
         })
@@ -32,7 +35,7 @@ export default class StudiosLogo extends Phaser.Scene {
         logo.play("logo")
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-            this.scene.start(SceneKeys.Intro)
+            this.scene.start(SceneKeys.Intro, { language: this.lang })
         })
     }
 }

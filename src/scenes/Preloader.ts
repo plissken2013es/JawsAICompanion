@@ -2,6 +2,9 @@ import Phaser from "phaser"
 import SceneKeys from "~/consts/SceneKeys"
 
 export default class Preloader extends Phaser.Scene {
+    
+    private lang: string = "EN"
+    
     constructor() {
         super(SceneKeys.Preloader)
     }
@@ -18,7 +21,7 @@ export default class Preloader extends Phaser.Scene {
         const jaws = this.add.sprite(0, 500, "jaws-loader", 0).setOrigin(0)
         const jawsAnim = this.anims.create({
             key: "jaws-swim",
-            frames: this.anims.generateFrameNumbers("jaws-loader"),
+            frames: this.anims.generateFrameNumbers("jaws-loader", {}),
             frameRate: 4,
             repeat: -1
         })
@@ -33,7 +36,7 @@ export default class Preloader extends Phaser.Scene {
             if (tweenJaws) { tweenJaws.stop() }
             tweenJaws = this.tweens.add({
                 targets: position,
-                x: this.cameras.main.width * value
+                x: this.cameras.main.width * value,
                 duration: 666,
                 ease: Phaser.Math.Easing.Expo,
                 onUpdate: () => {
@@ -100,7 +103,7 @@ export default class Preloader extends Phaser.Scene {
 
     create() {
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-            this.scene.start(SceneKeys.StudiosLogo)
+            this.scene.start(SceneKeys.StudiosLogo, { language: this.lang })
         })
     }
 

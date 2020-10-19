@@ -2,84 +2,130 @@ import ZoneNames from "~/consts/ZoneNames"
 
 const MapConfig = [
     {name: ZoneNames.ONE, 
-        x: 0, y: 0, 
+        x: 0, y: 0,
+        hooperX: 187, hooperY: 48,
+        quintX: 59, quintY: 114,
         bx: 150, by: 100, 
-        seaX: 200, seaY: 90},
+        seaX: 200, seaY: 90
+    },
 
     {name: ZoneNames.TWO, 
-        x: 420, y: 0, 
+        x: 420, y: 0,
+        hooperX: 721, hooperY: 43,
+        quintX: 796, quintY: 119,
         bx: 950, by: 120, 
-        seaX: 907, seaY: 32},
+        seaX: 907, seaY: 32
+    },
 
     {name: ZoneNames.THREE, 
         x: 0, y: 243, 
+        hooperX: 317, hooperY: 530,
+        quintX: 65, quintY: 527,
         bx: 100, by: 680, 
-        seaX: 230, seaY: 710},
+        seaX: 230, seaY: 710
+    },
 
     {name: ZoneNames.FOUR, 
         x: 384, y: 243, 
+        hooperX: 531, hooperY: 530,
+        quintX: 801, quintY: 528,
         bx: 1000, by: 680, 
-        seaX: 650, seaY: 680},
+        seaX: 650, seaY: 680
+    },
     
     {name: ZoneNames.FIVE, 
         x: 90, y: 155, 
+        hooperX: 152, hooperY: 255,
+        quintX: 152, quintY: 197,
+        brodyX: 270, brodyY: 261,
         bx: 271, by: 270, 
         gndX: 326, gndY: 326, 
-        seaX: 227, seaY: 318},
+        seaX: 227, seaY: 318
+    },
     
     {name: ZoneNames.SIX, 
-        x: 411, y: 28, 
+        x: 411, y: 28,
+        brodyX: 520, brodyY: 126,
+        hooperX: 466, hooperY: 54,
+        quintX: 579, quintY: 57,
         bx: 738, by: 107, 
         gndX: 609, gndY: 213, 
-        seaX: 601, seaY: 72},
+        seaX: 601, seaY: 72
+    },
     
     {name: ZoneNames.SEVEN, 
         x: 141, y: 302, 
+        brodyX: 291, brodyY: 371,
+        hooperX: 345, hooperY: 452,
+        quintX: 235, quintY: 473,
         bx: 421, by: 570, 
         gndX: 374, gndY: 460, 
-        seaX: 294, seaY: 589},        
+        seaX: 294, seaY: 589
+    },        
 
     {name: ZoneNames.EIGHT, 
-        x: 483, y: 241, 
+        x: 483, y: 241,
+        brodyX: 746, brodyY: 323,
+        hooperX: 754, hooperY: 471,
+        quintX: 658, quintY: 337,
         bx: 950, by: 500, 
         gndX: 665, gndY: 416, 
-        seaX: 907, seaY: 416},
+        seaX: 907, seaY: 416
+    },
 
     {name: ZoneNames.N, 
         x: 177, y: 35,  
+        brodyX: 363, brodyY: 185,
+        hooperX: 257, hooperY: 145,
+        quintX: 383, quintY: 82,
         bx: 465, by: 119,
         isBeach: true, 
         sx: 328, sy: 207, 
         gndX: 399, gndY: 247, 
-        seaX: 347, seaY: 134},
+        seaX: 347, seaY: 134
+    },
     
     {name: ZoneNames.S, 
-        x: 385, y: 327, 
+        x: 385, y: 327,
+        brodyX: 456, brodyY: 381,
+        hooperX: 434, hooperY: 460,
+        quintX: 605, quintY: 467,
         bx: 750, by: 595, 
         isBeach: true, 
         sx: 693, sy: 558, 
         gndX: 534, gndY: 465, 
-        seaX: 550, seaY: 569},
+        seaX: 550, seaY: 569
+    },
 
     {name: ZoneNames.E, 
-        x: 548, y: 77, 
+        x: 548, y: 77,
+        brodyX: 604, brodyY: 213,
+        hooperX: 762, hooperY: 241,
+        quintX: 653, quintY: 113,
         bx: 887, by: 245, 
         isBeach: true, 
         sx: 794, sy: 169, 
         gndX: 698, gndY: 301, 
-        seaX: 776, seaY: 226},
+        seaX: 776, seaY: 226
+    },
     
     {name: ZoneNames.W, 
         x: 21, y: 245, 
+        brodyX: 188, brodyY: 381,
+        hooperX: 129, hooperY: 477,
+        quintX: 68, quintY: 304,
         bx: 200, by: 575, 
         isBeach: true, 
         sx: 172, sy: 570, 
         gndX: 248, gndY: 460, 
-        seaX: 68, seaY: 475},
+        seaX: 68, seaY: 475
+    },
     
     {name: ZoneNames.A, 
-        x: 298, y: 204, 
-        gndX: 480, gndY: 346}
+        x: 298, y: 204,
+        brodyX: 391, brodyY: 279,
+        gndX: 480, gndY: 346
+    }
 ]
 
 export default MapConfig
