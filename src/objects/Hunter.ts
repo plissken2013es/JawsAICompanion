@@ -7,14 +7,14 @@ import ZoneNames from "~/consts/ZoneNames"
 export default class Hunter extends Phaser.GameObjects.Sprite {
 
     private readonly hunterName: string
-    private positionOnDragStart: object = { x: 0, y: 0 }
+    private positionOnDragStart = new Phaser.Geom.Point(0, 0)
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
         super(scene, x, y, texture)
 
         this.hunterName = texture
 
-        this.setInteractive()
+        this.setInteractive().setOrigin(0.5)
 
         scene.input.setDraggable(this)
 

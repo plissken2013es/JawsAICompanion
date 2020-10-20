@@ -11,6 +11,8 @@ interface IZoneCfg {
     readonly hooperY: number
     readonly quintX: number
     readonly quintY: number
+    readonly barrelX: number
+    readonly barrelY: number
 }
 
 export default IZoneCfg

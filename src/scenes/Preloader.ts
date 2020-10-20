@@ -1,5 +1,6 @@
 import Phaser from "phaser"
 import SceneKeys from "~/consts/SceneKeys"
+import Buttons from "~/consts/Buttons"
 
 export default class Preloader extends Phaser.Scene {
     
@@ -74,6 +75,16 @@ export default class Preloader extends Phaser.Scene {
             .image("brody", "Brody.png")
             .image("hooper", "Hooper.png")
             .image("quint", "Quint.png")
+
+            // hunter buttons
+            .image(Buttons.ADD_BARREL, Buttons.ADD_BARREL + ".png")
+            .image(Buttons.ADD_SWIMMER, Buttons.ADD_SWIMMER + ".png")
+            .image(Buttons.MICHAEL, Buttons.MICHAEL + ".png")
+            .image(Buttons.FISH_FINDER, Buttons.FISH_FINDER + ".png")
+            .image(Buttons.BINOCULARS, Buttons.BINOCULARS + ".png")
+
+            // other tokens
+            .image("barrel", "barrel.png")
 
             // intro
             .setPath("img/intro/")
