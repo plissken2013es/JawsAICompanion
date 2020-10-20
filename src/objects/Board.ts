@@ -2,6 +2,7 @@ import Phaser from "phaser"
 
 import MapConfig from "~/consts/MapConfig"
 import Zone from "~/objects/Zone"
+import IZoneCfg from './IZoneCfg'
 
 export default class Board extends Phaser.GameObjects.Container {
 
@@ -14,7 +15,7 @@ export default class Board extends Phaser.GameObjects.Container {
         this.background = scene.add.image(0, 0, "amityBg").setOrigin(0)
 
         MapConfig.forEach((zoneCfg) => {
-            const mapZone: Zone = new Zone(scene, zoneCfg)
+            const mapZone: Zone = new Zone(scene, zoneCfg as IZoneCfg)
             this.mapZones.push(mapZone)
         })
     }

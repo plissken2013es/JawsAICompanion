@@ -3,6 +3,7 @@ import Characters from '~/consts/Characters'
 import SceneKeys from "~/consts/SceneKeys"
 import Board from '~/objects/Board'
 import Hunter from '~/objects/Hunter'
+import LocaleManager from '~/utils/LocaleManager'
 
 export default class Game extends Phaser.Scene
 {
@@ -10,6 +11,7 @@ export default class Game extends Phaser.Scene
     private lang: string = "EN"
     private music?: Phaser.Sound.BaseSound
     private board?: Phaser.GameObjects.GameObject
+    private locales?: LocaleManager
 
 	constructor() {
 		super(SceneKeys.Game)
@@ -30,6 +32,7 @@ export default class Game extends Phaser.Scene
                 onCompleteScope: this
             })
         }
+        this.locales = new LocaleManager(this.lang)
     }
 
 	preload() {}
@@ -75,5 +78,9 @@ export default class Game extends Phaser.Scene
 
     getMap() {
         return this.board
+    }
+
+    getLocale(word: string): string {
+        return this.locales?.getLocale(word)
     }
 }
