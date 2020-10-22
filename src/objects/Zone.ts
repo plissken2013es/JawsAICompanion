@@ -9,7 +9,9 @@ export default class Zone extends Phaser.GameObjects.Sprite {
     readonly zoneName: string
     readonly zoneCfg: IZoneCfg
     private numBarrels: number = 0
+    private numSwimmers: number = 0
     private numBarrelsText?: Phaser.GameObjects.Text
+    private numSwimmersText?: Phaser.GameObjects.Text
 
     constructor(scene: Phaser.Scene, cfg: IZoneCfg) {
         super(scene, cfg.x, cfg.y, "map_" + cfg.name)
@@ -27,6 +29,10 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         return this.numBarrels > 0
     }
 
+    hasSwimmers(): Boolean {
+        return this.numSwimmers > 0
+    }
+
     isOpenSea() {
         if (this.name === ZoneNames.ONE || this.name === ZoneNames.TWO || this.name === ZoneNames.THREE || this.name === ZoneNames.FOUR) {
             return true
@@ -42,7 +48,6 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         if (this.isCentralAmity()) {
             return false // not adding barrels to Central Amity, please
         }
-        console.log("---------------------->", action)
         switch (action) {
             case Actions.ADD:
                 if (++this.numBarrels > 1) {
@@ -72,5 +77,39 @@ export default class Zone extends Phaser.GameObjects.Sprite {
                 return false
         }
     }
+
+    updateSwimmers(action: string) {
+        if (!this.zoneCfg.isBeach) {
+            return false // swimmers only at beaches
+        }
+        switch (action) {
+            case Actions.ADD:
+                if (++this.numSwimmers > 1) {
+                    if (this.numSwimmersText) {
+                        this.numSwimmersText.destroy()
+                    }
+                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this.numSwimmers.toString(), { fontFamily: "Elite", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
+                    this.numSwimmersText.setOrigin(0.5)
+                }
+                return false
+
+            case Actions.REMOVE:
+                if (this.numSwimmersText) {
+                    this.numSwimmersText.destroy()
+                }
+                if (--this.numSwimmers > 1) {
+                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this.numSwimmers.toString(), { fontFamily: "Elite", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
+                    this.numSwimmersText.setOrigin(0.5)
+                }
+                if (this.numSwimmers < 1) {
+                    this.numSwimmers = 0
+                    return true
+                }
+                return false
+
+            default:
+                return false
+        }
+    } 
 
 }

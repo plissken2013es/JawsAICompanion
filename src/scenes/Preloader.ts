@@ -78,7 +78,7 @@ export default class Preloader extends Phaser.Scene {
 
             // hunter buttons
             .image(Buttons.ADD_BARREL, Buttons.ADD_BARREL + ".png")
-            .image(Buttons.ADD_SWIMMER, Buttons.ADD_SWIMMER + ".png")
+            .spritesheet(Buttons.ADD_SWIMMER, Buttons.ADD_SWIMMER + ".png", { frameWidth: 32, frameHeight: 46 })
             .image(Buttons.MICHAEL, Buttons.MICHAEL + ".png")
             .image(Buttons.FISH_FINDER, Buttons.FISH_FINDER + ".png")
             .image(Buttons.BINOCULARS, Buttons.BINOCULARS + ".png")
@@ -109,6 +109,22 @@ export default class Preloader extends Phaser.Scene {
             .audio("splash", [
                 "splash.ogg",
                 "splash.mp3"
+            ])
+            .audio("swipe1", [
+                "swipe1.ogg",
+                "swipe1.mp3"
+            ])
+            .audio("swipe2", [
+                "swipe2.ogg",
+                "swipe2.mp3"
+            ])
+            .audio("swipe3", [
+                "swipe3.ogg",
+                "swipe3.mp3"
+            ])
+            .audio("swipe4", [
+                "swipe4.ogg",
+                "swipe4.mp3"
             ])
     }
 
