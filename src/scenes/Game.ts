@@ -7,6 +7,7 @@ import SceneKeys from "~/consts/SceneKeys"
 import Board from '~/objects/Board'
 import Hunter from '~/objects/Hunter'
 import HunterButton from "~/objects/HunterButton"
+import Michael from '~/objects/Michael'
 import LocaleManager from '~/utils/LocaleManager'
 
 export default class Game extends Phaser.Scene {
@@ -68,8 +69,9 @@ export default class Game extends Phaser.Scene {
             frameRate: 4,
             yoyo: true,
             repeat: -1
-        });
+        })
 
+        this.add.existing(new Michael(this, 920, 80, Buttons.MICHAEL));
         [
             { btnName: Buttons.ADD_BARREL }, 
             { 
@@ -78,7 +80,7 @@ export default class Game extends Phaser.Scene {
                 spriteDroppedAnim: "swimmerDroppedAnim"
             }
         ].forEach((btn, index) => {
-            this.add.existing(new HunterButton(this, 920, 80 + (index * 70), btn.btnName, btn.spriteSelectAnim, btn.spriteDroppedAnim))
+            this.add.existing(new HunterButton(this, 920, 160 + (index * 70), btn.btnName, btn.spriteSelectAnim, btn.spriteDroppedAnim))
         })
     }
 
@@ -88,6 +90,14 @@ export default class Game extends Phaser.Scene {
             this.sound.add("swipe2"),
             this.sound.add("swipe3"),
             this.sound.add("swipe4")
+        ]
+
+        const dropSounds = [
+            this.sound.add("drop1"),
+            this.sound.add("drop2"),
+            this.sound.add("drop3"),
+            this.sound.add("drop4"),
+            this.sound.add("drop5")
         ]
 
         this.input.on(Phaser.Input.Events.DRAG_START, (pointer, gameObject) => {
@@ -109,12 +119,17 @@ export default class Game extends Phaser.Scene {
 
         this.input.on(Phaser.Input.Events.DRAG_END, (pointer, gameObject, dropped) => {
             console.log("> DRAG_END", gameObject.texture.key, gameObject.x, gameObject.y, "dropped:", dropped)
+            const snd = Phaser.Utils.Array.GetRandom(dropSounds)
+            snd.play()
             if (gameObject.shouldRemove) { // barrels and swimmers can be removed
                 gameObject.shouldRemove()
             }
-            if (!dropped && gameObject.positionOnDragStart) {
+            if (!dropped && gameObject.positionOnDragStart) { // barrels and swimmers
                 gameObject.x = gameObject.positionOnDragStart.x
                 gameObject.y = gameObject.positionOnDragStart.y
+            }
+            if (!dropped && gameObject.returnHome) { // Michael
+                gameObject.returnHome()
             }
             if (gameObject.anims && gameObject.anims.currentAnim && !gameObject.shouldRemove) {
                 gameObject.anims.stopOnFrame(gameObject.anims.currentAnim.frames[0])
@@ -125,7 +140,7 @@ export default class Game extends Phaser.Scene {
         this.input.on(Phaser.Input.Events.DROP, (pointer, gameObject, dropZone) => {
             console.log("> DROP", gameObject.texture.key, gameObject.x, gameObject.y)
             if (!dropZone || !dropZone.zoneCfg) return
-            if (gameObject.moveTo) { // hunters can move
+            if (gameObject.moveTo) { // Michael && hunters can move
                 gameObject.moveTo(dropZone)
             }
             if (gameObject.addTo) { // barrels and swimmers can be added

@@ -46,6 +46,17 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                 }
                 break
 
+            case Buttons.MICHAEL:
+                this.x = this.positionOnDragStart.x
+                this.y = this.positionOnDragStart.y
+                const mX = zone.zoneCfg.swimmerX
+                const mY = zone.zoneCfg.swimmerY
+                if (zone.zoneCfg && mX && mY) {
+                    this.x = mX
+                    this.y = mY                    
+                }
+                break
+
             case Buttons.ADD_SWIMMER:
                 this.x = this.positionOnDragStart.x
                 this.y = this.positionOnDragStart.y

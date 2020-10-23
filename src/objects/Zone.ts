@@ -12,6 +12,10 @@ export default class Zone extends Phaser.GameObjects.Sprite {
     private numSwimmers: number = 0
     private numBarrelsText?: Phaser.GameObjects.Text
     private numSwimmersText?: Phaser.GameObjects.Text
+    private _isMichaelHere: boolean = false
+    public get isMichaelHere(): boolean {
+        return this.isMichaelHere
+    }
 
     constructor(scene: Phaser.Scene, cfg: IZoneCfg) {
         super(scene, cfg.x, cfg.y, "map_" + cfg.name)
@@ -78,7 +82,22 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         }
     }
 
-    updateSwimmers(action: string) {
+    updateMichael(action: string): Boolean {
+        if (this.zoneCfg.isBeach) {
+            switch (action) {
+                case Actions.ADD:
+                    this._isMichaelHere = true
+                    return true
+    
+                case Actions.REMOVE:
+                    this._isMichaelHere = false
+                    return true
+            }
+        }
+        return false
+    }
+
+    updateSwimmers(action: string): Boolean {
         if (!this.zoneCfg.isBeach) {
             return false // swimmers only at beaches
         }

@@ -110,6 +110,7 @@ export default class Preloader extends Phaser.Scene {
                 "splash.ogg",
                 "splash.mp3"
             ])
+            // audio - swipes
             .audio("swipe1", [
                 "swipe1.ogg",
                 "swipe1.mp3"
@@ -125,6 +126,27 @@ export default class Preloader extends Phaser.Scene {
             .audio("swipe4", [
                 "swipe4.ogg",
                 "swipe4.mp3"
+            ])
+            // audio - drops
+            .audio("drop1", [
+                "drop1.ogg",
+                "drop1.mp3"
+            ])
+            .audio("drop2", [
+                "drop2.ogg",
+                "drop2.mp3"
+            ])
+            .audio("drop3", [
+                "drop3.ogg",
+                "drop3.mp3"
+            ])
+            .audio("drop4", [
+                "drop4.ogg",
+                "drop4.mp3"
+            ])
+            .audio("drop5", [
+                "drop5.ogg",
+                "drop5.mp3"
             ])
     }
 

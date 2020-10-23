@@ -6,7 +6,7 @@ import ZoneNames from "~/consts/ZoneNames"
 export default class Barrel extends Phaser.GameObjects.Sprite {
 
     private readonly buttonName: string
-    private positionOnDragStart = new Phaser.Geom.Point(0, 0)
+    readonly positionOnDragStart = new Phaser.Geom.Point(0, 0)
     private linkedTo: Zone
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, zone: Zone) {
