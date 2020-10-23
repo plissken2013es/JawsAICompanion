@@ -27,6 +27,7 @@ export default class LanguageSelection extends Phaser.Scene {
             // fonts
             .setPath("scripts/")            
             .script("webfont", "webfont.js")
+            //.script("rexUI", "rexuiplugin.min.js")
     }
 
     create() {
