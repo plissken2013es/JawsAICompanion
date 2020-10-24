@@ -6,6 +6,9 @@ import ZoneNames from "~/consts/ZoneNames"
 import Barrel from './Barrel'
 import Actions from '~/consts/Actions'
 import Swimmer from './Swimmer'
+import Dialog from './Dialog'
+import DialogType from '~/consts/DialogType'
+import IGame from '~/objects/IGame'
 
 export default class HunterButton extends Phaser.GameObjects.Sprite {
 
@@ -13,12 +16,14 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     private positionOnDragStart = new Phaser.Geom.Point(0, 0)
     private readonly spriteSelectAnim?: string
     private readonly spriteDroppedAnim?: string
+    readonly scene: IGame
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, 
+    constructor(scene: IGame, x: number, y: number, texture: string, 
         spriteSelectAnim?: string, spriteDroppedAnim?: string) {
 
         super(scene, x, y, texture, 0)
 
+        this.scene = scene
         this.buttonName = texture
         this.spriteSelectAnim = spriteSelectAnim
         this.spriteDroppedAnim = spriteDroppedAnim
@@ -38,11 +43,23 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                 const posX = zone.zoneCfg.barrelX
                 const posY = zone.zoneCfg.barrelY
                 if (zone.zoneCfg && posX && posY) {
-                    if (zone.hasBarrels()) {
-                        zone.updateBarrels(Actions.ADD)
-                    } else {
-                        this.scene.add.existing(new Barrel(this.scene, posX, posY, "barrel", zone))
+                    const msg = this.scene.getLocale("Are you sure that you want to launch a barrel\nat zone ") + this.scene.getLocale(zone.zoneName) + "?"
+                    const callback = (button, index) => {
+                        switch (button.text) {
+                            case this.scene.getLocale("Yes"):
+                                if (zone.hasBarrels()) {
+                                    zone.updateBarrels(Actions.ADD)
+                                } else {
+                                    this.scene.add.existing(new Barrel(this.scene, posX, posY, "barrel", zone))
+                                }
+                                break
+                            default:
+                                break
+                        }
+                        this.scene.enableInteractiveObjects()
                     }
+                    const dialog = new Dialog(this.scene, DialogType.YES_NO, msg, callback)
+                    this.scene.disableInteractiveObjects()
                 }
                 break
 

@@ -2,21 +2,25 @@ import Phaser from "phaser"
 
 import Buttons from '~/consts/Buttons'
 import Characters from '~/consts/Characters'
+import DialogType from '~/consts/DialogType'
 import Languages from '~/consts/Languages'
 import SceneKeys from "~/consts/SceneKeys"
 import Board from '~/objects/Board'
+import Dialog from '~/objects/Dialog'
 import Hunter from '~/objects/Hunter'
 import HunterButton from "~/objects/HunterButton"
 import Michael from '~/objects/Michael'
+import IGame from '~/objects/IGame'
 import LocaleManager from '~/utils/LocaleManager'
 
-export default class Game extends Phaser.Scene {
+export default class Game extends Phaser.Scene implements IGame {
 
     private lang: string = Languages.English
     private music?: Phaser.Sound.BaseSound
     private board?: Phaser.GameObjects.GameObject
     private locales?: LocaleManager
     private dialog?: any
+    private readonly interactiveObjects: Phaser.GameObjects.Sprite[] = []
 
 	constructor() {
 		super(SceneKeys.Game)
@@ -55,19 +59,13 @@ export default class Game extends Phaser.Scene {
         this.addButtons()
 
         this.bindDragEvents()
-        
-        const msg = this.getLocale("Do you want to build a snow man? |\nHey, Barracuda! Do you know if it's still there?")
-        const print = this.add.text(0, 0, '');
-        const callback = (button, index) => {
-            print.text += index + ": " + button.text + "\n";
-            this.input.enable(this.michael)
-        }
-        this.dialog = this.createYesNoDialog(msg, callback)
     }
 
     addCharacters() {
         [Characters.BRODY, Characters.HOOPER, Characters.QUINT].forEach((charName) => {
-            this.add.existing(new Hunter(this, 0, 0, charName))
+            const hunter = new Hunter(this, 0, 0, charName)
+            this.interactiveObjects.push(hunter)
+            this.add.existing(hunter)
         })
     }
 
@@ -86,7 +84,9 @@ export default class Game extends Phaser.Scene {
             repeat: -1
         })
 
-        this.michael = this.add.existing(new Michael(this, 920, 80, Buttons.MICHAEL));
+        const michael = new Michael(this, 920, 80, Buttons.MICHAEL)
+        this.add.existing(michael)
+        this.interactiveObjects.push(michael);
         [
             { btnName: Buttons.ADD_BARREL }, 
             { 
@@ -95,7 +95,9 @@ export default class Game extends Phaser.Scene {
                 spriteDroppedAnim: "swimmerDroppedAnim"
             }
         ].forEach((btn, index) => {
-            this.add.existing(new HunterButton(this, 920, 160 + (index * 70), btn.btnName, btn.spriteSelectAnim, btn.spriteDroppedAnim))
+            const hunterButton = new HunterButton(this, 920, 160 + (index * 70), btn.btnName, btn.spriteSelectAnim, btn.spriteDroppedAnim)
+            this.add.existing(hunterButton)
+            this.interactiveObjects.push(hunterButton)
         })
     }
 
@@ -127,15 +129,11 @@ export default class Game extends Phaser.Scene {
         })
     
         this.input.on(Phaser.Input.Events.DRAG, (pointer, gameObject, dragX, dragY) => {    
-            if (this.dialog) return
-
             gameObject.x = dragX | 0
             gameObject.y = dragY | 0
         })
 
         this.input.on(Phaser.Input.Events.DRAG_END, (pointer, gameObject, dropped) => {
-            if (this.dialog) return
-
             console.log("> DRAG_END", gameObject.texture.key, gameObject.x, gameObject.y, "dropped:", dropped)
             const snd = Phaser.Utils.Array.GetRandom(dropSounds)
             snd.play()
@@ -156,8 +154,6 @@ export default class Game extends Phaser.Scene {
         })
 
         this.input.on(Phaser.Input.Events.DROP, (pointer, gameObject, dropZone) => {
-            if (this.dialog) return
-
             console.log("> DROP", gameObject.texture.key, gameObject.x, gameObject.y)
             if (!dropZone || !dropZone.zoneCfg) return
             if (gameObject.moveTo) { // Michael && hunters can move
@@ -169,89 +165,19 @@ export default class Game extends Phaser.Scene {
         })
     }
 
-    createYesNoDialog(message: string = "Do you wanna?", callback: Function) {
-        this.input.disable(this.michael)
-        const dialog = this.rexUI.add.dialog({
-            width: 200,
-            height: 150,
-            anchor: {
-                centerX: "center",
-                centerY: "center"
-            },
-
-            background: this.rexUI.add.roundRectangle(0, 0, 200, 150, 5, 0x1565c0),
-
-            content: this.add.text(0, 0, message, {
-                fontFamily: "Elite",
-                align: "center",
-                fontSize: 20
-            }),
-
-            actions: [
-                this.createLabel(this, "Yes"),
-                this.createLabel(this, "No")
-            ],
-
-            space: {
-                title: 25,
-                content: 25,
-                action: 15,
-
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: 20,
-            },
-
-            align: {
-                actions: "center",
-            },
-
-            expand: {
-                content: false,
-            }
-        })
-            .layout()
-            //.drawBounds(this.add.graphics(), 0xff0000)
-            .popUp(666);
-
-        dialog
-            .on("button.click", (button, groupName, index) => {
-                callback(button, index)
-                if (button.text == "No") dialog.scaleDownDestroy(666)
-            }, this)
-            .on("button.over", (button, groupName, index) => {
-                button.getElement("background").setStrokeStyle(1, 0xffffff);
-            })
-            .on("button.out", (button, groupName, index) => {
-                button.getElement("background").setStrokeStyle();
-            })
-    }
-
-    createLabel(scene, text) {
-        return scene.rexUI.add.label({
-            width: 40,
-            height: 40,
-    
-            background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 5, 0x5e92f3),
-    
-            text: scene.add.text(0, 0, text, {
-                fontFamily: "Elite",
-                color: "#004258",
-                align: "center",
-                fontSize: 18
-            }),
-    
-            space: {
-                left: 10,
-                right: 10,
-                top: 10,
-                bottom: 10
-            }
+    disableInteractiveObjects() {
+        this.interactiveObjects.forEach((obj) => {
+            this.input.disable(obj)
         })
     }
 
-    getMap() {
+    enableInteractiveObjects() {
+        this.interactiveObjects.forEach((obj) => {
+            this.input.enable(obj)
+        })
+    }
+
+    getMap(): Phaser.GameObjects.GameObject | undefined {
         return this.board
     }
 

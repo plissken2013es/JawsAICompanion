@@ -3,6 +3,7 @@ import Actions from '~/consts/Actions'
 import MapConfig from "~/consts/MapConfig"
 import ZoneNames from "~/consts/ZoneNames"
 import IZoneCfg from './IZoneCfg'
+import IGame from '~/objects/IGame'
 
 export default class Zone extends Phaser.GameObjects.Sprite {
 
@@ -17,7 +18,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         return this.isMichaelHere
     }
 
-    constructor(scene: Phaser.Scene, cfg: IZoneCfg) {
+    constructor(scene: IGame, cfg: IZoneCfg) {
         super(scene, cfg.x, cfg.y, "map_" + cfg.name)
 
         this.zoneName = cfg.name

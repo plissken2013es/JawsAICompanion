@@ -1,6 +1,9 @@
 import Languages from "~/consts/Languages"
 
-const Locale = {
+const Locale = {    
+    "Yes": {
+        ES: "Sí"
+    },
     "ninja": {
         ES: "silencioso"
     },
@@ -40,8 +43,8 @@ const Locale = {
     "Jaws has activated barrels at: ": {
         ES: "El tiburón ha activado barriles en: "
     },
-    "Are you sure that you want to launch a barrel at zone ": {
-        ES: "¿Seguro que quieres lanzar un barril en la zona "
+    "Are you sure that you want to launch a barrel\nat zone ": {
+        ES: "¿Seguro que quieres lanzar un barril\nen la zona "
     },
     "Do you want to use binoculars at Brody's location?": {
         ES: "¿Quieres que Brody use los prismáticos en su posición actual?"
@@ -111,7 +114,7 @@ const Locale = {
     }
 }
 
-class LocaleManager {
+export default class LocaleManager {
     private readonly selectedLang: string = Languages.English
 
     constructor(lang: string) {
@@ -120,7 +123,7 @@ class LocaleManager {
     
     getLocale = (key) => {
         if (Array.isArray(key)) {
-            let result = []
+            let result: any[] = []
             key.forEach((item) => {
                 if (Locale[item] && Locale[item][this.selectedLang]) {
                     result.push(Locale[item][this.selectedLang])
@@ -136,5 +139,3 @@ class LocaleManager {
         return key
     }
 }
-
-export default LocaleManager
