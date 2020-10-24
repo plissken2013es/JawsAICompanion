@@ -62,6 +62,10 @@ export default class Game extends Phaser.Scene implements IGame {
         this.addCharacters()
         this.addButtons()
         this.bindButtonEvents()
+
+        this.add.image(this.cameras.main.centerX, 570, "brody_eyes").setOrigin(0)
+        this.add.image(this.cameras.main.centerX + 120, 570, "hooper_eyes").setOrigin(0)
+        this.add.image(this.cameras.main.centerX + 240, 570, "quint_eyes").setOrigin(0)
     }
 
     addCharacters() {

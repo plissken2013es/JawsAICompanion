@@ -83,6 +83,11 @@ export default class Preloader extends Phaser.Scene {
             .image(Buttons.FISH_FINDER, Buttons.FISH_FINDER + ".png")
             .image(Buttons.BINOCULARS, Buttons.BINOCULARS + ".png")
 
+            // characters eyes
+            .image("brody_eyes", "brody_eyes.png")
+            .image("quint_eyes", "quint_eyes.png")
+            .image("hooper_eyes", "hooper_eyes.png")
+
             // other tokens
             .image("barrel", "barrel.png")
 
