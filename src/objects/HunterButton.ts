@@ -9,6 +9,7 @@ import Swimmer from './Swimmer'
 import Dialog from './Dialog'
 import DialogType from '~/consts/DialogType'
 import IGame from '~/objects/IGame'
+import Characters from '~/consts/Characters'
 
 export default class HunterButton extends Phaser.GameObjects.Sprite {
 
@@ -16,21 +17,29 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     private positionOnDragStart = new Phaser.Geom.Point(0, 0)
     private readonly spriteSelectAnim?: string
     private readonly spriteDroppedAnim?: string
+    private onlyClickable: boolean = false
     readonly scene: IGame
 
-    constructor(scene: IGame, x: number, y: number, texture: string, 
-        spriteSelectAnim?: string, spriteDroppedAnim?: string) {
+    constructor(scene: IGame, x: number, y: number, cfg: any) {
 
-        super(scene, x, y, texture, 0)
+        super(scene, x, y, cfg.btnName, 0)
 
         this.scene = scene
-        this.buttonName = texture
-        this.spriteSelectAnim = spriteSelectAnim
-        this.spriteDroppedAnim = spriteDroppedAnim
+        this.buttonName = cfg.btnName
+        this.spriteSelectAnim = cfg.spriteSelectAnim
+        this.spriteDroppedAnim = cfg.spriteDroppedAnim
+        this.onlyClickable = cfg.onlyClickable
 
         this.setInteractive().setOrigin(0.5)
 
-        this.scene.input.setDraggable(this)
+        if (this.onlyClickable) {
+            this.on(Phaser.Input.Events.POINTER_DOWN, (pointer) => {
+                console.log("> CLICK", this.buttonName)
+                this.onClick()
+            })
+        } else {
+            this.scene.input.setDraggable(this)
+        }
     }
 
     addTo(zone: Zone) {
@@ -90,6 +99,21 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                         this.scene.add.existing(swimmer)
                     }
                 }
+                break
+        }
+    }
+
+    onClick() {
+        console.log("click", this.buttonName)
+        switch (this.buttonName) {
+            case Buttons.FISH_FINDER:
+                const hooper = this.scene.findCharacterBy(Characters.HOOPER)
+                console.log(hooper.hunterName, hooper.currentZone.zoneName)
+                break
+
+            case Buttons.BINOCULARS:
+                const brody = this.scene.findCharacterBy(Characters.BRODY)
+                console.log(brody.hunterName, brody.currentZone.zoneName)
                 break
         }
     }

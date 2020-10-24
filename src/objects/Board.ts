@@ -7,7 +7,10 @@ import IZoneCfg from './IZoneCfg'
 export default class Board extends Phaser.GameObjects.Container {
 
     private readonly background: Phaser.GameObjects.Image
-    private readonly mapZones: Zone[] = []
+    private readonly _mapZones: Zone[] = []
+    public get mapZones(): Zone[] {
+        return this._mapZones
+    }
 
     constructor(scene: Phaser.Scene) {
         super(scene, 0, 0)
@@ -16,12 +19,12 @@ export default class Board extends Phaser.GameObjects.Container {
 
         MapConfig.forEach((zoneCfg) => {
             const mapZone: Zone = new Zone(scene, zoneCfg as IZoneCfg)
-            this.mapZones.push(mapZone)
+            this._mapZones.push(mapZone)
         })
     }
 
     getZoneByName(zoneName: string) {
-        return this.mapZones.find(zone => zone.zoneName === zoneName)
+        return this._mapZones.find(zone => zone.zoneName === zoneName)
     }
 
 }

@@ -3,13 +3,18 @@ import Phaser from "phaser"
 import Characters from "~/consts/Characters"
 import Zone from "~/objects/Zone"
 import ZoneNames from "~/consts/ZoneNames"
+import IGame from '~/objects/IGame'
 
 export default class Hunter extends Phaser.GameObjects.Sprite {
 
-    private readonly hunterName: string
+    readonly hunterName: string
     private positionOnDragStart = new Phaser.Geom.Point(0, 0)
+    private _currentZone: Zone
+    public get currentZone(): Zone {
+        return this._currentZone
+    }
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
+    constructor(scene: IGame, x: number, y: number, texture: string) {
         super(scene, x, y, texture)
 
         this.hunterName = texture
@@ -19,19 +24,19 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
         scene.input.setDraggable(this)
 
         let map = scene.getMap()
-        let startPosition: Zone = map.getZoneByName(ZoneNames.S)
+        this._currentZone = map.getZoneByName(ZoneNames.S)
         switch (this.hunterName) {
             case Characters.BRODY:
-                startPosition = map.getZoneByName(ZoneNames.SEVEN)
+                this._currentZone = map.getZoneByName(ZoneNames.SEVEN)
                 break
             case Characters.HOOPER:
-                startPosition = map.getZoneByName(ZoneNames.FIVE)
+                this._currentZone = map.getZoneByName(ZoneNames.FIVE)
                 break
             case Characters.QUINT:
-                startPosition = map.getZoneByName(ZoneNames.EIGHT)
+                this._currentZone = map.getZoneByName(ZoneNames.EIGHT)
                 break
         }
-        this.moveTo(startPosition)
+        this.moveTo(this._currentZone)
     }
 
     moveTo(zone: Zone) {
@@ -54,7 +59,12 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
         if (destinationX && destinationY) {
             this.x = destinationX
             this.y = destinationY
+            this._currentZone = zone
         }
+    }
+
+    animate() {
+        // TO-DO
     }
 
 }

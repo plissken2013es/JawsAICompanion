@@ -12,15 +12,18 @@ import HunterButton from "~/objects/HunterButton"
 import Michael from '~/objects/Michael'
 import IGame from '~/objects/IGame'
 import LocaleManager from '~/utils/LocaleManager'
+import JawsAI from '~/utils/JawsAI'
 
 export default class Game extends Phaser.Scene implements IGame {
 
     private lang: string = Languages.English
     private music?: Phaser.Sound.BaseSound
-    private board?: Phaser.GameObjects.GameObject
+    private board?: Board
     private locales?: LocaleManager
     private dialog?: any
     private readonly interactiveObjects: Phaser.GameObjects.Sprite[] = []
+    private hunters: Hunter[] = []
+    private jawsAI?: JawsAI
 
 	constructor() {
 		super(SceneKeys.Game)
@@ -42,6 +45,9 @@ export default class Game extends Phaser.Scene implements IGame {
             })
         }
         this.locales = new LocaleManager(this.lang)
+        this.board = new Board(this)
+        this.add.existing(this.board)
+        this.jawsAI = JawsAI.getInstance(this)
     }
 
 	preload() { 
@@ -53,18 +59,16 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     create() {
-        this.board = this.add.existing(new Board(this))
-        
         this.addCharacters()
         this.addButtons()
-
-        this.bindDragEvents()
+        this.bindButtonEvents()
     }
 
     addCharacters() {
         [Characters.BRODY, Characters.HOOPER, Characters.QUINT].forEach((charName) => {
             const hunter = new Hunter(this, 0, 0, charName)
             this.interactiveObjects.push(hunter)
+            this.hunters.push(hunter)
             this.add.existing(hunter)
         })
     }
@@ -93,15 +97,17 @@ export default class Game extends Phaser.Scene implements IGame {
                 btnName: Buttons.ADD_SWIMMER, 
                 spriteSelectAnim: "swimmerSelectAnim",
                 spriteDroppedAnim: "swimmerDroppedAnim"
-            }
-        ].forEach((btn, index) => {
-            const hunterButton = new HunterButton(this, 920, 160 + (index * 70), btn.btnName, btn.spriteSelectAnim, btn.spriteDroppedAnim)
+            },
+            { btnName: Buttons.FISH_FINDER, onlyClickable: true },
+            { btnName: Buttons.BINOCULARS, onlyClickable: true }
+        ].forEach((btnCfg, index) => {
+            const hunterButton = new HunterButton(this, 920, 160 + (index * 70), btnCfg)
             this.add.existing(hunterButton)
             this.interactiveObjects.push(hunterButton)
         })
     }
 
-    bindDragEvents() {
+    bindButtonEvents() {
         const dragSounds = [
             this.sound.add("swipe1"),
             this.sound.add("swipe2"),
@@ -177,11 +183,23 @@ export default class Game extends Phaser.Scene implements IGame {
         })
     }
 
+    findCharacterBy(name: string): Hunter | undefined {
+        return this.hunters.find(hunter => hunter.hunterName === name);
+    }
+
     getMap(): Phaser.GameObjects.GameObject | undefined {
         return this.board
     }
 
     getLocale(word: string): string {
         return this.locales?.getLocale(word)
+    }
+
+    launchMessage(msg: string) {
+        // TO-DO
+    }
+
+    updateBodyCount() {
+        // TO-DO
     }
 }

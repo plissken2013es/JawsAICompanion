@@ -30,26 +30,46 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         }
     }
 
-    hasBarrels(): Boolean {
+    animateBarrel() {
+        // TO-DO
+    }
+
+    showAttack() {
+        // TO-DO
+    }
+
+    showShark() {
+        // TO-DO
+    }
+
+    hasBarrels(): boolean {
         return this.numBarrels > 0
     }
 
-    hasSwimmers(): Boolean {
+    hasSomethingToEat(): boolean {
+        return this._isMichaelHere || this.numSwimmers > 0
+    }
+
+    hasSwimmers(): boolean {
         return this.numSwimmers > 0
     }
 
+    totalSwimmers(): number {
+        return this.numSwimmers + (this._isMichaelHere ? 2 : 0)
+    }
+
     isOpenSea() {
-        if (this.name === ZoneNames.ONE || this.name === ZoneNames.TWO || this.name === ZoneNames.THREE || this.name === ZoneNames.FOUR) {
+        if (this.zoneName === ZoneNames.ONE || this.zoneName === ZoneNames.TWO || this.zoneName === ZoneNames.THREE || this.zoneName === ZoneNames.FOUR) {
             return true
         }
         return false
     }
 
     isCentralAmity() {
-        return this.name === ZoneNames.A
+        return this.zoneName === ZoneNames.A
     }
 
-    updateBarrels(action: string): Boolean {
+    updateBarrels(action: string): boolean {
         if (this.isCentralAmity()) {
             return false // not adding barrels to Central Amity, please
         }
@@ -83,7 +103,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         }
     }
 
-    updateMichael(action: string): Boolean {
+    updateMichael(action: string): boolean {
         if (this.zoneCfg.isBeach) {
             switch (action) {
                 case Actions.ADD:
@@ -98,7 +118,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         return false
     }
 
-    updateSwimmers(action: string): Boolean {
+    updateSwimmers(action: string): boolean {
         if (!this.zoneCfg.isBeach) {
             return false // swimmers only at beaches
         }
