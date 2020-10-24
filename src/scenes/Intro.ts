@@ -103,6 +103,7 @@ export default class Intro extends Phaser.Scene {
     showJawsTitle() {
         const jawsTitle = this.add.image(187, 170, "jawsTitle").setOrigin(0)
         const text = this.add.text(680, 100, "COMPANION" , { fontFamily: "Elite", color: "#004258", align: "center", fontSize: 50 })
+        this.sound.add("bigger_boat").play({ volume: 0.3 })
         this.tweens.add({
             targets: text,
             rotation: .5,

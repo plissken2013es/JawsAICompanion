@@ -110,6 +110,10 @@ export default class Preloader extends Phaser.Scene {
                 "splash.ogg",
                 "splash.mp3"
             ])
+            .audio("bigger_boat", [
+                "bigger_boat.ogg",
+                "bigger_boat.mp3"
+            ])
             // audio - swipes
             .audio("swipe1", [
                 "swipe1.ogg",
