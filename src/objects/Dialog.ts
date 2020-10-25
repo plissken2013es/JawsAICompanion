@@ -12,70 +12,65 @@ export default class Dialog {
         this.scene = scene
         this.rexUI = this.scene.rexUI
 
-        switch (type) {
-            case DialogType.YES_NO:
-                this.dialog = this.rexUI.add.dialog({
-                    width: 200,
-                    height: 150,
-                    anchor: {
-                        centerX: "center",
-                        centerY: "center"
-                    },
-        
-                    background: this.rexUI.add.roundRectangle(0, 0, 200, 150, 5, 0x1565c0),
-        
-                    content: this.scene.add.text(0, 0, message, {
-                        fontFamily: "Elite",
-                        align: "center",
-                        fontSize: 20
-                    }),
-        
-                    actions: [
-                        this.createLabel(this.scene, this.scene.getLocale("Yes")),
-                        this.createLabel(this.scene, this.scene.getLocale("No"))
-                    ],
-        
-                    space: {
-                        title: 25,
-                        content: 25,
-                        action: 15,
-        
-                        left: 20,
-                        right: 20,
-                        top: 20,
-                        bottom: 20,
-                    },
-        
-                    align: {
-                        actions: "center",
-                    },
-        
-                    expand: {
-                        content: false,
-                    }
-                })
-                    .layout()
-                    //.drawBounds(this.add.graphics(), 0xff0000)
-                    .popUp(666);
-        
-               this. dialog
-                    .on("button.click", (button, groupName, index) => {
-                        callback(button, index)
-                        this.dialog.scaleDownDestroy(666)
-                    }, this)
-                    .on("button.over", (button, groupName, index) => {
-                        button.getElement("background").setStrokeStyle(1, 0xffffff);
-                    })
-                    .on("button.out", (button, groupName, index) => {
-                        button.getElement("background").setStrokeStyle();
-                    })
-                break
+        this.dialog = this.rexUI.add.dialog({
+            width: 200,
+            height: 150,
+            anchor: {
+                centerX: "center",
+                centerY: "center"
+            },
 
-            default:
-                break
-        }
+            background: this.rexUI.add.roundRectangle(0, 0, 200, 150, 5, 0x1565c0),
 
-        if (this.dialog) scene.add.existing(this.dialog)
+            content: this.scene.add.text(0, 0, message, {
+                fontFamily: "Elite",
+                align: "center",
+                fontSize: 20
+            }),
+
+            actions: type === DialogType.YES_NO ? [
+                this.createLabel(this.scene, this.scene.getLocale("Yes")),
+                this.createLabel(this.scene, this.scene.getLocale("No"))
+            ] : [
+                this.createLabel(this.scene, this.scene.getLocale("Ok"))
+            ],
+
+            space: {
+                title: 25,
+                content: 25,
+                action: 15,
+
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 20,
+            },
+
+            align: {
+                actions: "center",
+            },
+
+            expand: {
+                content: false,
+            }
+        })
+            .layout()
+            //.drawBounds(this.add.graphics(), 0xff0000)
+            .popUp(666);
+
+       this.dialog
+            .on("button.click", (button, groupName, index) => {
+                callback(button, index)
+                this.dialog.scaleDownDestroy(666)
+            }, this)
+            .on("button.over", (button, groupName, index) => {
+                button.getElement("background").setStrokeStyle(1, 0xffffff);
+            })
+            .on("button.out", (button, groupName, index) => {
+                button.getElement("background").setStrokeStyle();
+            })
+
+        scene.add.existing(this.dialog)
     }
 
     createLabel(scene: Phaser.Scene, text: string) {

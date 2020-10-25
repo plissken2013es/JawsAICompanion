@@ -1,4 +1,5 @@
 import Phaser from "phaser"
+import Languages from '~/consts/Languages'
 import SceneKeys from "~/consts/SceneKeys"
 
 export default class Intro extends Phaser.Scene {
@@ -11,7 +12,7 @@ export default class Intro extends Phaser.Scene {
     private diver?: Phaser.GameObjects.Sprite
     private corals?: Phaser.GameObjects.TileSprite
     private pause: boolean = false
-    private lang: string = "EN"
+    private lang: string = Languages.English
 
     constructor() {
         super(SceneKeys.Intro)
@@ -56,7 +57,8 @@ export default class Intro extends Phaser.Scene {
             key: "jawsShadow",
             frames: this.anims.generateFrameNumbers("jawsShadow", {}),
             frameRate: 1
-        }).on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        }) as Phaser.Animations.Animation
+        jawsShadowAnim.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.jawsShadow!.destroy()
             this.diver!.anims.stop()
             this.pause = true

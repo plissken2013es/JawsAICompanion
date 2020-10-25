@@ -2,6 +2,7 @@ import Phaser from "phaser"
 import Actions from '~/consts/Actions'
 import Zone from "~/objects/Zone"
 import ZoneNames from "~/consts/ZoneNames"
+import IGame from '~/objects/IGame'
 
 export default class Swimmer extends Phaser.GameObjects.Sprite {
 
@@ -9,7 +10,7 @@ export default class Swimmer extends Phaser.GameObjects.Sprite {
     readonly positionOnDragStart = new Phaser.Geom.Point(0, 0)
     private linkedTo: Zone
 
-    constructor(scene: Phaser.Scene, x: number, y: number, texture: string, zone: Zone) {
+    constructor(scene: IGame, x: number, y: number, texture: string, zone: Zone) {
         super(scene, x, y, texture)
 
         this.buttonName = texture
@@ -19,6 +20,15 @@ export default class Swimmer extends Phaser.GameObjects.Sprite {
 
         this.setInteractive().setOrigin(0.5)
         this.scene.input.setDraggable(this)
+    }
+
+    eatenByJaws() {
+        if (this.linkedTo.updateSwimmers(Actions.REMOVE)) {
+            (this.scene as IGame).interactiveObjects = (this.scene as IGame).interactiveObjects.filter((item, index) => {
+                return item != this
+            })
+            this.destroy()
+        }
     }
 
     shouldRemove() {

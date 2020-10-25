@@ -1,6 +1,9 @@
 import Languages from "~/consts/Languages"
 
-const Locale = {    
+const Locale = {  
+    "Ok": {
+        ES: "De acuerdo"
+    },
     "Yes": {
         ES: "Sí"
     },

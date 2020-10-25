@@ -3,7 +3,8 @@ enum SceneKeys {
     LanguageSelection = "languageSelection",
     StudiosLogo = "carpenterStudios",
     Intro = "intro",
-	Game = "game"
+    Game = "game",
+    PhaseTitle = "phaseTitle"
 }
 
 export default SceneKeys

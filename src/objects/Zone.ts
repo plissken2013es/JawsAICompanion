@@ -10,12 +10,15 @@ export default class Zone extends Phaser.GameObjects.Sprite {
     readonly zoneName: string
     readonly zoneCfg: IZoneCfg
     private numBarrels: number = 0
-    private numSwimmers: number = 0
+    private _numSwimmers: number = 0
+    public get numSwimmers(): number {
+        return this._numSwimmers
+    }
     private numBarrelsText?: Phaser.GameObjects.Text
     private numSwimmersText?: Phaser.GameObjects.Text
     private _isMichaelHere: boolean = false
     public get isMichaelHere(): boolean {
-        return this.isMichaelHere
+        return this._isMichaelHere
     }
 
     constructor(scene: IGame, cfg: IZoneCfg) {
@@ -47,15 +50,16 @@ export default class Zone extends Phaser.GameObjects.Sprite {
     }
 
     hasSomethingToEat(): boolean {
-        return this._isMichaelHere || this.numSwimmers > 0
+        return this._isMichaelHere || this._numSwimmers > 0
     }
 
     hasSwimmers(): boolean {
-        return this.numSwimmers > 0
+        return this._numSwimmers > 0
     }
 
     totalSwimmers(): number {
-        return this.numSwimmers + (this._isMichaelHere ? 2 : 0)
+        if (!this.zoneCfg.isBeach) return 0
+        return this._numSwimmers + (this._isMichaelHere ? 2 : 0)
     }
 
     isOpenSea() {
@@ -124,11 +128,11 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         }
         switch (action) {
             case Actions.ADD:
-                if (++this.numSwimmers > 1) {
+                if (++this._numSwimmers > 1) {
                     if (this.numSwimmersText) {
                         this.numSwimmersText.destroy()
                     }
-                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this.numSwimmers.toString(), { fontFamily: "Elite", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
+                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this._numSwimmers.toString(), { fontFamily: "Elite", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
                     this.numSwimmersText.setOrigin(0.5)
                 }
                 return false
@@ -137,12 +141,12 @@ export default class Zone extends Phaser.GameObjects.Sprite {
                 if (this.numSwimmersText) {
                     this.numSwimmersText.destroy()
                 }
-                if (--this.numSwimmers > 1) {
-                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this.numSwimmers.toString(), { fontFamily: "Elite", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
+                if (--this._numSwimmers > 1) {
+                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this._numSwimmers.toString(), { fontFamily: "Elite", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
                     this.numSwimmersText.setOrigin(0.5)
                 }
-                if (this.numSwimmers < 1) {
-                    this.numSwimmers = 0
+                if (this._numSwimmers < 1) {
+                    this._numSwimmers = 0
                     return true
                 }
                 return false

@@ -76,6 +76,7 @@ interface JawsConfig {
     activatedBarrelsThisTurn: string[]
     huntersVisitedThisTurn: Hunter[]
     swimmersEatenThisTurn: any
+    publicMessages: string[]
 }
 
 export default class JawsAI {
@@ -99,7 +100,8 @@ export default class JawsAI {
         status: JawsStatus.NORMAL,
         activatedBarrelsThisTurn: [],
         huntersVisitedThisTurn: [],
-        swimmersEatenThisTurn: {}
+        swimmersEatenThisTurn: {},
+        publicMessages: []
     }
 
     private constructor(scene: IGame) {
@@ -186,7 +188,7 @@ export default class JawsAI {
                 let maxSwimmers = 0
                 let crowdedBeaches: string[] = []
                 beaches.filter(beach => beach != this.jaws.position).forEach((beach) => {
-                    let numSwimmers = this.zones[beach].numSwimmers() + (this.zones[beach].isMichaelHere ? 2 : 0)
+                    let numSwimmers = this.findZoneBy(beach)!.numSwimmers + (this.findZoneBy(beach)!.isMichaelHere ? 2 : 0)
                     if (numSwimmers > maxSwimmers) {
                         crowdedBeaches = [beach]
                         maxSwimmers = numSwimmers
@@ -201,7 +203,7 @@ export default class JawsAI {
                 let lessSwimmers = 666
                 let emptyBeaches: string[] = []
                 beaches.filter(beach => beach != this.jaws.position).forEach((beach) => {
-                    let numSwimmers = this.zones[beach].numSwimmers() + (this.zones[beach].isMichaelHere ? 2 : 0)
+                    let numSwimmers = this.findZoneBy(beach)!.numSwimmers + (this.findZoneBy(beach)!.isMichaelHere ? 2 : 0)
                     if (numSwimmers < lessSwimmers) {
                         emptyBeaches = [beach]
                         lessSwimmers = numSwimmers
@@ -214,14 +216,14 @@ export default class JawsAI {
     
             case JawsMissionNames.SILENT_RUNNING:
                 let bestOptions = deepOcean.filter((zone) => {
-                    return !this.zones[zone].hasBarrels() && this.currentQuintPosition() != zone && zone != this.jaws.position
+                    return !this.findZoneBy(zone)!.hasBarrels() && this.currentQuintPosition() != zone && zone != this.jaws.position
                 })
                 console.log(bestOptions)
                 if (bestOptions.length > 0) {
                     return this.pick(bestOptions) as string
                 }
                 bestOptions = shallowOcean.filter((zone) => {
-                    return !this.zones[zone].hasBarrels() && this.currentQuintPosition() != zone && zone != this.jaws.position
+                    return !this.findZoneBy(zone)!.hasBarrels() && this.currentQuintPosition() != zone && zone != this.jaws.position
                 })
                 console.log(bestOptions)
                 if (bestOptions.length > 0) {
@@ -236,11 +238,11 @@ export default class JawsAI {
 
     barrelPositions(): string[] {
         let positions: string[] = []
-        for (let name in this.zones) {
-            if (this.zones[name].hasBarrels()) {
-                positions.push(name)
+        this.zones.forEach((zone) => {
+            if (this.findZoneBy(zone.zoneName)!.hasBarrels()) {
+                positions.push(zone.zoneName)
             }
-        }
+        })
         return positions
     }
 
@@ -275,6 +277,12 @@ export default class JawsAI {
         }
     }
 
+    findZoneBy(zoneName: string): Zone {
+        return this.zones.filter((zone) => {
+            return zone.zoneName === zoneName
+        })[0]
+    }
+
     initGame() {
         //savedLog = [] // TO-DO
         this.jaws.turnsPlayed = this.jaws.swimmersEaten = 0
@@ -294,12 +302,12 @@ export default class JawsAI {
         let bestOptions = quintZones[0].concat(quintZones[1])
         let initialPos = this.pick(bestOptions) as string
         console.log(this.scene.getLocale("Jaws chooses INITIAL position ") + this.scene.getLocale(initialPos), true)
-        this.scene.launchMessage(this.scene.getLocale("Jaws chooses INITIAL position "))
+        this.jaws.publicMessages.push(this.scene.getLocale("Jaws chooses INITIAL position "))
         this.jaws.position = initialPos
     }
 
     shouldAmbushAtBeach(numActions): boolean {
-        let beach = this.zones[this.jaws.position]
+        let beach = this.findZoneBy(this.jaws.position)
         let beachName = beach.name
         return this.isJawsAtBeach() && beach.hasSomethingToEat() && numActions < 2 && this.jaws.lastBeachAttacked != beachName
     }
@@ -325,9 +333,9 @@ export default class JawsAI {
 
     shouldUseFeedingFrenzy(isGoingToRunAwayOrHide): boolean {
         if (!this.jaws.powerEnabledThisTurn && this.jaws.powersAvailable.includes(PowerTokens.FEEDING_FRENZY) && !isGoingToRunAwayOrHide) {
-            let beach = this.zones[this.jaws.position]
+            let beach = this.findZoneBy(this.jaws.position)
             if (this.isJawsAtBeach()) {
-                if (beach.numSwimmers() > 3 || (beach.numSwimmers() > 1 && beach.isMichaelHere)) {
+                if (beach.numSwimmers > 3 || (beach.numSwimmers > 1 && beach.isMichaelHere)) {
                     this.useJawsPower(PowerTokens.FEEDING_FRENZY)
                     return true
                 }
@@ -350,7 +358,7 @@ export default class JawsAI {
         return !this.jaws.powerEnabledThisTurn && 
                 this.jaws.powersAvailable.includes(PowerTokens.EVASIVE_MOVES) && 
                 beaches.includes(zoneName) && 
-                this.zones[zoneName].hasBarrels() &&
+                this.findZoneBy(zoneName).hasBarrels() &&
                 this.jaws.path.length <= numActions
     }
 
@@ -402,8 +410,8 @@ export default class JawsAI {
 
     totalSwimmersOnBeaches(): number {
         let total = 0
-        beaches.forEach((beach) => {
-            total += this.zones[beach].totalSwimmers()
+        this.zones.forEach((zone) => {
+            total += zone.totalSwimmers()
         })
         return total
     }
@@ -457,9 +465,9 @@ export default class JawsAI {
         this.jaws.turnsPlayed++
         if (this.jaws.activatedBarrelsThisTurn.length > 0) {
             console.log(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(this.jaws.activatedBarrelsThisTurn), true)
-            this.scene.launchMessage(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(this.jaws.activatedBarrelsThisTurn))
+            this.jaws.publicMessages.push(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(this.jaws.activatedBarrelsThisTurn))
             this.jaws.activatedBarrelsThisTurn.forEach((zoneName) => {
-                this.zones[zoneName].animateBarrel()
+                this.findZoneBy(zoneName)!.animateBarrel()
             })
         }
         if (isGardnersBoat && this.jaws.huntersVisitedThisTurn.length > 0) {
@@ -467,54 +475,60 @@ export default class JawsAI {
             this.jaws.huntersVisitedThisTurn.forEach((captain) => {
                 captains.push(captain.hunterName)
             })
-            this.scene.launchMessage(this.scene.getLocale("Jaws has kicked captain: ") + captains)
+            this.jaws.publicMessages.push(this.scene.getLocale("Jaws has kicked captain: ") + captains)
             this.jaws.huntersVisitedThisTurn.forEach((captain) => {
                 captain.animate()
             })
         }
         for (let beachName in this.jaws.swimmersEatenThisTurn) {
             if (this.jaws.swimmersEatenThisTurn[beachName]["michael"]) {
-                this.scene.launchMessage(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beachName))
+                this.jaws.publicMessages.push(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beachName))
             }
             let numSwimmersEaten = this.jaws.swimmersEatenThisTurn[beachName]["swimmers"]
             if (numSwimmersEaten) {
-                this.scene.launchMessage(this.scene.getLocale("Jaws eats ") + numSwimmersEaten + this.scene.getLocale(" swimmer(s) on beach ") + this.scene.getLocale(beachName))
+                this.jaws.publicMessages.push(this.scene.getLocale("Jaws eats ") + numSwimmersEaten + this.scene.getLocale(" swimmer(s) on beach ") + this.scene.getLocale(beachName))
             }
-            this.zones[beachName].showAttack()
+            if (beachName) {
+                this.findZoneBy(beachName)!.showAttack()
+            }
         }
         this.scene.updateBodyCount()
         if (this.jaws.powerEnabledThisTurn) {
-            this.scene.launchMessage(this.scene.getLocale("Jaws has used a POWER."))
+            this.jaws.publicMessages.push(this.scene.getLocale("Jaws has used a POWER."))
         }
-        this.scene.launchMessage(this.scene.getLocale("Jaws ends its turn."))
+        this.jaws.publicMessages.push(this.scene.getLocale("Jaws ends its turn."))
+        this.scene.launchMessage(this.jaws.publicMessages.join("\n"))
+        this.jaws.publicMessages = []
         console.log("----------------" + this.scene.getLocale("END TURN ") + this.jaws.turnsPlayed + "-------------", true)
     }
 
-    jawsEatsMichaelAt(beach) {
-        console.log(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beach.name), true)
+    jawsEatsMichaelAt(beach: Zone) {
+        console.log(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beach.zoneName), true)
         beach.updateMichael(Actions.REMOVE)
+        this.scene.michael.returnHome()
         this.jaws.swimmersEaten += 2
-        if (this.jaws.swimmersEatenThisTurn[beach.name]) {
-            this.jaws.swimmersEatenThisTurn[beach.name]["michael"] = true
+        if (this.jaws.swimmersEatenThisTurn[beach.zoneName]) {
+            this.jaws.swimmersEatenThisTurn[beach.zoneName]["michael"] = true
         } else {
-            this.jaws.swimmersEatenThisTurn[beach.name] = { "michael": true }
+            this.jaws.swimmersEatenThisTurn[beach.zoneName] = { "michael": true }
         }
     }
     
-    jawsEatsSwimmerAt(beach) {
-        console.log(this.scene.getLocale("Jaws eats 1 swimmer on beach ") + this.scene.getLocale(beach.name), true)
-        beach.updateSwimmers(false, true)
+    jawsEatsSwimmerAt(beach: Zone) {
+        console.log(this.scene.getLocale("Jaws eats 1 swimmer on beach ") + this.scene.getLocale(beach.zoneName), true)
+        const swimmer = this.scene.findSwimmerAt(beach)
+        swimmer.eatenByJaws()
         this.jaws.swimmersEaten += 1
-        if (this.jaws.swimmersEatenThisTurn[beach.name]) {
-            this.jaws.swimmersEatenThisTurn[beach.name]["swimmers"]++
+        if (this.jaws.swimmersEatenThisTurn[beach.zoneName]) {
+            this.jaws.swimmersEatenThisTurn[beach.zoneName]["swimmers"]++
         } else {
-            this.jaws.swimmersEatenThisTurn[beach.name] = { "swimmers": 1 }
+            this.jaws.swimmersEatenThisTurn[beach.zoneName] = { "swimmers": 1 }
         } 
     }
 
     jawsMovesTo(destination, isGardnersBoat) {
         this.jaws.position = destination
-        if (this.zones[destination].hasBarrels() && !this.jaws.activatedBarrelsThisTurn.includes(destination) && this.jaws.powerEnabledThisTurn != PowerTokens.EVASIVE_MOVES) {
+        if (this.findZoneBy(destination)!.hasBarrels() && !this.jaws.activatedBarrelsThisTurn.includes(destination) && this.jaws.powerEnabledThisTurn != PowerTokens.EVASIVE_MOVES) {
             this.jaws.activatedBarrelsThisTurn.push(destination)
         }
         if (isGardnersBoat) {
@@ -537,7 +551,7 @@ export default class JawsAI {
         }
     
         if (this.isJawsAtBeach()) {
-            let beach = this.zones[this.jaws.position]
+            let beach = this.findZoneBy(this.jaws.position)
             let isGoingToRunAwayOrHide = this.shouldUseSpeedBurstPowerToRunAway(numActions) || this.shouldUseOutOfSightPower()
             let conditionsArePositive = numActions > 1 || this.shouldTakeMyChancesBecauseQuintIsFarAway() || isGoingToRunAwayOrHide
             if (beach.hasSomethingToEat() && conditionsArePositive) {
@@ -551,7 +565,7 @@ export default class JawsAI {
                         if (beach.isMichaelHere) {
                             this.jawsEatsMichaelAt(beach)     
                         }
-                        for (let q=0; q<beach.numSwimmers(); q++) {
+                        for (let q=0; q<beach.numSwimmers; q++) {
                             this.jawsEatsSwimmerAt(beach)
                         }
                         return true

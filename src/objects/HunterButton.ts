@@ -24,7 +24,6 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
 
         super(scene, x, y, cfg.btnName, 0)
 
-        this.scene = scene
         this.buttonName = cfg.btnName
         this.spriteSelectAnim = cfg.spriteSelectAnim
         this.spriteDroppedAnim = cfg.spriteDroppedAnim
@@ -34,7 +33,6 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
 
         if (this.onlyClickable) {
             this.on(Phaser.Input.Events.POINTER_DOWN, (pointer) => {
-                console.log("> CLICK", this.buttonName)
                 this.onClick()
             })
         } else {
@@ -43,8 +41,6 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     }
 
     addTo(zone: Zone) {
-        console.log("addTo:", zone)
-
         switch (this.buttonName) {
             case Buttons.ADD_BARREL:
                 this.x = this.positionOnDragStart.x
@@ -97,6 +93,7 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                             swimmer.play(this.spriteDroppedAnim)
                         }
                         this.scene.add.existing(swimmer)
+                        this.scene.interactiveObjects.push(swimmer)
                     }
                 }
                 break
@@ -104,7 +101,6 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     }
 
     onClick() {
-        console.log("click", this.buttonName)
         switch (this.buttonName) {
             case Buttons.FISH_FINDER:
                 const hooper = this.scene.findCharacterBy(Characters.HOOPER)

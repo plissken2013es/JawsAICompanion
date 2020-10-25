@@ -13,6 +13,11 @@ import Michael from '~/objects/Michael'
 import IGame from '~/objects/IGame'
 import LocaleManager from '~/utils/LocaleManager'
 import JawsAI from '~/utils/JawsAI'
+import PhaseTitle from './PhaseTitle'
+import TextButton from '~/objects/TextButton'
+import SharkButtons from '~/consts/SharkButtons'
+import Swimmer from '~/objects/Swimmer'
+import Zone from '~/objects/Zone'
 
 export default class Game extends Phaser.Scene implements IGame {
 
@@ -21,17 +26,20 @@ export default class Game extends Phaser.Scene implements IGame {
     private board?: Board
     private locales?: LocaleManager
     private dialog?: any
-    private readonly interactiveObjects: Phaser.GameObjects.Sprite[] = []
+    interactiveObjects: Phaser.GameObjects.GameObject[] = []
     private hunters: Hunter[] = []
     private jawsAI?: JawsAI
     boardCenter = new Phaser.Geom.Point(0, 0)
+    private _michael?: Michael
+    public get michael(): Michael | undefined {
+        return this._michael
+    }
 
 	constructor() {
 		super(SceneKeys.Game)
     }
     
     init(data) {
-        console.log("Language selected:", data.language)
         this.lang = data.language
         this.music = data.music
         if (this.music) {
@@ -63,43 +71,15 @@ export default class Game extends Phaser.Scene implements IGame {
         this.addCharacters()
         this.addButtons()
         this.bindButtonEvents()
+        this.addSharkButtons()
 
+        /*
         this.add.image(this.cameras.main.centerX, 570, "brody_eyes").setOrigin(0)
         this.add.image(this.cameras.main.centerX + 120, 570, "hooper_eyes").setOrigin(0)
         this.add.image(this.cameras.main.centerX + 240, 570, "quint_eyes").setOrigin(0)
+        */
 
-        const bloodBg = this.add.sprite(this.boardCenter.x, this.boardCenter.y, "blood_bg").setOrigin(0.5)
-        const maskShape = this.make.graphics({})
-        maskShape.fillStyle(0xffffff, 1)
-        maskShape.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height)
-        maskShape.x = -this.cameras.main.width
-        bloodBg.mask = new Phaser.Display.Masks.GeometryMask(this, maskShape)
-        const phaseAudio = this.sound.add("phase_title").play({ volume: 0.5 })
-        this.tweens.add({
-            targets: maskShape,
-            x: 0,
-            duration: 333,
-            ease: Phaser.Math.Easing.Linear,
-            onComplete: () => {
-                this.add.text(this.boardCenter.x, this.boardCenter.y - 50, 
-                    this.getLocale("EVENT PHASE + SHARK PHASE"),
-                {
-                    fontFamily: "Elite",
-                    color: "#e9c29f", 
-                    align: "center", 
-                    fontSize: 50 
-                }).setOrigin(0.5)
-                this.add.text(this.boardCenter.x, this.boardCenter.y, 
-                    this.getLocale("Draw Amity Event card.\nDeploy swimmers.\nClick on any Shark Action button."),
-                {
-                    fontFamily: "Elite",
-                    color: "#fff", 
-                    align: "center", 
-                    fontSize: 30 
-                }).setOrigin(0.5, 0)
-            },
-            onCompleteScope: this
-        })
+        this.launchPhaseTitle()
     }
 
     addCharacters() {
@@ -126,9 +106,9 @@ export default class Game extends Phaser.Scene implements IGame {
             repeat: -1
         })
 
-        const michael = new Michael(this, 920, 80, Buttons.MICHAEL)
-        this.add.existing(michael)
-        this.interactiveObjects.push(michael);
+        this._michael = new Michael(this, 920, 80, Buttons.MICHAEL)
+        this.add.existing(this._michael)
+        this.interactiveObjects.push(this._michael);
         [
             { btnName: Buttons.ADD_BARREL }, 
             { 
@@ -142,6 +122,31 @@ export default class Game extends Phaser.Scene implements IGame {
             const hunterButton = new HunterButton(this, 920, 160 + (index * 70), btnCfg)
             this.add.existing(hunterButton)
             this.interactiveObjects.push(hunterButton)
+        })
+    }
+
+    addSharkButtons() {
+        const y = ((this.cameras.main.height - (this.boardCenter.y * 2)) / 2) + (this.boardCenter.y * 2)
+
+        const sharkButtons = [
+            { text: this.getLocale("Jaws 3 actions").toUpperCase(), key: SharkButtons.JAWS_3 },
+            { text: this.getLocale("Jaws 4 actions").toUpperCase(), key: SharkButtons.JAWS_4 },
+            { text: this.getLocale("Jaws (Gardner's boat)").toUpperCase(), key: SharkButtons.JAWS_G },
+        ]
+        const buttonsCfg = { 
+            fill: "#fff",
+            backgroundColor: "#004258",
+            padding: { x: 6, y: 6 },
+            fontSize: 20
+        }
+
+        let widthsSum = 0
+        sharkButtons.forEach((btnCfg) => {
+            const btn = new TextButton(this, 20 + widthsSum, y, " " + btnCfg.text + " ", buttonsCfg, btnCfg.key, this.onSharkActionButtonPressed)
+                .setOrigin(0, 0.5)
+            this.add.existing(btn)
+            this.interactiveObjects.push(btn)
+            widthsSum += btn.getBounds().width + 20
         })
     }
 
@@ -169,7 +174,6 @@ export default class Game extends Phaser.Scene implements IGame {
             }
             const snd = Phaser.Utils.Array.GetRandom(dragSounds)
             snd.play()
-            console.log("DRAG_START", gameObject)
         })
     
         this.input.on(Phaser.Input.Events.DRAG, (pointer, gameObject, dragX, dragY) => {    
@@ -178,7 +182,6 @@ export default class Game extends Phaser.Scene implements IGame {
         })
 
         this.input.on(Phaser.Input.Events.DRAG_END, (pointer, gameObject, dropped) => {
-            console.log("> DRAG_END", gameObject.texture.key, gameObject.x, gameObject.y, "dropped:", dropped)
             const snd = Phaser.Utils.Array.GetRandom(dropSounds)
             snd.play()
             if (gameObject.shouldRemove) { // barrels and swimmers can be removed
@@ -198,7 +201,6 @@ export default class Game extends Phaser.Scene implements IGame {
         })
 
         this.input.on(Phaser.Input.Events.DROP, (pointer, gameObject, dropZone) => {
-            console.log("> DROP", gameObject.texture.key, gameObject.x, gameObject.y)
             if (!dropZone || !dropZone.zoneCfg) return
             if (gameObject.moveTo) { // Michael && hunters can move
                 gameObject.moveTo(dropZone)
@@ -222,7 +224,17 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     findCharacterBy(name: string): Hunter | undefined {
-        return this.hunters.find(hunter => hunter.hunterName === name);
+        return this.hunters.find(hunter => hunter.hunterName === name)
+    }
+
+    findSwimmerAt(beach: Zone): Swimmer {
+        const swimmer = this.interactiveObjects.find(swimmer => {
+            if (swimmer && swimmer.linkedTo) {
+                return swimmer.linkedTo.zoneName === beach.zoneName
+            }
+            return false
+        })
+        return swimmer as Swimmer
     }
 
     getMap(): Phaser.GameObjects.GameObject | undefined {
@@ -233,8 +245,52 @@ export default class Game extends Phaser.Scene implements IGame {
         return this.locales?.getLocale(word)
     }
 
-    launchMessage(msg: string) {
-        // TO-DO
+    launchMessage(msg: string, isLastMessage: boolean = false) {
+        console.log("------------------------------------->", msg)
+        this.time.delayedCall(500, () => {
+            const callback = (button, index) => {
+                this.enableInteractiveObjects()
+            }
+            const dialog = new Dialog(this, DialogType.OK, msg, callback)
+            this.disableInteractiveObjects()
+        }, [], this)
+    }
+
+    launchPhaseTitle() {
+        this.disableInteractiveObjects()
+        this.scene.add(SceneKeys.PhaseTitle, PhaseTitle, true, { 
+            boardCenter: this.boardCenter, 
+            mainScene: this,
+            callback: () => {
+                this.enableInteractiveObjects()
+                this.scene.remove(SceneKeys.PhaseTitle)
+            }
+        })
+    }
+
+    onSharkActionButtonPressed(buttonKey: string) {
+        let numActions = 3
+        let isGardnersBoat = false
+        switch (buttonKey) {
+            case SharkButtons.JAWS_3:
+                break
+
+            case SharkButtons.JAWS_4:
+                numActions = 4
+                break
+
+            case SharkButtons.JAWS_G:
+                isGardnersBoat = true
+                break
+
+            default:
+                return
+        }
+        if (this.jawsAI) {
+            this.jawsAI.setInitialJawsPositionIfNeeded(false)
+            this.jawsAI.selectTaskIfNeeded(numActions, isGardnersBoat)
+            this.jawsAI.performJawsActions(numActions, isGardnersBoat)
+        }
     }
 
     updateBodyCount() {
