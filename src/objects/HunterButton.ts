@@ -18,7 +18,6 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     private readonly spriteSelectAnim?: string
     private readonly spriteDroppedAnim?: string
     private onlyClickable: boolean = false
-    readonly scene: IGame
 
     constructor(scene: IGame, x: number, y: number, cfg: any) {
 
@@ -41,6 +40,7 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     }
 
     addTo(zone: Zone) {
+        const scene = this.scene as IGame
         switch (this.buttonName) {
             case Buttons.ADD_BARREL:
                 this.x = this.positionOnDragStart.x
@@ -48,23 +48,32 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                 const posX = zone.zoneCfg.barrelX
                 const posY = zone.zoneCfg.barrelY
                 if (zone.zoneCfg && posX && posY) {
-                    const msg = this.scene.getLocale("Are you sure that you want to launch a barrel\nat zone ") + this.scene.getLocale(zone.zoneName) + "?"
+                    const msg = scene.getLocale("Are you sure that you want to launch a barrel\nat zone ") + scene.getLocale(zone.zoneName) + "?"
                     const callback = (button, index) => {
                         switch (button.text) {
-                            case this.scene.getLocale("Yes"):
-                                if (zone.hasBarrels()) {
-                                    zone.updateBarrels(Actions.ADD)
+                            case scene.getLocale("Yes"):
+                                console.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(this.name), true)
+                                if (scene.getJawsPosition() == zone.zoneName) {
+                                    scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"))
+                                    console.log(scene.getLocale("You've attached a barrel to the shark!"), true)
+                                    zone.showShark()
+                                    scene.attachBarrelToJaws()
+                                    scene.updateBodyCount()
                                 } else {
-                                    this.scene.add.existing(new Barrel(this.scene, posX, posY, "barrel", zone))
+                                    if (zone.hasBarrels()) {
+                                        zone.updateBarrels(Actions.ADD)
+                                    } else {
+                                        this.scene.add.existing(new Barrel(this.scene, posX, posY, "barrel", zone))
+                                    }
                                 }
                                 break
                             default:
                                 break
                         }
-                        this.scene.enableInteractiveObjects()
+                        scene.enableInteractiveObjects()
                     }
-                    const dialog = new Dialog(this.scene, DialogType.YES_NO, msg, callback)
-                    this.scene.disableInteractiveObjects()
+                    const dialog = new Dialog(scene, DialogType.YES_NO, msg, callback)
+                    scene.disableInteractiveObjects()
                 }
                 break
 
@@ -88,12 +97,12 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                     if (zone.hasSwimmers()) {
                         zone.updateSwimmers(Actions.ADD)
                     } else {
-                        const swimmer = new Swimmer(this.scene, x, y, "swimmer_sprite", zone)
+                        const swimmer = new Swimmer(scene, x, y, "swimmer_sprite", zone)
                         if (this.spriteDroppedAnim) {
                             swimmer.play(this.spriteDroppedAnim)
                         }
                         this.scene.add.existing(swimmer)
-                        this.scene.interactiveObjects.push(swimmer)
+                        scene.interactiveObjects.push(swimmer)
                     }
                 }
                 break
@@ -101,14 +110,15 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     }
 
     onClick() {
+        const scene = this.scene as IGame
         switch (this.buttonName) {
             case Buttons.FISH_FINDER:
-                const hooper = this.scene.findCharacterBy(Characters.HOOPER)
+                const hooper = scene.findCharacterBy(Characters.HOOPER)
                 hooper?.askUserAboutFishFinder()
                 break
 
             case Buttons.BINOCULARS:
-                const brody = this.scene.findCharacterBy(Characters.BRODY)
+                const brody = scene.findCharacterBy(Characters.BRODY)
                 brody?.askUserAboutBinoculars()
                 break
         }

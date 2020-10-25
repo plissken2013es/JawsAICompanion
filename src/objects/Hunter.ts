@@ -70,71 +70,75 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
     askUserAboutBinoculars() {
         if (this.hunterName != Characters.BRODY || !this.currentZone.zoneCfg.isBeach) return
 
-        let failMsg = this.scene.getLocale("Nothing on the water...")
-        let successMsg = this.scene.getLocale("SHAAARK!!")
+        const scene = this.scene as IGame
+
+        let failMsg = scene.getLocale("Nothing on the water...")
+        let successMsg = scene.getLocale("SHAAARK!!")
 
         const callback = (button, index) => {
             switch (button.text) {
-                case this.scene.getLocale("Yes"):
-                    if (!this.scene.isJawsVisible()) {
-                        this.scene.launchMessage(failMsg)
+                case scene.getLocale("Yes"):
+                    if (!scene.isJawsVisible()) {
+                        scene.launchMessage(failMsg)
                         return
                     }
-                    if (this._currentZone.zoneName == this.scene.getJawsPosition()) {
-                        this.scene.launchMessage(successMsg)
+                    if (this._currentZone.zoneName == scene.getJawsPosition()) {
+                        scene.launchMessage(successMsg)
                         this._currentZone.showShark()
                     } else {
-                        this.scene.launchMessage(failMsg)
+                        scene.launchMessage(failMsg)
                     }
                     break
                 default:
                     break
             }
-            this.scene.enableInteractiveObjects()
+            scene.enableInteractiveObjects()
         }
-        const dialog = new Dialog(this.scene, DialogType.YES_NO, this.scene.getLocale("Do you want to use binoculars at Brody's location?"), callback)
-        this.scene.disableInteractiveObjects()
+        const dialog = new Dialog(scene, DialogType.YES_NO, scene.getLocale("Do you want to use binoculars at Brody's location?"), callback)
+        scene.disableInteractiveObjects()
     }
 
     askUserAboutFishFinder() {
         if (this.hunterName != Characters.HOOPER) return
 
-        let failMsg = this.scene.getLocale("NOTHING on the screen...")
-        let partialSuccessMsg = this.scene.getLocale("The shark is nearby from here...")
-        let successMsg = this.scene.getLocale("SHAAARK!!")
+        const scene = this.scene as IGame
+
+        let failMsg = scene.getLocale("NOTHING on the screen...")
+        let partialSuccessMsg = scene.getLocale("The shark is nearby from here...")
+        let successMsg = scene.getLocale("SHAAARK!!")
 
         const callback = (button, index) => {
             switch (button.text) {
-                case this.scene.getLocale("Yes"):
-                    console.log(this.scene.getLocale("Fish Finder activated at: ") + this.scene.getLocale(this._currentZone.zoneName), true)
-                    if (!this.scene.isJawsVisible()) {
-                        this.scene.launchMessage(failMsg)
+                case scene.getLocale("Yes"):
+                    console.log(scene.getLocale("Fish Finder activated at: ") + scene.getLocale(this._currentZone.zoneName), true)
+                    if (!scene.isJawsVisible()) {
+                        scene.launchMessage(failMsg)
                         return
                     }
-                    if (this._currentZone.zoneName == this.scene.getJawsPosition()) {
-                        this.scene.launchMessage(successMsg)
+                    if (this._currentZone.zoneName == scene.getJawsPosition()) {
+                        scene.launchMessage(successMsg)
                         this._currentZone.showShark()
                     } else {
                         let foundNear = false
                         this.dijkstraManager.filterNodesByDistance(1, JawsGraph, this._currentZone.zoneName)[1].forEach((zone) => {
-                            if (zone == this.scene.getJawsPosition()) {
+                            if (zone == scene.getJawsPosition()) {
                                 foundNear = true
                             }
                         })
                         if (foundNear) {
-                            this.scene.launchMessage(partialSuccessMsg)
+                            scene.launchMessage(partialSuccessMsg)
                         } else {
-                            this.scene.launchMessage(failMsg)
+                            scene.launchMessage(failMsg)
                         }
                     }
                     break
                 default:
                     break
             }
-            this.scene.enableInteractiveObjects()
+            scene.enableInteractiveObjects()
         }
-        const dialog = new Dialog(this.scene, DialogType.YES_NO, this.scene.getLocale("Do you want to activate the Fish Finder at Hooper's location?"), callback)
-        this.scene.disableInteractiveObjects()
+        const dialog = new Dialog(scene, DialogType.YES_NO, scene.getLocale("Do you want to activate the Fish Finder at Hooper's location?"), callback)
+        scene.disableInteractiveObjects()
     }
 
     animate() {

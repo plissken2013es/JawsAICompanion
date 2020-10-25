@@ -2,7 +2,7 @@ import Hunter from './Hunter';
 import Swimmer from './Swimmer';
 import Zone from './Zone';
 
-interface IGame {
+interface IGame extends Phaser.Scene {
     boardCenter: Phaser.Geom.Point
     interactiveObjects: Phaser.GameObjects.GameObject[]
     getLocale(word: string): string
@@ -13,6 +13,9 @@ interface IGame {
     findSwimmerAt(beach: Zone): Swimmer
     isJawsVisible(): boolean
     getJawsPosition(): string
+    launchMessage(msg: string, isSharkTurnFinished?: boolean)
+    updateBodyCount()
+    attachBarrelToJaws()
 }
 
 export default IGame

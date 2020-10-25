@@ -1,6 +1,21 @@
 import Languages from "~/consts/Languages"
 
-const Locale = {  
+const Locale = {
+    "EVENT PHASE + SHARK PHASE": {
+        ES: "FASE SUCESOS + FASE TIBURÓN"
+    },
+    "Draw Amity Event card.\nDeploy swimmers.\nClick on any Shark Action button.": {
+        ES: "Roba una carta Sucesos Amity.\nColoca bañistas.\nPulsa en el botón de Acción del Tiburón."
+    },
+    "CREW PHASE": {
+        ES: "FASE TRIPULACIÓN"
+    },
+    "Move characters.\nPerform actions.\nWhen finished, click 'End turn' button.": {
+        ES: "Mueve a los personajes.\nLleva a cabo acciones.\nCuando termines, pulsa en el botón 'Fin Turno'."
+    },    
+    "End Turn": {
+        ES: "Fin Turno"
+    },
     "Ok": {
         ES: "De acuerdo"
     },

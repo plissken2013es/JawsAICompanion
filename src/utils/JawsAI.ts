@@ -497,7 +497,7 @@ export default class JawsAI {
             this.jaws.publicMessages.push(this.scene.getLocale("Jaws has used a POWER."))
         }
         this.jaws.publicMessages.push(this.scene.getLocale("Jaws ends its turn."))
-        this.scene.launchMessage(this.jaws.publicMessages.join("\n"))
+        this.scene.launchMessage(this.jaws.publicMessages.join("\n"), true)
         this.jaws.publicMessages = []
         console.log("----------------" + this.scene.getLocale("END TURN ") + this.jaws.turnsPlayed + "-------------", true)
     }
