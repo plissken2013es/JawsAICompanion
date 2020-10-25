@@ -88,6 +88,9 @@ export default class Preloader extends Phaser.Scene {
             .image("quint_eyes", "quint_eyes.png")
             .image("hooper_eyes", "hooper_eyes.png")
 
+            // bg && UI
+            .image("blood_bg", "blood_bg.png")
+
             // other tokens
             .image("barrel", "barrel.png")
 
@@ -118,6 +121,10 @@ export default class Preloader extends Phaser.Scene {
             .audio("bigger_boat", [
                 "bigger_boat.ogg",
                 "bigger_boat.mp3"
+            ])
+            .audio("phase_title", [
+                "phase_title.ogg",
+                "phase_title.mp3"
             ])
             // audio - swipes
             .audio("swipe1", [

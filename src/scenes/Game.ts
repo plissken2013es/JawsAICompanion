@@ -24,6 +24,7 @@ export default class Game extends Phaser.Scene implements IGame {
     private readonly interactiveObjects: Phaser.GameObjects.Sprite[] = []
     private hunters: Hunter[] = []
     private jawsAI?: JawsAI
+    boardCenter = new Phaser.Geom.Point(0, 0)
 
 	constructor() {
 		super(SceneKeys.Game)
@@ -66,6 +67,39 @@ export default class Game extends Phaser.Scene implements IGame {
         this.add.image(this.cameras.main.centerX, 570, "brody_eyes").setOrigin(0)
         this.add.image(this.cameras.main.centerX + 120, 570, "hooper_eyes").setOrigin(0)
         this.add.image(this.cameras.main.centerX + 240, 570, "quint_eyes").setOrigin(0)
+
+        const bloodBg = this.add.sprite(this.boardCenter.x, this.boardCenter.y, "blood_bg").setOrigin(0.5)
+        const maskShape = this.make.graphics({})
+        maskShape.fillStyle(0xffffff, 1)
+        maskShape.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height)
+        maskShape.x = -this.cameras.main.width
+        bloodBg.mask = new Phaser.Display.Masks.GeometryMask(this, maskShape)
+        const phaseAudio = this.sound.add("phase_title").play({ volume: 0.5 })
+        this.tweens.add({
+            targets: maskShape,
+            x: 0,
+            duration: 333,
+            ease: Phaser.Math.Easing.Linear,
+            onComplete: () => {
+                this.add.text(this.boardCenter.x, this.boardCenter.y - 50, 
+                    this.getLocale("EVENT PHASE + SHARK PHASE"),
+                {
+                    fontFamily: "Elite",
+                    color: "#e9c29f", 
+                    align: "center", 
+                    fontSize: 50 
+                }).setOrigin(0.5)
+                this.add.text(this.boardCenter.x, this.boardCenter.y, 
+                    this.getLocale("Draw Amity Event card.\nDeploy swimmers.\nClick on any Shark Action button."),
+                {
+                    fontFamily: "Elite",
+                    color: "#fff", 
+                    align: "center", 
+                    fontSize: 30 
+                }).setOrigin(0.5, 0)
+            },
+            onCompleteScope: this
+        })
     }
 
     addCharacters() {
