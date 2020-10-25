@@ -597,4 +597,12 @@ export default class JawsAI {
         }    
     }
 
+    isJawsVisible(): boolean {
+        return this.jaws.powerEnabledThisTurn != PowerTokens.OUT_OF_SIGHT
+    }
+
+    getJawsPosition(): string {
+        return this.jaws.position
+    }
+
 }

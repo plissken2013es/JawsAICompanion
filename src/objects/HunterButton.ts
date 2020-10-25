@@ -104,12 +104,12 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
         switch (this.buttonName) {
             case Buttons.FISH_FINDER:
                 const hooper = this.scene.findCharacterBy(Characters.HOOPER)
-                console.log(hooper.hunterName, hooper.currentZone.zoneName)
+                hooper?.askUserAboutFishFinder()
                 break
 
             case Buttons.BINOCULARS:
                 const brody = this.scene.findCharacterBy(Characters.BRODY)
-                console.log(brody.hunterName, brody.currentZone.zoneName)
+                brody?.askUserAboutBinoculars()
                 break
         }
     }

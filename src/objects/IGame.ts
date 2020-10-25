@@ -5,12 +5,14 @@ import Zone from './Zone';
 interface IGame {
     boardCenter: Phaser.Geom.Point
     interactiveObjects: Phaser.GameObjects.GameObject[]
-    getLocale(): string
+    getLocale(word: string): string
     getMap(): Phaser.GameObjects.GameObject | undefined
     enableInteractiveObjects()
     disableInteractiveObjects()
     findCharacterBy(name: string): Hunter | undefined
     findSwimmerAt(beach: Zone): Swimmer
+    isJawsVisible(): boolean
+    getJawsPosition(): string
 }
 
-export default IZoneCfg
+export default IGame

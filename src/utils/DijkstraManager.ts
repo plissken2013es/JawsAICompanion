@@ -12,7 +12,7 @@ const shortestDistanceNode = (distances, visited) => {
 	return shortest
 }
 
-const findShortestPath = (graph, startNode, endNode) => {
+const findShortestPath = (graph: any, startNode: string, endNode: string) => {
 	// establish object for recording distances from the start node
 	let distances = {};
 	distances[endNode] = "Infinity";
@@ -78,7 +78,7 @@ const findShortestPath = (graph, startNode, endNode) => {
 	return results
 }
 
-const filterNodesByDistance = (dist, graph, origin) => {
+const filterNodesByDistance = (dist: number, graph: any, origin: string) => {
     let results = [[origin]]
     results.length = dist
 
@@ -147,11 +147,11 @@ export default class DijkstraManager {
         return buildWeightedJawsGraph(cfg)
     }
 
-    public filterNodesByDistance(dist, graph, origin) {
+    public filterNodesByDistance(dist: number, graph: any, origin: string) {
         return filterNodesByDistance(dist, graph, origin)
     }
 
-    public findShortestPath(graph, startNode, endNode) {
+    public findShortestPath(graph: any, startNode: string, endNode: string) {
         return findShortestPath(graph, startNode, endNode)
     }
 }

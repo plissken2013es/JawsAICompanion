@@ -243,6 +243,14 @@ export default class Game extends Phaser.Scene implements IGame {
 
     getLocale(word: string): string {
         return this.locales?.getLocale(word)
+    }    
+
+    getJawsPosition(): string {
+        return this.jawsAI!.getJawsPosition()
+    }
+
+    isJawsVisible(): boolean {
+        return this.jawsAI!.isJawsVisible()
     }
 
     launchMessage(msg: string, isLastMessage: boolean = false) {
