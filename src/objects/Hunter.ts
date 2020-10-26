@@ -142,7 +142,20 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
     }
 
     animate() {
-        // TO-DO
+        const splashSnd = this.scene.sound.add("splash")
+        splashSnd.play({ volume: 0.4 })
+        this.scene.tweens.add({
+            targets: this,
+            alpha: 0,
+            duration: 666,
+            ease: Phaser.Math.Easing.Expo,
+            yoyo: true,
+            repeat: 6,
+            onComplete: () => {
+                splashSnd.destroy()
+            },
+            onCompleteScope: this
+        })
     }
 
 }

@@ -20,6 +20,7 @@ import SharkButtons from '~/consts/SharkButtons'
 import Swimmer from '~/objects/Swimmer'
 import Zone from '~/objects/Zone'
 import FlavorTextsManager from '~/utils/FlavorTextsManager'
+import Barrel from '~/objects/Barrel'
 
 export default class Game extends Phaser.Scene implements IGame {
 
@@ -39,6 +40,8 @@ export default class Game extends Phaser.Scene implements IGame {
     public get michael(): Michael | undefined {
         return this._michael
     }
+    private swimmersEatenText?: Phaser.GameObjects.Text
+    private barrelsAttachedToJawsText?: Phaser.GameObjects.Text
 
 	constructor() {
 		super(SceneKeys.Game)
@@ -79,7 +82,25 @@ export default class Game extends Phaser.Scene implements IGame {
         this.addButtons()
         this.bindButtonEvents()
         this.addSharkButtons()
+        this.addBodyCounters()
         this.launchPhaseTitle(TitleType.EVENT_SHARK_PHASE)
+    }
+
+    addBodyCounters() {
+        const x = this.boardCenter.x * 2  + 30
+        const y = this.boardCenter.y*2 - 60
+        const textCfg = {
+            fontFamily: "Elite", 
+            color: "#fff", 
+            align: "center", 
+            fontSize: 30 
+        }
+        this.add.image(x, y, "bodycount")
+        this.swimmersEatenText = this.add.text(x, y + 50, "0", textCfg)
+        this.swimmersEatenText.setOrigin(0.5)
+        this.barrelsAttachedToJawsText = this.add.text(x + 90, y + 50, "0", textCfg)
+        this.barrelsAttachedToJawsText.setOrigin(0.5)
+        this.add.image(x + 90, y, "shark_bodycount")
     }
 
     addCharacters() {
@@ -140,6 +161,8 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     addFlavorText() {
+        if (new Phaser.Math.RandomDataGenerator().integerInRange(0, 1) == 0) return
+
         const y = ((this.cameras.main.height - (this.boardCenter.y * 2)) / 2) + (this.boardCenter.y * 2)
         const flavor = this.flavorTexts!.getText()
         let eyes = "brody_eyes"
@@ -283,6 +306,16 @@ export default class Game extends Phaser.Scene implements IGame {
         return this.hunters.find(hunter => hunter.hunterName === name)
     }
 
+    findBarrelAt(beachName: string): Barrel {
+        const barrel = this.interactiveObjects.find(barrel => {
+            if (barrel && barrel.linkedTo) {
+                return barrel.linkedTo.zoneName === beachName
+            }
+            return false
+        })
+        return barrel as Barrel
+    }
+
     findSwimmerAt(beach: Zone): Swimmer {
         const swimmer = this.interactiveObjects.find(swimmer => {
             if (swimmer && swimmer.linkedTo) {
@@ -297,7 +330,7 @@ export default class Game extends Phaser.Scene implements IGame {
         return this.board
     }
 
-    getLocale(word: string): string {
+    getLocale(word: string | string[]): string {
         return this.locales?.getLocale(word)
     }    
 
@@ -374,10 +407,11 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     attachBarrelToJaws() {
-        // TO-DO
+        this.jawsAI?.attachBarrelToJaws()
     }
 
-    updateBodyCount() {
-        // TO-DO
+    updateBodyCount(swimmers: number, barrels: number) {
+        this.swimmersEatenText.text = swimmers
+        this.barrelsAttachedToJawsText.text = barrels
     }
 }

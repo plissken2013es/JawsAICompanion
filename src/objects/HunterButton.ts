@@ -58,12 +58,13 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                                     console.log(scene.getLocale("You've attached a barrel to the shark!"), true)
                                     zone.showShark()
                                     scene.attachBarrelToJaws()
-                                    scene.updateBodyCount()
                                 } else {
                                     if (zone.hasBarrels()) {
                                         zone.updateBarrels(Actions.ADD)
                                     } else {
-                                        this.scene.add.existing(new Barrel(this.scene, posX, posY, "barrel", zone))
+                                        const barrel = new Barrel(this.scene, posX, posY, "barrel", zone)
+                                        this.scene.add.existing(barrel)
+                                        scene.interactiveObjects.push(barrel)
                                     }
                                 }
                                 break

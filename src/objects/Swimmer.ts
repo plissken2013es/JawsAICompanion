@@ -36,6 +36,9 @@ export default class Swimmer extends Phaser.GameObjects.Sprite {
         console.log("distance:", distanceDragged)
         if (distanceDragged > 100) {
             if (this.linkedTo.updateSwimmers(Actions.REMOVE)) {
+                (this.scene as IGame).interactiveObjects = (this.scene as IGame).interactiveObjects.filter((item, index) => {
+                    return item != this
+                })
                 this.destroy()
             }
         }

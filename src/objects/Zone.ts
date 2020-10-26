@@ -33,16 +33,43 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         }
     }
 
-    animateBarrel() {
-        // TO-DO
-    }
-
     showAttack() {
-        // TO-DO
+        if (!this.zoneCfg.isBeach) return
+
+        const attackAnim = this.scene.anims.create({
+            key: "sharkAttackAnim",
+            frames: this.scene.anims.generateFrameNumbers("shark_attack", {}),
+            frameRate: 4,
+            yoyo: true,
+            repeat: 3
+        })
+        const sharkAttack = this.scene.add.sprite(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, "shark_attack")
+        const chompSnd = this.scene.sound.add("chomp")
+        chompSnd.play({ volume: 0.5, loop: true })
+        sharkAttack.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            sharkAttack.destroy()
+            chompSnd.destroy()
+        })
+        sharkAttack.play("sharkAttackAnim")
     }
 
     showShark() {
-        // TO-DO
+        const jawsToken = this.scene.add.image(this.zoneCfg.sharkX, this.zoneCfg.sharkY, "jawsToken").setOrigin(0.5, 1)
+        const jawsAppear = this.scene.sound.add("jaws_appear")
+        jawsAppear.play({ volume: 0.5 })
+        this.scene.tweens.add({
+            targets: jawsToken,
+            alpha: 0,
+            duration: 666,
+            ease: Phaser.Math.Easing.Expo,
+            yoyo: true,
+            repeat: 6,
+            onComplete: () => {
+                jawsAppear.destroy()
+                jawsToken.destroy()
+            },
+            onCompleteScope: this
+        })
     }
 
     hasBarrels(): boolean {
@@ -126,6 +153,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         if (!this.zoneCfg.isBeach) {
             return false // swimmers only at beaches
         }
+        console.log("update num swimmerrs", this._numSwimmers)
         switch (action) {
             case Actions.ADD:
                 if (++this._numSwimmers > 1) {

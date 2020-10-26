@@ -15,6 +15,8 @@ interface IZoneCfg {
     readonly barrelY: number
     readonly swimmerX: number
     readonly swimmerY: number
+    readonly sharkX: number
+    readonly sharkY: number
     readonly isBeach: boolean
 }
 

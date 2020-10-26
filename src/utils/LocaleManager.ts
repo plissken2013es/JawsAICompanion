@@ -139,7 +139,7 @@ export default class LocaleManager {
         this.selectedLang = lang
     }
     
-    getLocale = (key) => {
+    getLocale = (key:string  | string[]) => {
         if (Array.isArray(key)) {
             let result: any[] = []
             key.forEach((item) => {

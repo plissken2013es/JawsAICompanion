@@ -21,6 +21,23 @@ export default class Barrel extends Phaser.GameObjects.Sprite {
         this.scene.input.setDraggable(this)
     }
 
+    animate() {
+        const sirenSnd = this.scene.sound.add("siren")
+        sirenSnd.play({ volume: 0.25 })
+        this.scene.tweens.add({
+            targets: this,
+            alpha: 0,
+            duration: 666,
+            ease: Phaser.Math.Easing.Expo,
+            yoyo: true,
+            repeat: 6,
+            onComplete: () => {
+                sirenSnd.destroy()
+            },
+            onCompleteScope: this
+        })
+    }
+
     shouldRemove() {
         const distanceDragged = Phaser.Math.Distance.Between(this.x, this.y, this.positionOnDragStart.x, this.positionOnDragStart.y)
         console.log("distance:", distanceDragged)

@@ -93,6 +93,10 @@ export default class Preloader extends Phaser.Scene {
 
             // other tokens
             .image("barrel", "barrel.png")
+            .image("bodycount", "bodycount.png")
+            .image("shark_bodycount", "shark_bodycount.png")
+            .spritesheet("shark_attack", "shark_attack_spritesheet.png", { frameWidth: 63, frameHeight: 50 })
+            .image("jawsToken", "jaws.png")
 
             // intro
             .setPath("img/intro/")
@@ -114,9 +118,18 @@ export default class Preloader extends Phaser.Scene {
                 "jaws_theme.ogg",
                 "jaws_theme.mp3"
             ])
+            .audio("jaws_appear", [
+                "jaws_appear.ogg",
+                "jaws_appear.mp3"
+            ])
+            // audio - misc effects
             .audio("splash", [
                 "splash.ogg",
                 "splash.mp3"
+            ])
+            .audio("siren", [
+                "siren.ogg",
+                "siren.mp3"
             ])
             .audio("bigger_boat", [
                 "bigger_boat.ogg",
@@ -125,6 +138,10 @@ export default class Preloader extends Phaser.Scene {
             .audio("phase_title", [
                 "phase_title.ogg",
                 "phase_title.mp3"
+            ])
+            .audio("chomp", [
+                "chomp.ogg",
+                "chomp.mp3"
             ])
             // audio - swipes
             .audio("swipe1", [
