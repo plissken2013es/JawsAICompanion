@@ -2,6 +2,7 @@ import Phaser from "phaser"
 import Actions from '~/consts/Actions'
 import Zone from "~/objects/Zone"
 import ZoneNames from "~/consts/ZoneNames"
+import IGame from './IGame'
 
 export default class Barrel extends Phaser.GameObjects.Sprite {
 
@@ -43,6 +44,9 @@ export default class Barrel extends Phaser.GameObjects.Sprite {
         console.log("distance:", distanceDragged)
         if (distanceDragged > 100) {
             if (this.linkedTo.updateBarrels(Actions.REMOVE)) {
+                (this.scene as IGame).interactiveObjects = (this.scene as IGame).interactiveObjects.filter((item, index) => {
+                    return item != this
+                })
                 this.destroy()
             }
         }

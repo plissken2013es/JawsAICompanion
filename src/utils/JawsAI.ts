@@ -448,6 +448,10 @@ export default class JawsAI {
             "E": { "michael": false, "swimmers": 0 }
         }
         this.jaws.powerEnabledThisTurn = null
+
+        this.jaws.turnsPlayed++
+        this.jaws.publicMessages.push(this.scene.getLocale("TURN ") + this.jaws.turnsPlayed)
+        this.jaws.publicMessages.push("--------")
     
         if (this.shouldUseEvasiveMovementsToMoveto(this.jaws.currentTarget, numActions)) {
             this.useJawsPower(PowerTokens.EVASIVE_MOVES)
@@ -467,7 +471,7 @@ export default class JawsAI {
             } 
             console.log(this.scene.getLocale("Jaws remaining actions: ") + numActions, true)
         }
-        this.jaws.turnsPlayed++
+
         if (this.jaws.activatedBarrelsThisTurn.length > 0) {
             const shuffledBarrels = Phaser.Utils.Array.Shuffle(this.jaws.activatedBarrelsThisTurn)
             console.log(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels), true)
@@ -608,6 +612,10 @@ export default class JawsAI {
     attachBarrelToJaws() {
         this.jaws.numAttachedBarrels += 1
         this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels)
+    }
+
+    numAttachedBarrelsToJaws(): number {
+        return this.jaws.numAttachedBarrels
     }
 
 }

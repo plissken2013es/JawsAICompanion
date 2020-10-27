@@ -1,4 +1,5 @@
 enum Buttons {
+    BARREL = "barrel",
     ADD_BARREL = "barrel+",
     ADD_SWIMMER = "swimmer_sprite",
     MICHAEL = "michael",

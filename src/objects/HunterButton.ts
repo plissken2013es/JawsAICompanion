@@ -66,7 +66,7 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                                     if (zone.hasBarrels()) {
                                         zone.updateBarrels(Actions.ADD)
                                     } else {
-                                        const barrel = new Barrel(this.scene, posX, posY, "barrel", zone)
+                                        const barrel = new Barrel(this.scene, posX, posY, Buttons.BARREL, zone)
                                         this.scene.add.existing(barrel)
                                         scene.interactiveObjects.push(barrel)
                                     }
@@ -77,8 +77,10 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                         }
                         scene.enableInteractiveObjects(scene.currentPhaseTitle)
                     }
-                    const dialog = new Dialog(scene, DialogType.YES_NO, msg, callback)
-                    scene.disableInteractiveObjects()
+                    this.scene.time.delayedCall(150, () => {
+                        const dialog = new Dialog(scene, DialogType.YES_NO, msg, callback)
+                        scene.disableInteractiveObjects()
+                    }, [], this)
                 }
                 break
 

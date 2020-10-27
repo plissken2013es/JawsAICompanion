@@ -129,6 +129,12 @@ const Locale = {
     },
     "NOTHING on the screen...": {
         ES: "No hay NADA en la pantalla..."
+    },
+    "TURN ": {
+        ES: "TURNO "
+    },
+    "Enough barrels! Do you want to end game?": {
+        ES: "¡Suficientes bidones! ¿Terminamos la partida?"
     }
 }
 

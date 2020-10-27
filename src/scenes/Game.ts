@@ -15,6 +15,7 @@ import IGame from '~/objects/IGame'
 import LocaleManager from '~/utils/LocaleManager'
 import JawsAI from '~/utils/JawsAI'
 import PhaseTitle from './PhaseTitle'
+import LogScreen from './LogScreen'
 import TextButton from '~/objects/TextButton'
 import SharkButtons from '~/consts/SharkButtons'
 import Swimmer from '~/objects/Swimmer'
@@ -30,8 +31,6 @@ export default class Game extends Phaser.Scene implements IGame {
     private locales?: LocaleManager
     private dialog?: any
     interactiveObjects: Phaser.GameObjects.GameObject[] = []
-    private crewPhaseObjects: Phaser.GameObjects.GameObject[] = []
-    private sharkPhaseObjects: Phaser.GameObjects.GameObject[] = []
     private _currentPhaseTitle: string
     public get currentPhaseTitle(): string {
         return this._currentPhaseTitle
@@ -48,6 +47,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
     private swimmersEatenText?: Phaser.GameObjects.Text
     private barrelsAttachedToJawsText?: Phaser.GameObjects.Text
+    private numBarrelsObjetive: number = 2
 
 	constructor() {
 		super(SceneKeys.Game)
@@ -56,6 +56,9 @@ export default class Game extends Phaser.Scene implements IGame {
     init(data) {
         this.lang = data.language
         this.music = data.music
+        if (data.numBarrelsObjetive) {
+            this.numBarrelsObjetive = data.numBarrelsObjetive
+        }
         if (this.music) {
             this.tweens.add({
                 targets: this.music,
@@ -67,10 +70,11 @@ export default class Game extends Phaser.Scene implements IGame {
                 onCompleteScope: this
             })
         }
+
+        this.interactiveObjects = []
         this.locales = new LocaleManager(this.lang)
         this.board = new Board(this)
         this.flavorTexts = new FlavorTextsManager(this.lang)
-        console.log(this.flavorTexts.getText())
         this.add.existing(this.board)
         this.jawsAI = JawsAI.getInstance(this)
     }
@@ -114,7 +118,6 @@ export default class Game extends Phaser.Scene implements IGame {
         [Characters.BRODY, Characters.HOOPER, Characters.QUINT].forEach((charName) => {
             const hunter = new Hunter(this, 0, 0, charName)
             this.interactiveObjects.push(hunter)
-            this.crewPhaseObjects.push(hunter)
             this.hunters.push(hunter)
             this.add.existing(hunter)
         })
@@ -137,14 +140,12 @@ export default class Game extends Phaser.Scene implements IGame {
 
         this._michael = new Michael(this, 920, 80, Buttons.MICHAEL)
         this.add.existing(this._michael)
-        this.interactiveObjects.push(this._michael)
-        this.sharkPhaseObjects.push(this._michael);
+        this.interactiveObjects.push(this._michael);
         [
             { 
                 btnName: Buttons.ADD_SWIMMER, 
                 spriteSelectAnim: "swimmerSelectAnim",
-                spriteDroppedAnim: "swimmerDroppedAnim",
-                sharkPhase: true
+                spriteDroppedAnim: "swimmerDroppedAnim"
             },
             { btnName: Buttons.ADD_BARREL }, 
             { btnName: Buttons.FISH_FINDER, onlyClickable: true },
@@ -153,11 +154,6 @@ export default class Game extends Phaser.Scene implements IGame {
             const hunterButton = new HunterButton(this, 920, 160 + (index * 70), btnCfg)
             this.add.existing(hunterButton)
             this.interactiveObjects.push(hunterButton)
-            if (btnCfg.sharkPhase) {
-                this.sharkPhaseObjects.push(hunterButton)
-            } else {
-                this.crewPhaseObjects.push(hunterButton)
-            }
         })
     }
 
@@ -311,50 +307,36 @@ export default class Game extends Phaser.Scene implements IGame {
         })
     }
 
+    shouldBeInteractiveObjectFor(currentPhase: string, object: Phaser.GameObjects.GameObject) {
+        let name = object.buttonName || object.hunterName
+        if (object.isTextButton  || name == Characters.BRODY || name == Characters.HOOPER || name == Characters.QUINT) { 
+            return true
+        }
+        switch (currentPhase) {
+            case TitleType.EVENT_SHARK_PHASE:
+                if (name == Buttons.ADD_SWIMMER || name == Buttons.MICHAEL) {
+                    return true
+                }
+                return false
+
+            case TitleType.CREW_PHASE:
+                if (name == Buttons.FISH_FINDER || name == Buttons.BINOCULARS ||
+                    name == Buttons.ADD_BARREL || name == Buttons.ADD_SWIMMER ||
+                    name == Buttons.BARREL || name == Buttons.MICHAEL) {
+                    return true
+                }
+                return false   
+                
+            default:
+                return false
+        }
+    }
+
     enableInteractiveObjects(phaseTitle: string) {
         this.interactiveObjects.forEach((obj) => {
-            if (obj.isTextButton) {
-                console.log(this._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName)
+            if (this.shouldBeInteractiveObjectFor(phaseTitle, obj)) {
                 this.input.enable(obj)
-                return
-            }
-
-            switch (phaseTitle) {
-                case TitleType.EVENT_SHARK_PHASE:
-                    const foundSharkObj = this.sharkPhaseObjects.find(item => {
-                        if (item.buttonName && item.buttonName == obj.buttonName) {
-                            return true
-                        }
-                        if (item.hunterName && item.hunterName == obj.hunterName) {
-                            return true
-                        }
-                        return false
-                    })
-                    if (foundSharkObj) {
-                        console.log(this._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName)
-                        this.input.enable(obj)
-                    }
-                    break
-                
-                    case TitleType.CREW_PHASE:
-                        const foundCrewObject = this.crewPhaseObjects.find(item => {
-                            if (item.buttonName && item.buttonName == obj.buttonName) {
-                                return true
-                            }
-                            if (item.hunterName && item.hunterName == obj.hunterName) {
-                                return true
-                            }
-                            return false
-                        })
-                        if (foundCrewObject) {
-                            console.log(this._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName)
-                            this.input.enable(obj)
-                        }
-                    break
-                
-                default:
-                    break
-            }            
+            }         
         })
     }
 
@@ -465,6 +447,34 @@ export default class Game extends Phaser.Scene implements IGame {
 
     attachBarrelToJaws() {
         this.jawsAI?.attachBarrelToJaws()
+        if (this.jawsAI?.numAttachedBarrelsToJaws() >= this.numBarrelsObjetive) {
+            const callback = (button, index) => {
+                switch (button.text) {
+                    case this.getLocale("Yes"):
+                        this.launchLogScreen()
+                        //this.scene.start(SceneKeys.Intro, { language: this.lang })
+                        //this.scene.stop()
+                        break
+                    default:
+                        break
+                }
+                this.enableInteractiveObjects(this.currentPhaseTitle)
+            }
+            const dialog = new Dialog(this, DialogType.YES_NO, this.getLocale("Enough barrels! Do you want to end game?"), callback)
+            this.disableInteractiveObjects()
+        }
+    }
+
+    launchLogScreen() {
+        this.scene.add(SceneKeys.LogScreen, LogScreen, true, { 
+            mainScene: this,
+            boardCenter: this.boardCenter,
+            language: this.lang,
+            callback: () => {
+                this.enableInteractiveObjects(this.currentPhaseTitle)
+                this.scene.remove(SceneKeys.PhaseTitle)
+            }
+        })
     }
 
     updateBodyCount(swimmers: number, barrels: number) {

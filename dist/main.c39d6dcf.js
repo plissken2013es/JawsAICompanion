@@ -182960,6 +182960,7 @@ var SceneKeys;
   SceneKeys["Intro"] = "intro";
   SceneKeys["Game"] = "game";
   SceneKeys["PhaseTitle"] = "phaseTitle";
+  SceneKeys["LogScreen"] = "logScreen";
 })(SceneKeys || (SceneKeys = {}));
 
 var _default = SceneKeys;
@@ -182974,6 +182975,7 @@ exports.default = void 0;
 var Buttons;
 
 (function (Buttons) {
+  Buttons["BARREL"] = "barrel";
   Buttons["ADD_BARREL"] = "barrel+";
   Buttons["ADD_SWIMMER"] = "swimmer_sprite";
   Buttons["MICHAEL"] = "michael";
@@ -184826,12 +184828,17 @@ var Barrel = /*#__PURE__*/function (_Phaser$GameObjects$S) {
   }, {
     key: "shouldRemove",
     value: function shouldRemove() {
+      var _this2 = this;
+
       var distanceDragged = _phaser.default.Math.Distance.Between(this.x, this.y, this.positionOnDragStart.x, this.positionOnDragStart.y);
 
       console.log("distance:", distanceDragged);
 
       if (distanceDragged > 100) {
         if (this.linkedTo.updateBarrels(_Actions.default.REMOVE)) {
+          this.scene.interactiveObjects = this.scene.interactiveObjects.filter(function (item, index) {
+            return item != _this2;
+          });
           this.destroy();
         }
       }
@@ -185059,7 +185066,7 @@ var HunterButton = /*#__PURE__*/function (_Phaser$GameObjects$S) {
                     if (zone.hasBarrels()) {
                       zone.updateBarrels(_Actions.default.ADD);
                     } else {
-                      var barrel = new _Barrel.default(_this2.scene, posX, posY, "barrel", zone);
+                      var barrel = new _Barrel.default(_this2.scene, posX, posY, _Buttons.default.BARREL, zone);
 
                       _this2.scene.add.existing(barrel);
 
@@ -185076,8 +185083,10 @@ var HunterButton = /*#__PURE__*/function (_Phaser$GameObjects$S) {
               scene.enableInteractiveObjects(scene.currentPhaseTitle);
             };
 
-            var dialog = new _Dialog.default(scene, _DialogType.default.YES_NO, msg, callback);
-            scene.disableInteractiveObjects();
+            this.scene.time.delayedCall(150, function () {
+              var dialog = new _Dialog.default(scene, _DialogType.default.YES_NO, msg, callback);
+              scene.disableInteractiveObjects();
+            }, [], this);
           }
 
           break;
@@ -185378,6 +185387,12 @@ var Locale = {
   },
   "NOTHING on the screen...": {
     ES: "No hay NADA en la pantalla..."
+  },
+  "TURN ": {
+    ES: "TURNO "
+  },
+  "Enough barrels! Do you want to end game?": {
+    ES: "¡Suficientes bidones! ¿Terminamos la partida?"
   }
 };
 
@@ -185898,6 +185913,9 @@ var JawsAI = /*#__PURE__*/function () {
         }
       };
       this.jaws.powerEnabledThisTurn = null;
+      this.jaws.turnsPlayed++;
+      this.jaws.publicMessages.push(this.scene.getLocale("TURN ") + this.jaws.turnsPlayed);
+      this.jaws.publicMessages.push("--------");
 
       if (this.shouldUseEvasiveMovementsToMoveto(this.jaws.currentTarget, numActions)) {
         this.useJawsPower(PowerTokens.EVASIVE_MOVES);
@@ -185918,8 +185936,6 @@ var JawsAI = /*#__PURE__*/function () {
 
         console.log(this.scene.getLocale("Jaws remaining actions: ") + numActions, true);
       }
-
-      this.jaws.turnsPlayed++;
 
       if (this.jaws.activatedBarrelsThisTurn.length > 0) {
         var shuffledBarrels = Phaser.Utils.Array.Shuffle(this.jaws.activatedBarrelsThisTurn);
@@ -186088,6 +186104,11 @@ var JawsAI = /*#__PURE__*/function () {
     value: function attachBarrelToJaws() {
       this.jaws.numAttachedBarrels += 1;
       this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels);
+    }
+  }, {
+    key: "numAttachedBarrelsToJaws",
+    value: function numAttachedBarrelsToJaws() {
+      return this.jaws.numAttachedBarrels;
     }
   }], [{
     key: "getInstance",
@@ -186270,7 +186291,101 @@ var PhaseTitle = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = PhaseTitle;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/SceneKeys":"consts/SceneKeys.ts","~/consts/TitleType":"consts/TitleType.ts"}],"objects/TextButton.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/SceneKeys":"consts/SceneKeys.ts","~/consts/TitleType":"consts/TitleType.ts"}],"objects/ScrollablePanel.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var ScrollablePanel = /*#__PURE__*/function () {
+  function ScrollablePanel(scene, position, message) {
+    _classCallCheck(this, ScrollablePanel);
+
+    this.COLOR_PRIMARY = 0x004258;
+    this.COLOR_LIGHT = 0x7b5e57;
+    this.COLOR_DARK = 0x00001a;
+    this.scene = scene;
+    this.rexUI = this.scene.rexUI;
+    this.print = this.scene.add.text(0, 0, '');
+    console.log(position);
+    this.panel = this.rexUI.add.scrollablePanel({
+      x: position.x,
+      y: position.y,
+      width: 700,
+      height: 500,
+      scrollMode: 0,
+      background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, this.COLOR_PRIMARY),
+      panel: {
+        child: this.rexUI.add.fixWidthSizer({
+          space: {
+            left: 10,
+            right: 5,
+            top: 10,
+            bottom: 10,
+            item: 10,
+            line: 10
+          }
+        }),
+        mask: {
+          padding: 1
+        }
+      },
+      slider: {
+        track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, this.COLOR_DARK),
+        thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, this.COLOR_LIGHT)
+      },
+      space: {
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 10,
+        panel: 10
+      }
+    }).layout();
+    this.updatePanel(this.panel, content);
+  }
+
+  _createClass(ScrollablePanel, [{
+    key: "updatePanel",
+    value: function updatePanel(panel, content) {
+      var sizer = panel.getElement('panel');
+      var scene = panel.scene;
+      sizer.clear(true);
+      var lines = content.split('\n');
+
+      for (var li = 0, lcnt = lines.length; li < lcnt; li++) {
+        var words = lines[li].split(' ');
+
+        for (var wi = 0, wcnt = words.length; wi < wcnt; wi++) {
+          sizer.add(scene.add.text(0, 0, words[wi], {
+            fontSize: 18
+          }));
+        }
+
+        if (li < lcnt - 1) {
+          sizer.addNewLine();
+        }
+      }
+
+      panel.layout();
+      return panel;
+    }
+  }]);
+
+  return ScrollablePanel;
+}();
+
+exports.default = ScrollablePanel;
+var content = "Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.\nAlong with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.\nThousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games. Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.\nAlong with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.\nThousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games. Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.\nAlong with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.\nThousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games.";
+},{}],"objects/TextButton.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -186362,7 +186477,115 @@ var TextButton = /*#__PURE__*/function (_Phaser$GameObjects$T) {
 }(_phaser.default.GameObjects.Text);
 
 exports.default = TextButton;
-},{"phaser":"../node_modules/phaser/dist/phaser.js"}],"consts/SharkButtons.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js"}],"scenes/LogScreen.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _phaser = _interopRequireDefault(require("phaser"));
+
+var _Languages = _interopRequireDefault(require("~/consts/Languages"));
+
+var _SceneKeys = _interopRequireDefault(require("~/consts/SceneKeys"));
+
+var _ScrollablePanel = _interopRequireDefault(require("~/objects/ScrollablePanel"));
+
+var _TextButton = _interopRequireDefault(require("~/objects/TextButton"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var LogScreen = /*#__PURE__*/function (_Phaser$Scene) {
+  _inherits(LogScreen, _Phaser$Scene);
+
+  var _super = _createSuper(LogScreen);
+
+  function LogScreen() {
+    var _this;
+
+    _classCallCheck(this, LogScreen);
+
+    _this = _super.call(this, _SceneKeys.default.LogScreen);
+    _this.boardCenter = new _phaser.default.Geom.Point(0, 0);
+    _this.lang = _Languages.default.English;
+    _this.COLOR_PRIMARY = 0x004258;
+    _this.COLOR_LIGHT = 0x7b5e57;
+    _this.COLOR_DARK = 0x00001a;
+    return _this;
+  }
+
+  _createClass(LogScreen, [{
+    key: "init",
+    value: function init(data) {
+      if (data.mainScene) {
+        this.mainScene = data.mainScene;
+      }
+
+      if (data.callback) {
+        this.callback = data.callback;
+      }
+
+      if (data.boardCenter) {
+        this.boardCenter = data.boardCenter;
+      }
+
+      if (data.language) {
+        this.lang = data.language;
+      }
+    }
+  }, {
+    key: "create",
+    value: function create() {
+      var maskShape = this.make.graphics({});
+      maskShape.fillStyle(0x000, .75);
+      maskShape.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+      this.add.existing(maskShape);
+      var panel = new _ScrollablePanel.default(this, this.boardCenter, "kkk");
+      var buttonsCfg = {
+        fill: "#fff",
+        backgroundColor: "#004258",
+        padding: {
+          x: 6,
+          y: 6
+        },
+        fontSize: 30
+      };
+      var btn = new _TextButton.default(this, this.boardCenter.x, this.cameras.main.height - 50, "END GAME", buttonsCfg, "endGame", function () {
+        console.log("callback!!!!!");
+      }).setOrigin(0.5);
+      this.add.existing(btn);
+    }
+  }]);
+
+  return LogScreen;
+}(_phaser.default.Scene);
+
+exports.default = LogScreen;
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/ScrollablePanel":"objects/ScrollablePanel.ts","~/objects/TextButton":"objects/TextButton.ts"}],"consts/SharkButtons.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -186640,6 +186863,8 @@ var _JawsAI = _interopRequireDefault(require("~/utils/JawsAI"));
 
 var _PhaseTitle = _interopRequireDefault(require("./PhaseTitle"));
 
+var _LogScreen = _interopRequireDefault(require("./LogScreen"));
+
 var _TextButton = _interopRequireDefault(require("~/objects/TextButton"));
 
 var _SharkButtons = _interopRequireDefault(require("~/consts/SharkButtons"));
@@ -186683,10 +186908,9 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     _this = _super.call(this, _SceneKeys.default.Game);
     _this.lang = _Languages.default.English;
     _this.interactiveObjects = [];
-    _this.crewPhaseObjects = [];
-    _this.sharkPhaseObjects = [];
     _this.hunters = [];
     _this.boardCenter = new _phaser.default.Geom.Point(0, 0);
+    _this.numBarrelsObjetive = 2;
     return _this;
   }
 
@@ -186697,6 +186921,10 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
 
       this.lang = data.language;
       this.music = data.music;
+
+      if (data.numBarrelsObjetive) {
+        this.numBarrelsObjetive = data.numBarrelsObjetive;
+      }
 
       if (this.music) {
         this.tweens.add({
@@ -186710,10 +186938,10 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
         });
       }
 
+      this.interactiveObjects = [];
       this.locales = new _LocaleManager.default(this.lang);
       this.board = new _Board.default(this);
       this.flavorTexts = new _FlavorTextsManager.default(this.lang);
-      console.log(this.flavorTexts.getText());
       this.add.existing(this.board);
       this.jawsAI = _JawsAI.default.getInstance(this);
     }
@@ -186765,8 +186993,6 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
 
         _this3.interactiveObjects.push(hunter);
 
-        _this3.crewPhaseObjects.push(hunter);
-
         _this3.hunters.push(hunter);
 
         _this3.add.existing(hunter);
@@ -186799,12 +187025,10 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       this._michael = new _Michael.default(this, 920, 80, _Buttons.default.MICHAEL);
       this.add.existing(this._michael);
       this.interactiveObjects.push(this._michael);
-      this.sharkPhaseObjects.push(this._michael);
       [{
         btnName: _Buttons.default.ADD_SWIMMER,
         spriteSelectAnim: "swimmerSelectAnim",
-        spriteDroppedAnim: "swimmerDroppedAnim",
-        sharkPhase: true
+        spriteDroppedAnim: "swimmerDroppedAnim"
       }, {
         btnName: _Buttons.default.ADD_BARREL
       }, {
@@ -186819,12 +187043,6 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
         _this4.add.existing(hunterButton);
 
         _this4.interactiveObjects.push(hunterButton);
-
-        if (btnCfg.sharkPhase) {
-          _this4.sharkPhaseObjects.push(hunterButton);
-        } else {
-          _this4.crewPhaseObjects.push(hunterButton);
-        }
       });
     }
   }, {
@@ -187004,64 +187222,41 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       });
     }
   }, {
+    key: "shouldBeInteractiveObjectFor",
+    value: function shouldBeInteractiveObjectFor(currentPhase, object) {
+      var name = object.buttonName || object.hunterName;
+
+      if (object.isTextButton || name == _Characters.default.BRODY || name == _Characters.default.HOOPER || name == _Characters.default.QUINT) {
+        return true;
+      }
+
+      switch (currentPhase) {
+        case _TitleType.default.EVENT_SHARK_PHASE:
+          if (name == _Buttons.default.ADD_SWIMMER || name == _Buttons.default.MICHAEL) {
+            return true;
+          }
+
+          return false;
+
+        case _TitleType.default.CREW_PHASE:
+          if (name == _Buttons.default.FISH_FINDER || name == _Buttons.default.BINOCULARS || name == _Buttons.default.ADD_BARREL || name == _Buttons.default.ADD_SWIMMER || name == _Buttons.default.BARREL || name == _Buttons.default.MICHAEL) {
+            return true;
+          }
+
+          return false;
+
+        default:
+          return false;
+      }
+    }
+  }, {
     key: "enableInteractiveObjects",
     value: function enableInteractiveObjects(phaseTitle) {
       var _this7 = this;
 
       this.interactiveObjects.forEach(function (obj) {
-        if (obj.isTextButton) {
-          console.log(_this7._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName);
-
+        if (_this7.shouldBeInteractiveObjectFor(phaseTitle, obj)) {
           _this7.input.enable(obj);
-
-          return;
-        }
-
-        switch (phaseTitle) {
-          case _TitleType.default.EVENT_SHARK_PHASE:
-            var foundSharkObj = _this7.sharkPhaseObjects.find(function (item) {
-              if (item.buttonName && item.buttonName == obj.buttonName) {
-                return true;
-              }
-
-              if (item.hunterName && item.hunterName == obj.hunterName) {
-                return true;
-              }
-
-              return false;
-            });
-
-            if (foundSharkObj) {
-              console.log(_this7._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName);
-
-              _this7.input.enable(obj);
-            }
-
-            break;
-
-          case _TitleType.default.CREW_PHASE:
-            var foundCrewObject = _this7.crewPhaseObjects.find(function (item) {
-              if (item.buttonName && item.buttonName == obj.buttonName) {
-                return true;
-              }
-
-              if (item.hunterName && item.hunterName == obj.hunterName) {
-                return true;
-              }
-
-              return false;
-            });
-
-            if (foundCrewObject) {
-              console.log(_this7._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName);
-
-              _this7.input.enable(obj);
-            }
-
-            break;
-
-          default:
-            break;
         }
       });
     }
@@ -187204,9 +187399,48 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "attachBarrelToJaws",
     value: function attachBarrelToJaws() {
-      var _a;
+      var _this10 = this;
+
+      var _a, _b;
 
       (_a = this.jawsAI) === null || _a === void 0 ? void 0 : _a.attachBarrelToJaws();
+
+      if (((_b = this.jawsAI) === null || _b === void 0 ? void 0 : _b.numAttachedBarrelsToJaws()) >= this.numBarrelsObjetive) {
+        var callback = function callback(button, index) {
+          switch (button.text) {
+            case _this10.getLocale("Yes"):
+              _this10.launchLogScreen(); //this.scene.start(SceneKeys.Intro, { language: this.lang })
+              //this.scene.stop()
+
+
+              break;
+
+            default:
+              break;
+          }
+
+          _this10.enableInteractiveObjects(_this10.currentPhaseTitle);
+        };
+
+        var dialog = new _Dialog.default(this, _DialogType.default.YES_NO, this.getLocale("Enough barrels! Do you want to end game?"), callback);
+        this.disableInteractiveObjects();
+      }
+    }
+  }, {
+    key: "launchLogScreen",
+    value: function launchLogScreen() {
+      var _this11 = this;
+
+      this.scene.add(_SceneKeys.default.LogScreen, _LogScreen.default, true, {
+        mainScene: this,
+        boardCenter: this.boardCenter,
+        language: this.lang,
+        callback: function callback() {
+          _this11.enableInteractiveObjects(_this11.currentPhaseTitle);
+
+          _this11.scene.remove(_SceneKeys.default.PhaseTitle);
+        }
+      });
     }
   }, {
     key: "updateBodyCount",
@@ -187230,7 +187464,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = Game;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Buttons":"consts/Buttons.ts","~/consts/Characters":"consts/Characters.ts","~/consts/DialogType":"consts/DialogType.ts","~/consts/TitleType":"consts/TitleType.ts","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/Board":"objects/Board.ts","~/objects/Dialog":"objects/Dialog.ts","~/objects/Hunter":"objects/Hunter.ts","~/objects/HunterButton":"objects/HunterButton.ts","~/objects/Michael":"objects/Michael.ts","~/utils/LocaleManager":"utils/LocaleManager.ts","~/utils/JawsAI":"utils/JawsAI.ts","./PhaseTitle":"scenes/PhaseTitle.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/SharkButtons":"consts/SharkButtons.ts","~/utils/FlavorTextsManager":"utils/FlavorTextsManager.ts"}],"scenes/LanguageSelection.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Buttons":"consts/Buttons.ts","~/consts/Characters":"consts/Characters.ts","~/consts/DialogType":"consts/DialogType.ts","~/consts/TitleType":"consts/TitleType.ts","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/Board":"objects/Board.ts","~/objects/Dialog":"objects/Dialog.ts","~/objects/Hunter":"objects/Hunter.ts","~/objects/HunterButton":"objects/HunterButton.ts","~/objects/Michael":"objects/Michael.ts","~/utils/LocaleManager":"utils/LocaleManager.ts","~/utils/JawsAI":"utils/JawsAI.ts","./PhaseTitle":"scenes/PhaseTitle.ts","./LogScreen":"scenes/LogScreen.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/SharkButtons":"consts/SharkButtons.ts","~/utils/FlavorTextsManager":"utils/FlavorTextsManager.ts"}],"scenes/LanguageSelection.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -187404,7 +187638,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54229" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61789" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
