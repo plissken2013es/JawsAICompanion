@@ -92,7 +92,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
                 default:
                     break
             }
-            scene.enableInteractiveObjects()
+            scene.enableInteractiveObjects(scene.currentPhaseTitle)
         }
         const dialog = new Dialog(scene, DialogType.YES_NO, scene.getLocale("Do you want to use binoculars at Brody's location?"), callback)
         scene.disableInteractiveObjects()
@@ -135,7 +135,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
                 default:
                     break
             }
-            scene.enableInteractiveObjects()
+            scene.enableInteractiveObjects(scene.currentPhaseTitle)
         }
         const dialog = new Dialog(scene, DialogType.YES_NO, scene.getLocale("Do you want to activate the Fish Finder at Hooper's location?"), callback)
         scene.disableInteractiveObjects()

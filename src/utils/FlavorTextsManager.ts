@@ -147,7 +147,7 @@ const FlavorTexts = {
         },
         char: Characters.HOOPER
     },
-    "I am familiar with the fact that you are going to ignore this problem until\nit swims up and bites you in the ass.": {
+    "I am familiar with the fact that you are going to ignore\nthis problem until it swims up and bites you in the ass.": {
         text: {
             ES: "Lo que comprendo es que seguirá ignorando el problema hasta que\nse meta en el agua y le muerda el culo."
         },

@@ -6,9 +6,10 @@ import Zone from './Zone';
 interface IGame extends Phaser.Scene {
     boardCenter: Phaser.Geom.Point
     interactiveObjects: Phaser.GameObjects.GameObject[]
+    currentPhaseTitle: string
     getLocale(word: string | string[]): string
     getMap(): Phaser.GameObjects.GameObject | undefined
-    enableInteractiveObjects()
+    enableInteractiveObjects(phaseTitle: string)
     disableInteractiveObjects()
     findCharacterBy(name: string): Hunter | undefined
     findSwimmerAt(beach: Zone): Swimmer

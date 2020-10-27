@@ -184654,7 +184654,7 @@ var Hunter = /*#__PURE__*/function (_Phaser$GameObjects$S) {
             break;
         }
 
-        scene.enableInteractiveObjects();
+        scene.enableInteractiveObjects(scene.currentPhaseTitle);
       };
 
       var dialog = new _Dialog.default(scene, _DialogType.default.YES_NO, scene.getLocale("Do you want to use binoculars at Brody's location?"), callback);
@@ -184707,7 +184707,7 @@ var Hunter = /*#__PURE__*/function (_Phaser$GameObjects$S) {
             break;
         }
 
-        scene.enableInteractiveObjects();
+        scene.enableInteractiveObjects(scene.currentPhaseTitle);
       };
 
       var dialog = new _Dialog.default(scene, _DialogType.default.YES_NO, scene.getLocale("Do you want to activate the Fish Finder at Hooper's location?"), callback);
@@ -185009,7 +185009,13 @@ var HunterButton = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _this.spriteDroppedAnim = cfg.spriteDroppedAnim;
     _this.onlyClickable = cfg.onlyClickable;
 
-    _this.setInteractive().setOrigin(0.5);
+    _this.setInteractive();
+
+    if (cfg.btnName == _Buttons.default.ADD_SWIMMER) {
+      _this.setDisplaySize(_this.width * 1.4, _this.height * 1.4);
+    }
+
+    _this.setOrigin(0.5);
 
     if (_this.onlyClickable) {
       _this.on(_phaser.default.Input.Events.POINTER_DOWN, function (pointer) {
@@ -185067,7 +185073,7 @@ var HunterButton = /*#__PURE__*/function (_Phaser$GameObjects$S) {
                   break;
               }
 
-              scene.enableInteractiveObjects();
+              scene.enableInteractiveObjects(scene.currentPhaseTitle);
             };
 
             var dialog = new _Dialog.default(scene, _DialogType.default.YES_NO, msg, callback);
@@ -186310,7 +186316,7 @@ var TextButton = /*#__PURE__*/function (_Phaser$GameObjects$T) {
 
     _this = _super.call(this, scene, x, y, text, style);
     _this.isTextButton = true;
-    _this.buttonKey = key;
+    _this.buttonName = key;
 
     _this.setInteractive({
       useHandCursor: true
@@ -186323,7 +186329,7 @@ var TextButton = /*#__PURE__*/function (_Phaser$GameObjects$T) {
     }).on('pointerup', function () {
       _this.enterButtonHoverState();
 
-      callback.apply(_this.scene, [_this.buttonKey]);
+      callback.apply(_this.scene, [_this.buttonName]);
     });
 
     return _this;
@@ -186540,7 +186546,7 @@ var FlavorTexts = {
     },
     char: _Characters.default.HOOPER
   },
-  "I am familiar with the fact that you are going to ignore this problem until\nit swims up and bites you in the ass.": {
+  "I am familiar with the fact that you are going to ignore\nthis problem until it swims up and bites you in the ass.": {
     text: {
       ES: "Lo que comprendo es que seguirá ignorando el problema hasta que\nse meta en el agua y le muerda el culo."
     },
@@ -186677,6 +186683,8 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     _this = _super.call(this, _SceneKeys.default.Game);
     _this.lang = _Languages.default.English;
     _this.interactiveObjects = [];
+    _this.crewPhaseObjects = [];
+    _this.sharkPhaseObjects = [];
     _this.hunters = [];
     _this.boardCenter = new _phaser.default.Geom.Point(0, 0);
     return _this;
@@ -186726,6 +186734,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       this.bindButtonEvents();
       this.addSharkButtons();
       this.addBodyCounters();
+      this.disableInteractiveObjects();
       this.launchPhaseTitle(_TitleType.default.EVENT_SHARK_PHASE);
     }
   }, {
@@ -186755,6 +186764,8 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
         var hunter = new _Hunter.default(_this3, 0, 0, charName);
 
         _this3.interactiveObjects.push(hunter);
+
+        _this3.crewPhaseObjects.push(hunter);
 
         _this3.hunters.push(hunter);
 
@@ -186788,12 +186799,14 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       this._michael = new _Michael.default(this, 920, 80, _Buttons.default.MICHAEL);
       this.add.existing(this._michael);
       this.interactiveObjects.push(this._michael);
+      this.sharkPhaseObjects.push(this._michael);
       [{
-        btnName: _Buttons.default.ADD_BARREL
-      }, {
         btnName: _Buttons.default.ADD_SWIMMER,
         spriteSelectAnim: "swimmerSelectAnim",
-        spriteDroppedAnim: "swimmerDroppedAnim"
+        spriteDroppedAnim: "swimmerDroppedAnim",
+        sharkPhase: true
+      }, {
+        btnName: _Buttons.default.ADD_BARREL
       }, {
         btnName: _Buttons.default.FISH_FINDER,
         onlyClickable: true
@@ -186806,6 +186819,12 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
         _this4.add.existing(hunterButton);
 
         _this4.interactiveObjects.push(hunterButton);
+
+        if (btnCfg.sharkPhase) {
+          _this4.sharkPhaseObjects.push(hunterButton);
+        } else {
+          _this4.crewPhaseObjects.push(hunterButton);
+        }
       });
     }
   }, {
@@ -186986,11 +187005,64 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     }
   }, {
     key: "enableInteractiveObjects",
-    value: function enableInteractiveObjects() {
+    value: function enableInteractiveObjects(phaseTitle) {
       var _this7 = this;
 
       this.interactiveObjects.forEach(function (obj) {
-        _this7.input.enable(obj);
+        if (obj.isTextButton) {
+          console.log(_this7._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName);
+
+          _this7.input.enable(obj);
+
+          return;
+        }
+
+        switch (phaseTitle) {
+          case _TitleType.default.EVENT_SHARK_PHASE:
+            var foundSharkObj = _this7.sharkPhaseObjects.find(function (item) {
+              if (item.buttonName && item.buttonName == obj.buttonName) {
+                return true;
+              }
+
+              if (item.hunterName && item.hunterName == obj.hunterName) {
+                return true;
+              }
+
+              return false;
+            });
+
+            if (foundSharkObj) {
+              console.log(_this7._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName);
+
+              _this7.input.enable(obj);
+            }
+
+            break;
+
+          case _TitleType.default.CREW_PHASE:
+            var foundCrewObject = _this7.crewPhaseObjects.find(function (item) {
+              if (item.buttonName && item.buttonName == obj.buttonName) {
+                return true;
+              }
+
+              if (item.hunterName && item.hunterName == obj.hunterName) {
+                return true;
+              }
+
+              return false;
+            });
+
+            if (foundCrewObject) {
+              console.log(_this7._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName);
+
+              _this7.input.enable(obj);
+            }
+
+            break;
+
+          default:
+            break;
+        }
       });
     }
   }, {
@@ -187053,7 +187125,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
 
       this.time.delayedCall(500, function () {
         var callback = function callback(button, index) {
-          _this8.enableInteractiveObjects();
+          _this8.enableInteractiveObjects(_this8._currentPhaseTitle);
 
           if (isSharkTurnFinished) {
             _this8.launchPhaseTitle(_TitleType.default.CREW_PHASE);
@@ -187079,13 +187151,14 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       var _this9 = this;
 
       if (type != _TitleType.default.EVENT_SHARK_PHASE && type != _TitleType.default.CREW_PHASE) return;
+      this._currentPhaseTitle = type;
       this.disableInteractiveObjects();
       this.scene.add(_SceneKeys.default.PhaseTitle, _PhaseTitle.default, true, {
         boardCenter: this.boardCenter,
         mainScene: this,
         type: type,
         callback: function callback() {
-          _this9.enableInteractiveObjects();
+          _this9.enableInteractiveObjects(type);
 
           _this9.scene.remove(_SceneKeys.default.PhaseTitle);
         }
@@ -187140,6 +187213,11 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     value: function updateBodyCount(swimmers, barrels) {
       this.swimmersEatenText.text = swimmers;
       this.barrelsAttachedToJawsText.text = barrels;
+    }
+  }, {
+    key: "currentPhaseTitle",
+    get: function get() {
+      return this._currentPhaseTitle;
     }
   }, {
     key: "michael",
@@ -187326,7 +187404,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64903" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54229" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

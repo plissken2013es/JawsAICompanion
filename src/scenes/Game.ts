@@ -30,6 +30,12 @@ export default class Game extends Phaser.Scene implements IGame {
     private locales?: LocaleManager
     private dialog?: any
     interactiveObjects: Phaser.GameObjects.GameObject[] = []
+    private crewPhaseObjects: Phaser.GameObjects.GameObject[] = []
+    private sharkPhaseObjects: Phaser.GameObjects.GameObject[] = []
+    private _currentPhaseTitle: string
+    public get currentPhaseTitle(): string {
+        return this._currentPhaseTitle
+    }
     private hunters: Hunter[] = []
     private jawsAI?: JawsAI
     private flavorTexts?: FlavorTextsManager
@@ -83,6 +89,7 @@ export default class Game extends Phaser.Scene implements IGame {
         this.bindButtonEvents()
         this.addSharkButtons()
         this.addBodyCounters()
+        this.disableInteractiveObjects()
         this.launchPhaseTitle(TitleType.EVENT_SHARK_PHASE)
     }
 
@@ -107,6 +114,7 @@ export default class Game extends Phaser.Scene implements IGame {
         [Characters.BRODY, Characters.HOOPER, Characters.QUINT].forEach((charName) => {
             const hunter = new Hunter(this, 0, 0, charName)
             this.interactiveObjects.push(hunter)
+            this.crewPhaseObjects.push(hunter)
             this.hunters.push(hunter)
             this.add.existing(hunter)
         })
@@ -129,20 +137,27 @@ export default class Game extends Phaser.Scene implements IGame {
 
         this._michael = new Michael(this, 920, 80, Buttons.MICHAEL)
         this.add.existing(this._michael)
-        this.interactiveObjects.push(this._michael);
+        this.interactiveObjects.push(this._michael)
+        this.sharkPhaseObjects.push(this._michael);
         [
-            { btnName: Buttons.ADD_BARREL }, 
             { 
                 btnName: Buttons.ADD_SWIMMER, 
                 spriteSelectAnim: "swimmerSelectAnim",
-                spriteDroppedAnim: "swimmerDroppedAnim"
+                spriteDroppedAnim: "swimmerDroppedAnim",
+                sharkPhase: true
             },
+            { btnName: Buttons.ADD_BARREL }, 
             { btnName: Buttons.FISH_FINDER, onlyClickable: true },
             { btnName: Buttons.BINOCULARS, onlyClickable: true }
         ].forEach((btnCfg, index) => {
             const hunterButton = new HunterButton(this, 920, 160 + (index * 70), btnCfg)
             this.add.existing(hunterButton)
             this.interactiveObjects.push(hunterButton)
+            if (btnCfg.sharkPhase) {
+                this.sharkPhaseObjects.push(hunterButton)
+            } else {
+                this.crewPhaseObjects.push(hunterButton)
+            }
         })
     }
 
@@ -296,9 +311,50 @@ export default class Game extends Phaser.Scene implements IGame {
         })
     }
 
-    enableInteractiveObjects() {
+    enableInteractiveObjects(phaseTitle: string) {
         this.interactiveObjects.forEach((obj) => {
-            this.input.enable(obj)
+            if (obj.isTextButton) {
+                console.log(this._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName)
+                this.input.enable(obj)
+                return
+            }
+
+            switch (phaseTitle) {
+                case TitleType.EVENT_SHARK_PHASE:
+                    const foundSharkObj = this.sharkPhaseObjects.find(item => {
+                        if (item.buttonName && item.buttonName == obj.buttonName) {
+                            return true
+                        }
+                        if (item.hunterName && item.hunterName == obj.hunterName) {
+                            return true
+                        }
+                        return false
+                    })
+                    if (foundSharkObj) {
+                        console.log(this._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName)
+                        this.input.enable(obj)
+                    }
+                    break
+                
+                    case TitleType.CREW_PHASE:
+                        const foundCrewObject = this.crewPhaseObjects.find(item => {
+                            if (item.buttonName && item.buttonName == obj.buttonName) {
+                                return true
+                            }
+                            if (item.hunterName && item.hunterName == obj.hunterName) {
+                                return true
+                            }
+                            return false
+                        })
+                        if (foundCrewObject) {
+                            console.log(this._currentPhaseTitle, "activate:", obj.buttonName, obj.hunterName)
+                            this.input.enable(obj)
+                        }
+                    break
+                
+                default:
+                    break
+            }            
         })
     }
 
@@ -345,7 +401,7 @@ export default class Game extends Phaser.Scene implements IGame {
     launchMessage(msg: string, isSharkTurnFinished?: boolean) {
         this.time.delayedCall(500, () => {
             const callback = (button, index) => {
-                this.enableInteractiveObjects()
+                this.enableInteractiveObjects(this._currentPhaseTitle)
                 if (isSharkTurnFinished) {
                     this.launchPhaseTitle(TitleType.CREW_PHASE)
                     this.removeTextButtons()
@@ -361,13 +417,14 @@ export default class Game extends Phaser.Scene implements IGame {
 
     launchPhaseTitle(type: string) {
         if (type != TitleType.EVENT_SHARK_PHASE && type != TitleType.CREW_PHASE) return
+        this._currentPhaseTitle = type
         this.disableInteractiveObjects()
         this.scene.add(SceneKeys.PhaseTitle, PhaseTitle, true, { 
             boardCenter: this.boardCenter, 
             mainScene: this,
             type: type,
             callback: () => {
-                this.enableInteractiveObjects()
+                this.enableInteractiveObjects(type)
                 this.scene.remove(SceneKeys.PhaseTitle)
             }
         })

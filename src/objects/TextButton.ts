@@ -4,14 +4,14 @@ import IGame from '~/objects/IGame'
 
 export default class TextButton extends Phaser.GameObjects.Text {
 
-    readonly buttonKey: string
+    readonly buttonName: string
     public isTextButton: boolean = true
 
     constructor(scene: IGame, x: number, y: number, text: string, style: any, key: string, callback: Function) {
 
         super(scene, x, y, text, style)
 
-        this.buttonKey = key
+        this.buttonName = key
 
         this.setInteractive({ useHandCursor: true })
             .on('pointerover', () => this.enterButtonHoverState() )
@@ -19,7 +19,7 @@ export default class TextButton extends Phaser.GameObjects.Text {
             .on('pointerdown', () => this.enterButtonActiveState() )
             .on('pointerup', () => {
                 this.enterButtonHoverState()
-                callback.apply(this.scene, [this.buttonKey])
+                callback.apply(this.scene, [this.buttonName])
             })
 
     }

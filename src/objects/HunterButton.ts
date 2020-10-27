@@ -28,7 +28,11 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
         this.spriteDroppedAnim = cfg.spriteDroppedAnim
         this.onlyClickable = cfg.onlyClickable
 
-        this.setInteractive().setOrigin(0.5)
+        this.setInteractive()
+        if (cfg.btnName == Buttons.ADD_SWIMMER) {
+            this.setDisplaySize(this.width*1.4, this.height*1.4)
+        }
+        this.setOrigin(0.5)
 
         if (this.onlyClickable) {
             this.on(Phaser.Input.Events.POINTER_DOWN, (pointer) => {
@@ -71,7 +75,7 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                             default:
                                 break
                         }
-                        scene.enableInteractiveObjects()
+                        scene.enableInteractiveObjects(scene.currentPhaseTitle)
                     }
                     const dialog = new Dialog(scene, DialogType.YES_NO, msg, callback)
                     scene.disableInteractiveObjects()
