@@ -41,7 +41,6 @@ export default class Barrel extends Phaser.GameObjects.Sprite {
 
     shouldRemove() {
         const distanceDragged = Phaser.Math.Distance.Between(this.x, this.y, this.positionOnDragStart.x, this.positionOnDragStart.y)
-        console.log("distance:", distanceDragged)
         if (distanceDragged > 100) {
             if (this.linkedTo.updateBarrels(Actions.REMOVE)) {
                 (this.scene as IGame).interactiveObjects = (this.scene as IGame).interactiveObjects.filter((item, index) => {

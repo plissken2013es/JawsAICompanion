@@ -135,6 +135,12 @@ const Locale = {
     },
     "Enough barrels! Do you want to end game?": {
         ES: "¡Suficientes bidones! ¿Terminamos la partida?"
+    },
+    "THE JAWS LOG": {
+        ES: "EL DIARIO DE TIBURÓN"
+    },
+    "END GAME": {
+        ES: "TERMINAR PARTIDA"
     }
 }
 

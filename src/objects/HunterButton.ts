@@ -10,6 +10,7 @@ import Dialog from './Dialog'
 import DialogType from '~/consts/DialogType'
 import IGame from '~/objects/IGame'
 import Characters from '~/consts/Characters'
+import LogManager from '~/utils/LogManager'
 
 export default class HunterButton extends Phaser.GameObjects.Sprite {
 
@@ -18,10 +19,13 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     private readonly spriteSelectAnim?: string
     private readonly spriteDroppedAnim?: string
     private onlyClickable: boolean = false
+    private logManager: LogManager
 
     constructor(scene: IGame, x: number, y: number, cfg: any) {
 
         super(scene, x, y, cfg.btnName, 0)
+
+        this.logManager = LogManager.getInstance(scene.logEnabled)
 
         this.buttonName = cfg.btnName
         this.spriteSelectAnim = cfg.spriteSelectAnim
@@ -56,10 +60,10 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                     const callback = (button, index) => {
                         switch (button.text) {
                             case scene.getLocale("Yes"):
-                                console.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(this.name), true)
+                                this.logManager.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(zone.zoneName), true)
                                 if (scene.getJawsPosition() == zone.zoneName) {
                                     scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"))
-                                    console.log(scene.getLocale("You've attached a barrel to the shark!"), true)
+                                    this.logManager.log(scene.getLocale("You've attached a barrel to the shark!"), true)
                                     zone.showShark()
                                     scene.attachBarrelToJaws()
                                 } else {

@@ -4,6 +4,7 @@ import SceneKeys from "~/consts/SceneKeys"
 import IGame from '~/objects/IGame'
 import ScrollablePanel from '~/objects/ScrollablePanel'
 import TextButton from '~/objects/TextButton'
+import LogManager from '~/utils/LogManager'
 
 export default class LogScreen extends Phaser.Scene {
     
@@ -13,6 +14,7 @@ export default class LogScreen extends Phaser.Scene {
     private rexUI: any
     private panel: any
     private lang: string = Languages.English
+    private logManager: LogManager
 
     private COLOR_PRIMARY: number = 0x004258
     private COLOR_LIGHT: number = 0x7b5e57
@@ -20,6 +22,8 @@ export default class LogScreen extends Phaser.Scene {
 
     constructor() {
         super(SceneKeys.LogScreen)
+
+        this.logManager = LogManager.getInstance(false)
     }
 
     init(data: any) {
@@ -43,7 +47,9 @@ export default class LogScreen extends Phaser.Scene {
         maskShape.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height)
         this.add.existing(maskShape)
 
-        const panel = new ScrollablePanel(this, this.boardCenter, "kkk")
+        let logs = this.logManager.savedLogs
+        logs.unshift(this.mainScene?.getLocale("THE JAWS LOG") + "\n------------------------")
+        const panel = new ScrollablePanel(this, this.boardCenter, logs.join("\n"))
 
         const buttonsCfg = { 
             fill: "#fff",
@@ -52,7 +58,8 @@ export default class LogScreen extends Phaser.Scene {
             fontSize: 30
         }
 
-        const btn = new TextButton(this, this.boardCenter.x, this.cameras.main.height - 50, "END GAME", buttonsCfg, "endGame", () => { console.log("callback!!!!!") })
+        const btn = new TextButton(this, this.boardCenter.x, this.cameras.main.height - 50, 
+            "END GAME", buttonsCfg, "endGame", this.callback)
             .setOrigin(0.5)
         this.add.existing(btn)
     }

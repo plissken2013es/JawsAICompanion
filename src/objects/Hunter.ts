@@ -8,6 +8,7 @@ import DialogType from '~/consts/DialogType'
 import Dialog from './Dialog'
 import DijkstraManager from '~/utils/DijkstraManager'
 import { JawsGraph } from '~/consts/Graph'
+import LogManager from '~/utils/LogManager'
 
 export default class Hunter extends Phaser.GameObjects.Sprite {
 
@@ -18,6 +19,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
         return this._currentZone
     }
     private dijkstraManager: DijkstraManager
+    private logManager: LogManager
 
     constructor(scene: IGame, x: number, y: number, texture: string) {
         super(scene, x, y, texture)
@@ -26,6 +28,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
         this.setInteractive().setOrigin(0.5)
         this.scene.input.setDraggable(this)
         this.dijkstraManager = DijkstraManager.getInstance()
+        this.logManager = LogManager.getInstance(scene.logEnabled)
 
         let map = scene.getMap()
         this._currentZone = map.getZoneByName(ZoneNames.S)
@@ -110,7 +113,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
         const callback = (button, index) => {
             switch (button.text) {
                 case scene.getLocale("Yes"):
-                    console.log(scene.getLocale("Fish Finder activated at: ") + scene.getLocale(this._currentZone.zoneName), true)
+                    this.logManager.log(scene.getLocale("Fish Finder activated at: ") + scene.getLocale(this._currentZone.zoneName), true)
                     if (!scene.isJawsVisible()) {
                         scene.launchMessage(failMsg)
                         return

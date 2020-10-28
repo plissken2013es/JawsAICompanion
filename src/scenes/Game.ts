@@ -25,6 +25,8 @@ import Barrel from '~/objects/Barrel'
 
 export default class Game extends Phaser.Scene implements IGame {
 
+    readonly logEnabled:boolean = true // deactivate for DIST version
+
     private lang: string = Languages.English
     private music?: Phaser.Sound.BaseSound
     private board?: Board
@@ -54,6 +56,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
     
     init(data) {
+        console.log("INIT!!!")
         this.lang = data.language
         this.music = data.music
         if (data.numBarrelsObjetive) {
@@ -77,6 +80,7 @@ export default class Game extends Phaser.Scene implements IGame {
         this.flavorTexts = new FlavorTextsManager(this.lang)
         this.add.existing(this.board)
         this.jawsAI = JawsAI.getInstance(this)
+        this.jawsAI.resetAI()
     }
 
 	preload() { 
@@ -88,6 +92,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     create() {
+        console.log("CREATE!!!")
         this.addCharacters()
         this.addButtons()
         this.bindButtonEvents()
@@ -95,6 +100,7 @@ export default class Game extends Phaser.Scene implements IGame {
         this.addBodyCounters()
         this.disableInteractiveObjects()
         this.launchPhaseTitle(TitleType.EVENT_SHARK_PHASE)
+        console.log(this.interactiveObjects)
     }
 
     addBodyCounters() {
@@ -452,8 +458,6 @@ export default class Game extends Phaser.Scene implements IGame {
                 switch (button.text) {
                     case this.getLocale("Yes"):
                         this.launchLogScreen()
-                        //this.scene.start(SceneKeys.Intro, { language: this.lang })
-                        //this.scene.stop()
                         break
                     default:
                         break
@@ -471,8 +475,8 @@ export default class Game extends Phaser.Scene implements IGame {
             boardCenter: this.boardCenter,
             language: this.lang,
             callback: () => {
-                this.enableInteractiveObjects(this.currentPhaseTitle)
-                this.scene.remove(SceneKeys.PhaseTitle)
+                this.scene.remove(SceneKeys.LogScreen)
+                this.scene.start(SceneKeys.FinalOptions, { language: this.lang })
             }
         })
     }

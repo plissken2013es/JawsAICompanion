@@ -7,6 +7,7 @@ import IGame from '~/objects/IGame'
 import Characters from '~/consts/Characters'
 import Hunter from '~/objects/Hunter'
 import Actions from '~/consts/Actions'
+import LogManager from './LogManager'
 
 const beaches = [ZoneNames.N, ZoneNames.S, ZoneNames.E, ZoneNames.W]
 const deepOcean = [ZoneNames.ONE, ZoneNames.TWO, ZoneNames.THREE, ZoneNames.FOUR]
@@ -86,6 +87,7 @@ export default class JawsAI {
     private dijkstraManager: DijkstraManager
     private zones: Zone[]
     private scene: IGame
+    private logManager: LogManager
 
     private jaws: JawsConfig = {
         position: "",
@@ -109,6 +111,8 @@ export default class JawsAI {
         this.zones = this.scene.getMap().mapZones
         this.random = new Phaser.Math.RandomDataGenerator()
         this.dijkstraManager = DijkstraManager.getInstance()
+        this.logManager = LogManager.getInstance(this.scene.logEnabled)
+        this.logManager.log("JAWSAI CONSTRUCTOR")
     }
 
     public static getInstance(scene: IGame): JawsAI {
@@ -117,6 +121,27 @@ export default class JawsAI {
         }
 
         return JawsAI.instance
+    }
+
+    resetAI() {
+        this.jaws = {
+            position: "",
+            numAttachedBarrels: 0,
+            currentTarget: null,
+            lastBeachAttacked: null,
+            path: [],
+            powerEnabledThisTurn: null,
+            powersAvailable: [],
+            turnsPlayed: 0,
+            swimmersEaten: 0,
+            status: JawsStatus.NORMAL,
+            activatedBarrelsThisTurn: [],
+            huntersVisitedThisTurn: [],
+            swimmersEatenThisTurn: {},
+            publicMessages: []
+        }
+        this.initGame()
+        this.logManager.reset()
     }
 
     realInRange(min: number, max: number) {
@@ -218,14 +243,14 @@ export default class JawsAI {
                 let bestOptions = deepOcean.filter((zone) => {
                     return !this.findZoneBy(zone)!.hasBarrels() && this.currentQuintPosition() != zone && zone != this.jaws.position
                 })
-                console.log(bestOptions)
+                this.logManager.log(bestOptions)
                 if (bestOptions.length > 0) {
                     return this.pick(bestOptions) as string
                 }
                 bestOptions = shallowOcean.filter((zone) => {
                     return !this.findZoneBy(zone)!.hasBarrels() && this.currentQuintPosition() != zone && zone != this.jaws.position
                 })
-                console.log(bestOptions)
+                this.logManager.log(bestOptions)
                 if (bestOptions.length > 0) {
                     return this.pick(bestOptions) as string
                 }
@@ -284,13 +309,8 @@ export default class JawsAI {
     }
 
     initGame() {
-        //savedLog = [] // TO-DO
         this.jaws.turnsPlayed = this.jaws.swimmersEaten = 0
         this.jaws.powersAvailable = Array.from(powersAvailable) // we need a fresh copy
-    }
-
-    showLog = () => {
-        // TO-DO
     }
 
     setInitialJawsPositionIfNeeded(force) {
@@ -301,7 +321,7 @@ export default class JawsAI {
         let quintZones = this.dijkstraManager.filterNodesByDistance(4, JawsGraph, this.currentQuintPosition()).reverse()
         let bestOptions = quintZones[0].concat(quintZones[1])
         let initialPos = this.pick(bestOptions) as string
-        console.log(this.scene.getLocale("Jaws chooses INITIAL position ") + this.scene.getLocale(initialPos), true)
+        this.logManager.log(this.scene.getLocale("Jaws chooses INITIAL position ") + this.scene.getLocale(initialPos), true)
         this.jaws.publicMessages.push(this.scene.getLocale("Jaws chooses INITIAL position "))
         this.jaws.position = initialPos
     }
@@ -375,7 +395,7 @@ export default class JawsAI {
     performSpeedBurstMove(isGardnersBoat) {
         this.jaws.currentTarget = this.getJawsTargetForMission(JawsMissionNames.FARTHEST_BEACH)
         this.calculateRouteToTarget()
-        console.log(this.scene.getLocale("Jaws uses SPEED BURST to go to ") + this.scene.getLocale(this.jaws.currentTarget), true)
+        this.logManager.log(this.scene.getLocale("Jaws uses SPEED BURST to go to ") + this.scene.getLocale(this.jaws.currentTarget), true)
         for (let q=0; q<3; q++) {
             if (this.jaws.path.length > 0) {
                 this.jawsMovesTo(this.jaws.path.shift(), isGardnersBoat)
@@ -394,18 +414,18 @@ export default class JawsAI {
         } else if (this.jaws.numAttachedBarrels > 0 && this.integerInRange(1, 10) < 5) { // fear of Quint? 40%
             this.jaws.status = JawsStatus.NINJA
         }
-        console.log(this.scene.getLocale("Jaws status is: ") + this.scene.getLocale(this.jaws.status))
+        this.logManager.log(this.scene.getLocale("Jaws status is: ") + this.scene.getLocale(this.jaws.status))
     }
     
     calculateRouteToTarget() {
         let taskConfig = {barrels: this.barrelPositions()} // TODO: review Quint (when to apply & his weight), quint: currentQuintPosition(), desiredDistanceToQuint: 2}
-        console.log(taskConfig)
+        this.logManager.log(taskConfig)
         let graph = this.dijkstraManager.buildWeightedJawsGraph(taskConfig)
-        console.log(graph)
+        this.logManager.log(graph)
         let path = this.dijkstraManager.findShortestPath(graph, this.jaws.position, this.jaws.currentTarget).path
         if (path[0] === this.jaws.position) path.shift()
         this.jaws.path = path
-        console.log(this.scene.getLocale("Jaws' task path is: ") + this.scene.getLocale(path))
+        this.logManager.log(this.scene.getLocale("Jaws' task path is: ") + this.scene.getLocale(path))
     }
 
     totalSwimmersOnBeaches(): number {
@@ -423,17 +443,17 @@ export default class JawsAI {
     
         while (this.jaws.position === this.jaws.currentTarget || this.jaws.currentTarget == null) {
             let task = this.pick(this.getMissionDeckForJawsStatus())
-            console.log(this.scene.getLocale("Jaws current mission now is: ") + task)
+            this.logManager.log(this.scene.getLocale("Jaws current mission now is: ") + task)
             this.jaws.currentTarget = this.getJawsTargetForMission(task as string)
         }
-        console.log(this.scene.getLocale("Jaws current target now is: ") + this.scene.getLocale(this.jaws.currentTarget))
+        this.logManager.log(this.scene.getLocale("Jaws current target now is: ") + this.scene.getLocale(this.jaws.currentTarget))
     
         this.calculateRouteToTarget()
     }
 
     performJawsActions(numActions, isGardnersBoat) {
         if (!this.jaws.currentTarget) {
-            console.log(this.scene.getLocale("No current target...?"))
+            this.logManager.log(this.scene.getLocale("No current target...?"))
             return
         }
     
@@ -469,12 +489,12 @@ export default class JawsAI {
                     this.selectTaskIfNeeded(numActions, isGardnersBoat)
                 }
             } 
-            console.log(this.scene.getLocale("Jaws remaining actions: ") + numActions, true)
+            this.logManager.log(this.scene.getLocale("Jaws remaining actions: ") + numActions, true)
         }
 
         if (this.jaws.activatedBarrelsThisTurn.length > 0) {
             const shuffledBarrels = Phaser.Utils.Array.Shuffle(this.jaws.activatedBarrelsThisTurn)
-            console.log(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels), true)
+            this.logManager.log(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels), true)
             this.jaws.publicMessages.push(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels))
             this.jaws.activatedBarrelsThisTurn.forEach((zoneName) => {
                 this.scene.findBarrelAt(zoneName).animate()
@@ -510,11 +530,11 @@ export default class JawsAI {
         this.jaws.publicMessages.push(this.scene.getLocale("Jaws ends its turn."))
         this.scene.launchMessage(this.jaws.publicMessages.join("\n"), true)
         this.jaws.publicMessages = []
-        console.log("----------------" + this.scene.getLocale("END TURN ") + this.jaws.turnsPlayed + "-------------", true)
+        this.logManager.log("----------------" + this.scene.getLocale("END TURN ") + this.jaws.turnsPlayed + "-------------", true)
     }
 
     jawsEatsMichaelAt(beach: Zone) {
-        console.log(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beach.zoneName), true)
+        this.logManager.log(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beach.zoneName), true)
         beach.updateMichael(Actions.REMOVE)
         this.scene.michael.returnHome()
         this.jaws.swimmersEaten += 2
@@ -522,7 +542,7 @@ export default class JawsAI {
     }
     
     jawsEatsSwimmerAt(beach: Zone) {
-        console.log(this.scene.getLocale("Jaws eats 1 swimmer on beach ") + this.scene.getLocale(beach.zoneName), true)
+        this.logManager.log(this.scene.getLocale("Jaws eats 1 swimmer on beach ") + this.scene.getLocale(beach.zoneName), true)
         const swimmer = this.scene.findSwimmerAt(beach)
         swimmer.eatenByJaws()
         this.jaws.swimmersEaten += 1
@@ -544,7 +564,7 @@ export default class JawsAI {
                 this.jaws.huntersVisitedThisTurn.push(quint)
             }
         }
-        console.log(this.scene.getLocale("Jaws moves to ") + this.scene.getLocale(destination), true)
+        this.logManager.log(this.scene.getLocale("Jaws moves to ") + this.scene.getLocale(destination), true)
     }
 
     executeJawsSingleAction(numActions, isGardnersBoat) {
@@ -563,7 +583,7 @@ export default class JawsAI {
                 // Feeding Frenzy
                 if (this.shouldUseFeedingFrenzy(isGoingToRunAwayOrHide)) {
                     if (!isGoingToRunAwayOrHide) {
-                        console.log(this.scene.getLocale("Jaws uses FEEDING FRENZY power at ") + this.scene.getLocale(beach.name), true)
+                        this.logManager.log(this.scene.getLocale("Jaws uses FEEDING FRENZY power at ") + this.scene.getLocale(beach.name), true)
                         this.useJawsPower(PowerTokens.FEEDING_FRENZY)
                         if (beach.isMichaelHere) {
                             this.jawsEatsMichaelAt(beach)     

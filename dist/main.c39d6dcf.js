@@ -182961,6 +182961,7 @@ var SceneKeys;
   SceneKeys["Game"] = "game";
   SceneKeys["PhaseTitle"] = "phaseTitle";
   SceneKeys["LogScreen"] = "logScreen";
+  SceneKeys["FinalOptions"] = "finalOptions";
 })(SceneKeys || (SceneKeys = {}));
 
 var _default = SceneKeys;
@@ -183041,7 +183042,6 @@ var Preloader = /*#__PURE__*/function (_Phaser$Scene) {
   _createClass(Preloader, [{
     key: "init",
     value: function init(data) {
-      console.log("Language selected:", data.language);
       this.lang = data.language;
       this.launchLegalText();
     }
@@ -183097,7 +183097,7 @@ var Preloader = /*#__PURE__*/function (_Phaser$Scene) {
         frameHeight: 46
       }).image(_Buttons.default.MICHAEL, _Buttons.default.MICHAEL + ".png").image(_Buttons.default.FISH_FINDER, _Buttons.default.FISH_FINDER + ".png").image(_Buttons.default.BINOCULARS, _Buttons.default.BINOCULARS + ".png") // characters eyes
       .image("brody_eyes", "brody_eyes.png").image("quint_eyes", "quint_eyes.png").image("hooper_eyes", "hooper_eyes.png") // bg && UI
-      .image("blood_bg", "blood_bg.png") // other tokens
+      .image("blood_bg", "blood_bg.png").image("jaws_pixel", "jaws_pixel.png") // other tokens
       .image("barrel", "barrel.png").image("bodycount", "bodycount.png").image("shark_bodycount", "shark_bodycount.png").spritesheet("shark_attack", "shark_attack_spritesheet.png", {
         frameWidth: 63,
         frameHeight: 50
@@ -183983,8 +183983,6 @@ var Zone = /*#__PURE__*/function (_Phaser$GameObjects$S) {
         return false; // swimmers only at beaches
       }
 
-      console.log("update num swimmerrs", this._numSwimmers);
-
       switch (action) {
         case _Actions.default.ADD:
           if (++this._numSwimmers > 1) {
@@ -184508,7 +184506,67 @@ var DijkstraManager = /*#__PURE__*/function () {
 }();
 
 exports.default = DijkstraManager;
-},{"~/consts/Graph":"consts/Graph.ts"}],"objects/Hunter.ts":[function(require,module,exports) {
+},{"~/consts/Graph":"consts/Graph.ts"}],"utils/LogManager.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var LogManager = /*#__PURE__*/function () {
+  function LogManager(logEnabled) {
+    _classCallCheck(this, LogManager);
+
+    this._savedLogs = [];
+    this.logEnabled = false;
+    this.reset();
+    this.logEnabled = logEnabled || false;
+  }
+
+  _createClass(LogManager, [{
+    key: "reset",
+    value: function reset() {
+      this._savedLogs = [];
+    }
+  }, {
+    key: "log",
+    value: function log(msg, saveLogMsg) {
+      if (this.logEnabled) {
+        console.log(msg);
+      }
+
+      if (saveLogMsg) {
+        this._savedLogs.push(msg);
+      }
+    }
+  }, {
+    key: "savedLogs",
+    get: function get() {
+      return this._savedLogs;
+    }
+  }], [{
+    key: "getInstance",
+    value: function getInstance(logEnabled) {
+      if (!LogManager.instance) {
+        LogManager.instance = new LogManager(logEnabled);
+      }
+
+      return LogManager.instance;
+    }
+  }]);
+
+  return LogManager;
+}();
+
+exports.default = LogManager;
+},{}],"objects/Hunter.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -184529,6 +184587,8 @@ var _Dialog = _interopRequireDefault(require("./Dialog"));
 var _DijkstraManager = _interopRequireDefault(require("~/utils/DijkstraManager"));
 
 var _Graph = require("~/consts/Graph");
+
+var _LogManager = _interopRequireDefault(require("~/utils/LogManager"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -184573,6 +184633,7 @@ var Hunter = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _this.scene.input.setDraggable(_assertThisInitialized(_this));
 
     _this.dijkstraManager = _DijkstraManager.default.getInstance();
+    _this.logManager = _LogManager.default.getInstance(scene.logEnabled);
     var map = scene.getMap();
     _this._currentZone = map.getZoneByName(_ZoneNames.default.S);
 
@@ -184676,7 +184737,7 @@ var Hunter = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       var callback = function callback(button, index) {
         switch (button.text) {
           case scene.getLocale("Yes"):
-            console.log(scene.getLocale("Fish Finder activated at: ") + scene.getLocale(_this3._currentZone.zoneName), true);
+            _this3.logManager.log(scene.getLocale("Fish Finder activated at: ") + scene.getLocale(_this3._currentZone.zoneName), true);
 
             if (!scene.isJawsVisible()) {
               scene.launchMessage(failMsg);
@@ -184746,7 +184807,7 @@ var Hunter = /*#__PURE__*/function (_Phaser$GameObjects$S) {
 }(_phaser.default.GameObjects.Sprite);
 
 exports.default = Hunter;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Characters":"consts/Characters.ts","~/consts/ZoneNames":"consts/ZoneNames.ts","~/consts/DialogType":"consts/DialogType.ts","./Dialog":"objects/Dialog.ts","~/utils/DijkstraManager":"utils/DijkstraManager.ts","~/consts/Graph":"consts/Graph.ts"}],"objects/Barrel.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Characters":"consts/Characters.ts","~/consts/ZoneNames":"consts/ZoneNames.ts","~/consts/DialogType":"consts/DialogType.ts","./Dialog":"objects/Dialog.ts","~/utils/DijkstraManager":"utils/DijkstraManager.ts","~/consts/Graph":"consts/Graph.ts","~/utils/LogManager":"utils/LogManager.ts"}],"objects/Barrel.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -184831,8 +184892,6 @@ var Barrel = /*#__PURE__*/function (_Phaser$GameObjects$S) {
       var _this2 = this;
 
       var distanceDragged = _phaser.default.Math.Distance.Between(this.x, this.y, this.positionOnDragStart.x, this.positionOnDragStart.y);
-
-      console.log("distance:", distanceDragged);
 
       if (distanceDragged > 100) {
         if (this.linkedTo.updateBarrels(_Actions.default.REMOVE)) {
@@ -184930,8 +184989,6 @@ var Swimmer = /*#__PURE__*/function (_Phaser$GameObjects$S) {
 
       var distanceDragged = _phaser.default.Math.Distance.Between(this.x, this.y, this.positionOnDragStart.x, this.positionOnDragStart.y);
 
-      console.log("distance:", distanceDragged);
-
       if (distanceDragged > 100) {
         if (this.linkedTo.updateSwimmers(_Actions.default.REMOVE)) {
           this.scene.interactiveObjects = this.scene.interactiveObjects.filter(function (item, index) {
@@ -184974,6 +185031,8 @@ var _DialogType = _interopRequireDefault(require("~/consts/DialogType"));
 
 var _Characters = _interopRequireDefault(require("~/consts/Characters"));
 
+var _LogManager = _interopRequireDefault(require("~/utils/LogManager"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -185011,6 +185070,7 @@ var HunterButton = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _this = _super.call(this, scene, x, y, cfg.btnName, 0);
     _this.positionOnDragStart = new _phaser.default.Geom.Point(0, 0);
     _this.onlyClickable = false;
+    _this.logManager = _LogManager.default.getInstance(scene.logEnabled);
     _this.buttonName = cfg.btnName;
     _this.spriteSelectAnim = cfg.spriteSelectAnim;
     _this.spriteDroppedAnim = cfg.spriteDroppedAnim;
@@ -185055,11 +185115,13 @@ var HunterButton = /*#__PURE__*/function (_Phaser$GameObjects$S) {
             var callback = function callback(button, index) {
               switch (button.text) {
                 case scene.getLocale("Yes"):
-                  console.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(_this2.name), true);
+                  _this2.logManager.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(zone.zoneName), true);
 
                   if (scene.getJawsPosition() == zone.zoneName) {
                     scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"));
-                    console.log(scene.getLocale("You've attached a barrel to the shark!"), true);
+
+                    _this2.logManager.log(scene.getLocale("You've attached a barrel to the shark!"), true);
+
                     zone.showShark();
                     scene.attachBarrelToJaws();
                   } else {
@@ -185151,7 +185213,7 @@ var HunterButton = /*#__PURE__*/function (_Phaser$GameObjects$S) {
 }(_phaser.default.GameObjects.Sprite);
 
 exports.default = HunterButton;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Buttons":"consts/Buttons.ts","./Barrel":"objects/Barrel.ts","~/consts/Actions":"consts/Actions.ts","./Swimmer":"objects/Swimmer.ts","./Dialog":"objects/Dialog.ts","~/consts/DialogType":"consts/DialogType.ts","~/consts/Characters":"consts/Characters.ts"}],"objects/Michael.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Buttons":"consts/Buttons.ts","./Barrel":"objects/Barrel.ts","~/consts/Actions":"consts/Actions.ts","./Swimmer":"objects/Swimmer.ts","./Dialog":"objects/Dialog.ts","~/consts/DialogType":"consts/DialogType.ts","~/consts/Characters":"consts/Characters.ts","~/utils/LogManager":"utils/LogManager.ts"}],"objects/Michael.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -185393,6 +185455,12 @@ var Locale = {
   },
   "Enough barrels! Do you want to end game?": {
     ES: "¡Suficientes bidones! ¿Terminamos la partida?"
+  },
+  "THE JAWS LOG": {
+    ES: "EL DIARIO DE TIBURÓN"
+  },
+  "END GAME": {
+    ES: "TERMINAR PARTIDA"
   }
 };
 
@@ -185444,6 +185512,8 @@ var _ZoneNames = _interopRequireDefault(require("~/consts/ZoneNames"));
 var _Characters = _interopRequireDefault(require("~/consts/Characters"));
 
 var _Actions = _interopRequireDefault(require("~/consts/Actions"));
+
+var _LogManager = _interopRequireDefault(require("./LogManager"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -185503,17 +185573,37 @@ var JawsAI = /*#__PURE__*/function () {
       swimmersEatenThisTurn: {},
       publicMessages: []
     };
-
-    this.showLog = function () {// TO-DO
-    };
-
     this.scene = scene;
     this.zones = this.scene.getMap().mapZones;
     this.random = new Phaser.Math.RandomDataGenerator();
     this.dijkstraManager = _DijkstraManager.default.getInstance();
+    this.logManager = _LogManager.default.getInstance(this.scene.logEnabled);
+    this.logManager.log("JAWSAI CONSTRUCTOR");
   }
 
   _createClass(JawsAI, [{
+    key: "resetAI",
+    value: function resetAI() {
+      this.jaws = {
+        position: "",
+        numAttachedBarrels: 0,
+        currentTarget: null,
+        lastBeachAttacked: null,
+        path: [],
+        powerEnabledThisTurn: null,
+        powersAvailable: [],
+        turnsPlayed: 0,
+        swimmersEaten: 0,
+        status: JawsStatus.NORMAL,
+        activatedBarrelsThisTurn: [],
+        huntersVisitedThisTurn: [],
+        swimmersEatenThisTurn: {},
+        publicMessages: []
+      };
+      this.initGame();
+      this.logManager.reset();
+    }
+  }, {
     key: "realInRange",
     value: function realInRange(min, max) {
       return this.random.realInRange(min, max);
@@ -185639,7 +185729,7 @@ var JawsAI = /*#__PURE__*/function () {
           var bestOptions = deepOcean.filter(function (zone) {
             return !_this.findZoneBy(zone).hasBarrels() && _this.currentQuintPosition() != zone && zone != _this.jaws.position;
           });
-          console.log(bestOptions);
+          this.logManager.log(bestOptions);
 
           if (bestOptions.length > 0) {
             return this.pick(bestOptions);
@@ -185648,7 +185738,7 @@ var JawsAI = /*#__PURE__*/function () {
           bestOptions = shallowOcean.filter(function (zone) {
             return !_this.findZoneBy(zone).hasBarrels() && _this.currentQuintPosition() != zone && zone != _this.jaws.position;
           });
-          console.log(bestOptions);
+          this.logManager.log(bestOptions);
 
           if (bestOptions.length > 0) {
             return this.pick(bestOptions);
@@ -185723,7 +185813,6 @@ var JawsAI = /*#__PURE__*/function () {
   }, {
     key: "initGame",
     value: function initGame() {
-      //savedLog = [] // TO-DO
       this.jaws.turnsPlayed = this.jaws.swimmersEaten = 0;
       this.jaws.powersAvailable = Array.from(powersAvailable); // we need a fresh copy
     }
@@ -185735,7 +185824,7 @@ var JawsAI = /*#__PURE__*/function () {
       var quintZones = this.dijkstraManager.filterNodesByDistance(4, _Graph.JawsGraph, this.currentQuintPosition()).reverse();
       var bestOptions = quintZones[0].concat(quintZones[1]);
       var initialPos = this.pick(bestOptions);
-      console.log(this.scene.getLocale("Jaws chooses INITIAL position ") + this.scene.getLocale(initialPos), true);
+      this.logManager.log(this.scene.getLocale("Jaws chooses INITIAL position ") + this.scene.getLocale(initialPos), true);
       this.jaws.publicMessages.push(this.scene.getLocale("Jaws chooses INITIAL position "));
       this.jaws.position = initialPos;
     }
@@ -185817,7 +185906,7 @@ var JawsAI = /*#__PURE__*/function () {
     value: function performSpeedBurstMove(isGardnersBoat) {
       this.jaws.currentTarget = this.getJawsTargetForMission(JawsMissionNames.FARTHEST_BEACH);
       this.calculateRouteToTarget();
-      console.log(this.scene.getLocale("Jaws uses SPEED BURST to go to ") + this.scene.getLocale(this.jaws.currentTarget), true);
+      this.logManager.log(this.scene.getLocale("Jaws uses SPEED BURST to go to ") + this.scene.getLocale(this.jaws.currentTarget), true);
 
       for (var q = 0; q < 3; q++) {
         if (this.jaws.path.length > 0) {
@@ -185840,7 +185929,7 @@ var JawsAI = /*#__PURE__*/function () {
         this.jaws.status = JawsStatus.NINJA;
       }
 
-      console.log(this.scene.getLocale("Jaws status is: ") + this.scene.getLocale(this.jaws.status));
+      this.logManager.log(this.scene.getLocale("Jaws status is: ") + this.scene.getLocale(this.jaws.status));
     }
   }, {
     key: "calculateRouteToTarget",
@@ -185849,13 +185938,13 @@ var JawsAI = /*#__PURE__*/function () {
         barrels: this.barrelPositions()
       }; // TODO: review Quint (when to apply & his weight), quint: currentQuintPosition(), desiredDistanceToQuint: 2}
 
-      console.log(taskConfig);
+      this.logManager.log(taskConfig);
       var graph = this.dijkstraManager.buildWeightedJawsGraph(taskConfig);
-      console.log(graph);
+      this.logManager.log(graph);
       var path = this.dijkstraManager.findShortestPath(graph, this.jaws.position, this.jaws.currentTarget).path;
       if (path[0] === this.jaws.position) path.shift();
       this.jaws.path = path;
-      console.log(this.scene.getLocale("Jaws' task path is: ") + this.scene.getLocale(path));
+      this.logManager.log(this.scene.getLocale("Jaws' task path is: ") + this.scene.getLocale(path));
     }
   }, {
     key: "totalSwimmersOnBeaches",
@@ -185874,11 +185963,11 @@ var JawsAI = /*#__PURE__*/function () {
 
       while (this.jaws.position === this.jaws.currentTarget || this.jaws.currentTarget == null) {
         var task = this.pick(this.getMissionDeckForJawsStatus());
-        console.log(this.scene.getLocale("Jaws current mission now is: ") + task);
+        this.logManager.log(this.scene.getLocale("Jaws current mission now is: ") + task);
         this.jaws.currentTarget = this.getJawsTargetForMission(task);
       }
 
-      console.log(this.scene.getLocale("Jaws current target now is: ") + this.scene.getLocale(this.jaws.currentTarget));
+      this.logManager.log(this.scene.getLocale("Jaws current target now is: ") + this.scene.getLocale(this.jaws.currentTarget));
       this.calculateRouteToTarget();
     }
   }, {
@@ -185887,7 +185976,7 @@ var JawsAI = /*#__PURE__*/function () {
       var _this3 = this;
 
       if (!this.jaws.currentTarget) {
-        console.log(this.scene.getLocale("No current target...?"));
+        this.logManager.log(this.scene.getLocale("No current target...?"));
         return;
       }
 
@@ -185934,12 +186023,12 @@ var JawsAI = /*#__PURE__*/function () {
           }
         }
 
-        console.log(this.scene.getLocale("Jaws remaining actions: ") + numActions, true);
+        this.logManager.log(this.scene.getLocale("Jaws remaining actions: ") + numActions, true);
       }
 
       if (this.jaws.activatedBarrelsThisTurn.length > 0) {
         var shuffledBarrels = Phaser.Utils.Array.Shuffle(this.jaws.activatedBarrelsThisTurn);
-        console.log(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels), true);
+        this.logManager.log(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels), true);
         this.jaws.publicMessages.push(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels));
         this.jaws.activatedBarrelsThisTurn.forEach(function (zoneName) {
           _this3.scene.findBarrelAt(zoneName).animate();
@@ -185984,12 +186073,12 @@ var JawsAI = /*#__PURE__*/function () {
       this.jaws.publicMessages.push(this.scene.getLocale("Jaws ends its turn."));
       this.scene.launchMessage(this.jaws.publicMessages.join("\n"), true);
       this.jaws.publicMessages = [];
-      console.log("----------------" + this.scene.getLocale("END TURN ") + this.jaws.turnsPlayed + "-------------", true);
+      this.logManager.log("----------------" + this.scene.getLocale("END TURN ") + this.jaws.turnsPlayed + "-------------", true);
     }
   }, {
     key: "jawsEatsMichaelAt",
     value: function jawsEatsMichaelAt(beach) {
-      console.log(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beach.zoneName), true);
+      this.logManager.log(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beach.zoneName), true);
       beach.updateMichael(_Actions.default.REMOVE);
       this.scene.michael.returnHome();
       this.jaws.swimmersEaten += 2;
@@ -185998,7 +186087,7 @@ var JawsAI = /*#__PURE__*/function () {
   }, {
     key: "jawsEatsSwimmerAt",
     value: function jawsEatsSwimmerAt(beach) {
-      console.log(this.scene.getLocale("Jaws eats 1 swimmer on beach ") + this.scene.getLocale(beach.zoneName), true);
+      this.logManager.log(this.scene.getLocale("Jaws eats 1 swimmer on beach ") + this.scene.getLocale(beach.zoneName), true);
       var swimmer = this.scene.findSwimmerAt(beach);
       swimmer.eatenByJaws();
       this.jaws.swimmersEaten += 1;
@@ -186026,7 +186115,7 @@ var JawsAI = /*#__PURE__*/function () {
         }
       }
 
-      console.log(this.scene.getLocale("Jaws moves to ") + this.scene.getLocale(destination), true);
+      this.logManager.log(this.scene.getLocale("Jaws moves to ") + this.scene.getLocale(destination), true);
     }
   }, {
     key: "executeJawsSingleAction",
@@ -186046,7 +186135,7 @@ var JawsAI = /*#__PURE__*/function () {
 
           if (this.shouldUseFeedingFrenzy(isGoingToRunAwayOrHide)) {
             if (!isGoingToRunAwayOrHide) {
-              console.log(this.scene.getLocale("Jaws uses FEEDING FRENZY power at ") + this.scene.getLocale(beach.name), true);
+              this.logManager.log(this.scene.getLocale("Jaws uses FEEDING FRENZY power at ") + this.scene.getLocale(beach.name), true);
               this.useJawsPower(PowerTokens.FEEDING_FRENZY);
 
               if (beach.isMichaelHere) {
@@ -186125,7 +186214,7 @@ var JawsAI = /*#__PURE__*/function () {
 }();
 
 exports.default = JawsAI;
-},{"~/utils/DijkstraManager":"utils/DijkstraManager.ts","~/consts/Graph":"consts/Graph.ts","~/consts/ZoneNames":"consts/ZoneNames.ts","~/consts/Characters":"consts/Characters.ts","~/consts/Actions":"consts/Actions.ts"}],"scenes/PhaseTitle.ts":[function(require,module,exports) {
+},{"~/utils/DijkstraManager":"utils/DijkstraManager.ts","~/consts/Graph":"consts/Graph.ts","~/consts/ZoneNames":"consts/ZoneNames.ts","~/consts/Characters":"consts/Characters.ts","~/consts/Actions":"consts/Actions.ts","./LogManager":"utils/LogManager.ts"}],"scenes/PhaseTitle.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -186314,8 +186403,6 @@ var ScrollablePanel = /*#__PURE__*/function () {
     this.COLOR_DARK = 0x00001a;
     this.scene = scene;
     this.rexUI = this.scene.rexUI;
-    this.print = this.scene.add.text(0, 0, '');
-    console.log(position);
     this.panel = this.rexUI.add.scrollablePanel({
       x: position.x,
       y: position.y,
@@ -186350,7 +186437,7 @@ var ScrollablePanel = /*#__PURE__*/function () {
         panel: 10
       }
     }).layout();
-    this.updatePanel(this.panel, content);
+    this.updatePanel(this.panel, message);
   }
 
   _createClass(ScrollablePanel, [{
@@ -186384,7 +186471,6 @@ var ScrollablePanel = /*#__PURE__*/function () {
 }();
 
 exports.default = ScrollablePanel;
-var content = "Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.\nAlong with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.\nThousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games. Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.\nAlong with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.\nThousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games. Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.\nAlong with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.\nThousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games.";
 },{}],"objects/TextButton.ts":[function(require,module,exports) {
 "use strict";
 
@@ -186495,6 +186581,8 @@ var _ScrollablePanel = _interopRequireDefault(require("~/objects/ScrollablePanel
 
 var _TextButton = _interopRequireDefault(require("~/objects/TextButton"));
 
+var _LogManager = _interopRequireDefault(require("~/utils/LogManager"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -186535,6 +186623,7 @@ var LogScreen = /*#__PURE__*/function (_Phaser$Scene) {
     _this.COLOR_PRIMARY = 0x004258;
     _this.COLOR_LIGHT = 0x7b5e57;
     _this.COLOR_DARK = 0x00001a;
+    _this.logManager = _LogManager.default.getInstance(false);
     return _this;
   }
 
@@ -186560,11 +186649,15 @@ var LogScreen = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
+      var _a;
+
       var maskShape = this.make.graphics({});
       maskShape.fillStyle(0x000, .75);
       maskShape.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
       this.add.existing(maskShape);
-      var panel = new _ScrollablePanel.default(this, this.boardCenter, "kkk");
+      var logs = this.logManager.savedLogs;
+      logs.unshift(((_a = this.mainScene) === null || _a === void 0 ? void 0 : _a.getLocale("THE JAWS LOG")) + "\n------------------------");
+      var panel = new _ScrollablePanel.default(this, this.boardCenter, logs.join("\n"));
       var buttonsCfg = {
         fill: "#fff",
         backgroundColor: "#004258",
@@ -186574,9 +186667,7 @@ var LogScreen = /*#__PURE__*/function (_Phaser$Scene) {
         },
         fontSize: 30
       };
-      var btn = new _TextButton.default(this, this.boardCenter.x, this.cameras.main.height - 50, "END GAME", buttonsCfg, "endGame", function () {
-        console.log("callback!!!!!");
-      }).setOrigin(0.5);
+      var btn = new _TextButton.default(this, this.boardCenter.x, this.cameras.main.height - 50, "END GAME", buttonsCfg, "endGame", this.callback).setOrigin(0.5);
       this.add.existing(btn);
     }
   }]);
@@ -186585,7 +186676,7 @@ var LogScreen = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = LogScreen;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/ScrollablePanel":"objects/ScrollablePanel.ts","~/objects/TextButton":"objects/TextButton.ts"}],"consts/SharkButtons.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/ScrollablePanel":"objects/ScrollablePanel.ts","~/objects/TextButton":"objects/TextButton.ts","~/utils/LogManager":"utils/LogManager.ts"}],"consts/SharkButtons.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -186906,6 +186997,8 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     _classCallCheck(this, Game);
 
     _this = _super.call(this, _SceneKeys.default.Game);
+    _this.logEnabled = true; // deactivate for DIST version
+
     _this.lang = _Languages.default.English;
     _this.interactiveObjects = [];
     _this.hunters = [];
@@ -186919,6 +187012,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     value: function init(data) {
       var _this2 = this;
 
+      console.log("INIT!!!");
       this.lang = data.language;
       this.music = data.music;
 
@@ -186944,6 +187038,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       this.flavorTexts = new _FlavorTextsManager.default(this.lang);
       this.add.existing(this.board);
       this.jawsAI = _JawsAI.default.getInstance(this);
+      this.jawsAI.resetAI();
     }
   }, {
     key: "preload",
@@ -186957,6 +187052,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
+      console.log("CREATE!!!");
       this.addCharacters();
       this.addButtons();
       this.bindButtonEvents();
@@ -186964,6 +187060,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       this.addBodyCounters();
       this.disableInteractiveObjects();
       this.launchPhaseTitle(_TitleType.default.EVENT_SHARK_PHASE);
+      console.log(this.interactiveObjects);
     }
   }, {
     key: "addBodyCounters",
@@ -187409,9 +187506,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
         var callback = function callback(button, index) {
           switch (button.text) {
             case _this10.getLocale("Yes"):
-              _this10.launchLogScreen(); //this.scene.start(SceneKeys.Intro, { language: this.lang })
-              //this.scene.stop()
-
+              _this10.launchLogScreen();
 
               break;
 
@@ -187436,9 +187531,11 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
         boardCenter: this.boardCenter,
         language: this.lang,
         callback: function callback() {
-          _this11.enableInteractiveObjects(_this11.currentPhaseTitle);
+          _this11.scene.remove(_SceneKeys.default.LogScreen);
 
-          _this11.scene.remove(_SceneKeys.default.PhaseTitle);
+          _this11.scene.start(_SceneKeys.default.FinalOptions, {
+            language: _this11.lang
+          });
         }
       });
     }
@@ -187564,7 +187661,95 @@ var LanguageSelection = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = LanguageSelection;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/SceneKeys":"consts/SceneKeys.ts","~/consts/Languages":"consts/Languages.ts"}],"main.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/SceneKeys":"consts/SceneKeys.ts","~/consts/Languages":"consts/Languages.ts"}],"scenes/FinalOptions.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _phaser = _interopRequireDefault(require("phaser"));
+
+var _Languages = _interopRequireDefault(require("~/consts/Languages"));
+
+var _SceneKeys = _interopRequireDefault(require("~/consts/SceneKeys"));
+
+var _TextButton = _interopRequireDefault(require("~/objects/TextButton"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var FinalOptions = /*#__PURE__*/function (_Phaser$Scene) {
+  _inherits(FinalOptions, _Phaser$Scene);
+
+  var _super = _createSuper(FinalOptions);
+
+  function FinalOptions() {
+    var _this;
+
+    _classCallCheck(this, FinalOptions);
+
+    _this = _super.call(this, _SceneKeys.default.FinalOptions);
+    _this.lang = _Languages.default.English;
+    return _this;
+  }
+
+  _createClass(FinalOptions, [{
+    key: "init",
+    value: function init(data) {
+      this.lang = data.language;
+    }
+  }, {
+    key: "create",
+    value: function create() {
+      var _this2 = this;
+
+      this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, "jaws_pixel").setOrigin(0.5, 1);
+      var buttonsCfg = {
+        fill: "#fff",
+        backgroundColor: "#004258",
+        padding: {
+          x: 6,
+          y: 6
+        },
+        fontSize: 30
+      };
+      var btn = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 50, "END GAME", buttonsCfg, "endGame", function () {
+        _this2.scene.start(_SceneKeys.default.Intro, {
+          language: _this2.lang
+        });
+      }).setOrigin(0.5);
+      this.add.existing(btn);
+    }
+  }]);
+
+  return FinalOptions;
+}(_phaser.default.Scene);
+
+exports.default = FinalOptions;
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/TextButton":"objects/TextButton.ts"}],"main.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -187583,6 +187768,8 @@ var _Intro = _interopRequireDefault(require("./scenes/Intro"));
 var _Game = _interopRequireDefault(require("./scenes/Game"));
 
 var _LanguageSelection = _interopRequireDefault(require("./scenes/LanguageSelection"));
+
+var _FinalOptions = _interopRequireDefault(require("./scenes/FinalOptions"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -187604,13 +187791,13 @@ var config = {
     autoCenter: _phaser.default.Scale.CENTER_BOTH
   },
   backgroundColor: "#00001a",
-  scene: [_LanguageSelection.default, _Preloader.default, _StudiosLogo.default, _Intro.default, _Game.default]
+  scene: [_LanguageSelection.default, _Preloader.default, _StudiosLogo.default, _Intro.default, _Game.default, _FinalOptions.default]
 };
 
 var _default = new _phaser.default.Game(config);
 
 exports.default = _default;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","./scenes/Preloader":"scenes/Preloader.ts","./scenes/StudiosLogo":"scenes/StudiosLogo.ts","./scenes/Intro":"scenes/Intro.ts","./scenes/Game":"scenes/Game.ts","./scenes/LanguageSelection":"scenes/LanguageSelection.ts"}],"C:/Users/luisq/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","./scenes/Preloader":"scenes/Preloader.ts","./scenes/StudiosLogo":"scenes/StudiosLogo.ts","./scenes/Intro":"scenes/Intro.ts","./scenes/Game":"scenes/Game.ts","./scenes/LanguageSelection":"scenes/LanguageSelection.ts","./scenes/FinalOptions":"scenes/FinalOptions.ts"}],"C:/Users/luisq/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -187638,7 +187825,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61789" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52515" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

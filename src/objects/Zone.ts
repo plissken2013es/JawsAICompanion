@@ -153,7 +153,6 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         if (!this.zoneCfg.isBeach) {
             return false // swimmers only at beaches
         }
-        console.log("update num swimmerrs", this._numSwimmers)
         switch (action) {
             case Actions.ADD:
                 if (++this._numSwimmers > 1) {

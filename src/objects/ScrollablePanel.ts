@@ -11,16 +11,10 @@ export default class ScrollablePanel {
     private panel: any
     private scene: Phaser.Scene
 
-    private print: Phaser.GameObjects.Text
-
     constructor(scene: Phaser.Scene, position: Phaser.Geom.Point, message: string) {
         this.scene = scene
         this.rexUI = this.scene.rexUI
      
-        this.print = this.scene.add.text(0, 0, '');
-
-        console.log(position)
-
         this.panel = this.rexUI.add.scrollablePanel({
             x: position.x,
             y: position.y,
@@ -63,7 +57,7 @@ export default class ScrollablePanel {
             }
         }).layout()
 
-        this.updatePanel(this.panel, content)
+        this.updatePanel(this.panel, message)
     }
 
     updatePanel(panel, content): any {
@@ -91,11 +85,3 @@ export default class ScrollablePanel {
     }
 
 }
-
-const content = `Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.
-Along with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.
-Thousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games. Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.
-Along with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.
-Thousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games. Phaser is a fast, free, and fun open source HTML5 game framework that offers WebGL and Canvas rendering across desktop and mobile web browsers. Games can be compiled to iOS, Android and native apps by using 3rd party tools. You can use JavaScript or TypeScript for development.
-Along with the fantastic open source community, Phaser is actively developed and maintained by Photon Storm. As a result of rapid support, and a developer friendly API, Phaser is currently one of the most starred game frameworks on GitHub.
-Thousands of developers from indie and multi-national digital agencies, and universities worldwide use Phaser. You can take a look at their incredible games.`

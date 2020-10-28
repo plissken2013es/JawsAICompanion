@@ -11,7 +11,6 @@ export default class Preloader extends Phaser.Scene {
     }
 
     init(data) {
-        console.log("Language selected:", data.language)
         this.lang = data.language
         this.launchLegalText()
     }
@@ -90,6 +89,7 @@ export default class Preloader extends Phaser.Scene {
 
             // bg && UI
             .image("blood_bg", "blood_bg.png")
+            .image("jaws_pixel", "jaws_pixel.png")
 
             // other tokens
             .image("barrel", "barrel.png")

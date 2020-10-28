@@ -7,6 +7,7 @@ interface IGame extends Phaser.Scene {
     boardCenter: Phaser.Geom.Point
     interactiveObjects: Phaser.GameObjects.GameObject[]
     currentPhaseTitle: string
+    logEnabled: boolean
     getLocale(word: string | string[]): string
     getMap(): Phaser.GameObjects.GameObject | undefined
     enableInteractiveObjects(phaseTitle: string)
