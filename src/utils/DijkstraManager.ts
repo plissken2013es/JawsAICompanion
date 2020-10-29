@@ -140,7 +140,7 @@ export default class DijkstraManager {
             DijkstraManager.instance = new DijkstraManager()
         }
 
-        return DijkstraManager.instance;
+        return DijkstraManager.instance
     }
     
     public buildWeightedJawsGraph(cfg) {

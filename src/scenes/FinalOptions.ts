@@ -2,6 +2,8 @@ import Phaser, { Game } from "phaser"
 import Languages from '~/consts/Languages'
 import SceneKeys from "~/consts/SceneKeys"
 import TextButton from '~/objects/TextButton'
+import { GameDataToSave } from "~/consts/GameDataToSave"
+import LocalStorage from '~/utils/LocalStorage'
 
 export default class FinalOptions extends Phaser.Scene {
     
@@ -28,7 +30,10 @@ export default class FinalOptions extends Phaser.Scene {
         const btn = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 50, 
             "END GAME", buttonsCfg, "endGame", 
             () => {
-                this.scene.start(SceneKeys.Intro, { language: this.lang })
+                let gameData = {}
+                gameData[GameDataToSave.TEMPORARY_LANGUAGE] = this.lang
+                LocalStorage.getInstance().saveGameData(gameData)
+                window.location.reload()
             })
             .setOrigin(0.5)
         this.add.existing(btn)

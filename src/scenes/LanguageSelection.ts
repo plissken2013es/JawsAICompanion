@@ -1,6 +1,8 @@
 import Phaser from "phaser"
 import SceneKeys from "~/consts/SceneKeys"
 import Languages from "~/consts/Languages"
+import { GameDataToSave } from "~/consts/GameDataToSave"
+import LocalStorage from '~/utils/LocalStorage'
 
 export default class LanguageSelection extends Phaser.Scene {
     constructor() {
@@ -27,7 +29,6 @@ export default class LanguageSelection extends Phaser.Scene {
             // fonts
             .setPath("scripts/")            
             .script("webfont", "webfont.js")
-            //.script("rexUI", "rexuiplugin.min.js")
     }
 
     create() {
@@ -36,18 +37,25 @@ export default class LanguageSelection extends Phaser.Scene {
                 families: [ "Elite", "troika" ]
             },
             active: () => {
-                this.add.image(this.cameras.main.centerX - 128, this.cameras.main.centerY, "flag_es")
-                    .setOrigin(0.5)
-                    .setInteractive()
-                    .on(Phaser.Input.Events.POINTER_DOWN, (pointer, x, y, event) => {
-                        this.scene.start(SceneKeys.Preloader, { language: Languages.Spanish })
-                    })
-                this.add.image(this.cameras.main.centerX + 128, this.cameras.main.centerY, "flag_en")
-                    .setOrigin(0.5)
-                    .setInteractive()
-                    .on(Phaser.Input.Events.POINTER_DOWN, (pointer, x, y, event) => {
-                        this.scene.start(SceneKeys.Preloader, { language: Languages.English })
-                    })
+                let localStorage = LocalStorage.getInstance()
+                let temporaryLanguage = localStorage.loadGameData() && localStorage.loadGameData()[GameDataToSave.TEMPORARY_LANGUAGE]
+                if (temporaryLanguage) {
+                    localStorage.removeItem(GameDataToSave.TEMPORARY_LANGUAGE)
+                    this.scene.start(SceneKeys.Preloader, { language: temporaryLanguage })
+                } else {
+                    this.add.image(this.cameras.main.centerX - 128, this.cameras.main.centerY, "flag_es")
+                        .setOrigin(0.5)
+                        .setInteractive()
+                        .on(Phaser.Input.Events.POINTER_DOWN, (pointer, x, y, event) => {
+                            this.scene.start(SceneKeys.Preloader, { language: Languages.Spanish })
+                        })
+                    this.add.image(this.cameras.main.centerX + 128, this.cameras.main.centerY, "flag_en")
+                        .setOrigin(0.5)
+                        .setInteractive()
+                        .on(Phaser.Input.Events.POINTER_DOWN, (pointer, x, y, event) => {
+                            this.scene.start(SceneKeys.Preloader, { language: Languages.English })
+                        })
+                }
             }
         }
     }

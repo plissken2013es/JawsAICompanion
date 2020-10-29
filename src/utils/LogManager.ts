@@ -17,7 +17,7 @@ export default class LogManager {
             LogManager.instance = new LogManager(logEnabled)
         }
 
-        return LogManager.instance;
+        return LogManager.instance
     }
 
     reset() {

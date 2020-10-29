@@ -21,7 +21,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
     private dijkstraManager: DijkstraManager
     private logManager: LogManager
 
-    constructor(scene: IGame, x: number, y: number, texture: string) {
+    constructor(scene: IGame, x: number, y: number, texture: string, startAtZone?: string) {
         super(scene, x, y, texture)
 
         this.hunterName = texture
@@ -31,18 +31,23 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
         this.logManager = LogManager.getInstance(scene.logEnabled)
 
         let map = scene.getMap()
-        this._currentZone = map.getZoneByName(ZoneNames.S)
-        switch (this.hunterName) {
-            case Characters.BRODY:
-                this._currentZone = map.getZoneByName(ZoneNames.SEVEN)
-                break
-            case Characters.HOOPER:
-                this._currentZone = map.getZoneByName(ZoneNames.FIVE)
-                break
-            case Characters.QUINT:
-                this._currentZone = map.getZoneByName(ZoneNames.EIGHT)
-                break
-        }
+
+        if (startAtZone) {
+            this._currentZone = map.getZoneByName(startAtZone)
+        } else {
+            switch (this.hunterName) {
+                case Characters.BRODY:
+                    this._currentZone = map.getZoneByName(ZoneNames.SEVEN)
+                    break
+                case Characters.HOOPER:
+                    this._currentZone = map.getZoneByName(ZoneNames.FIVE)
+                    break
+                case Characters.QUINT:
+                    this._currentZone = map.getZoneByName(ZoneNames.EIGHT)
+                    break
+            }
+        }        
+
         this.moveTo(this._currentZone)
     }
 

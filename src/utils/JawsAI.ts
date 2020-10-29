@@ -105,43 +105,29 @@ export default class JawsAI {
         swimmersEatenThisTurn: {},
         publicMessages: []
     }
+    public get Jaws(): JawsConfig {
+        return this.jaws
+    }
 
-    private constructor(scene: IGame) {
+    private constructor(scene: IGame, savedJaws?: JawsConfig) {
         this.scene = scene
         this.zones = this.scene.getMap().mapZones
         this.random = new Phaser.Math.RandomDataGenerator()
         this.dijkstraManager = DijkstraManager.getInstance()
         this.logManager = LogManager.getInstance(this.scene.logEnabled)
-        this.logManager.log("JAWSAI CONSTRUCTOR")
+        console.log("JAWSAI CONSTRUCTOR")
+        if (savedJaws) {
+            console.log("saved jaws", savedJaws)
+            this.jaws = savedJaws
+        }
     }
 
-    public static getInstance(scene: IGame): JawsAI {
+    public static getInstance(scene: IGame, savedJaws?: JawsConfig): JawsAI {
         if (!JawsAI.instance) {
-            JawsAI.instance = new JawsAI(scene)
+            JawsAI.instance = new JawsAI(scene, savedJaws)
         }
 
         return JawsAI.instance
-    }
-
-    resetAI() {
-        this.jaws = {
-            position: "",
-            numAttachedBarrels: 0,
-            currentTarget: null,
-            lastBeachAttacked: null,
-            path: [],
-            powerEnabledThisTurn: null,
-            powersAvailable: [],
-            turnsPlayed: 0,
-            swimmersEaten: 0,
-            status: JawsStatus.NORMAL,
-            activatedBarrelsThisTurn: [],
-            huntersVisitedThisTurn: [],
-            swimmersEatenThisTurn: {},
-            publicMessages: []
-        }
-        this.initGame()
-        this.logManager.reset()
     }
 
     realInRange(min: number, max: number) {

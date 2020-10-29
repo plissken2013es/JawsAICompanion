@@ -22,6 +22,9 @@ import Swimmer from '~/objects/Swimmer'
 import Zone from '~/objects/Zone'
 import FlavorTextsManager from '~/utils/FlavorTextsManager'
 import Barrel from '~/objects/Barrel'
+import { GameDataToSave } from "~/consts/GameDataToSave"
+import LocalStorage from '~/utils/LocalStorage'
+import Actions from '~/consts/Actions'
 
 export default class Game extends Phaser.Scene implements IGame {
 
@@ -39,6 +42,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
     private hunters: Hunter[] = []
     private jawsAI?: JawsAI
+    private localStorage: LocalStorage = LocalStorage.getInstance()
     private flavorTexts?: FlavorTextsManager
     private characterEyes?: Phaser.GameObjects.Image
     private characterText?: Phaser.GameObjects.Text
@@ -75,12 +79,15 @@ export default class Game extends Phaser.Scene implements IGame {
         }
 
         this.interactiveObjects = []
+        this.hunters = []
         this.locales = new LocaleManager(this.lang)
         this.board = new Board(this)
         this.flavorTexts = new FlavorTextsManager(this.lang)
         this.add.existing(this.board)
-        this.jawsAI = JawsAI.getInstance(this)
-        this.jawsAI.resetAI()
+        this.localStorage = LocalStorage.getInstance()
+
+        const savedJaws = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.JAWS]
+        this.jawsAI = JawsAI.getInstance(this, savedJaws)
     }
 
 	preload() { 
@@ -93,14 +100,48 @@ export default class Game extends Phaser.Scene implements IGame {
 
     create() {
         console.log("CREATE!!!")
+        console.log(this.interactiveObjects)
         this.addCharacters()
         this.addButtons()
         this.bindButtonEvents()
         this.addSharkButtons()
         this.addBodyCounters()
         this.disableInteractiveObjects()
+
+        this.addBarrelsIfNeeded()
+        this.addSwimmersIfNeeded()
+
         this.launchPhaseTitle(TitleType.EVENT_SHARK_PHASE)
-        console.log(this.interactiveObjects)
+    }
+
+    addBarrelsIfNeeded() {
+        const savedBarrelPositions = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.BARREL_POSITIONS]
+        if (savedBarrelPositions) {
+            for (let index in savedBarrelPositions) {
+                const zone = this.board?.getZoneByName(savedBarrelPositions[index])
+                const barrel = new Barrel(this, zone?.zoneCfg.barrelX, zone?.zoneCfg.barrelY, Buttons.BARREL, zone)
+                this.add.existing(barrel)
+                this.interactiveObjects.push(barrel)
+            }
+        }
+    }
+
+    addSwimmersIfNeeded() {
+        const savedSwimmerPositions = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.SWIMMER_POSITIONS]
+        if (savedSwimmerPositions) {
+            for (let index in savedSwimmerPositions) {
+                const swimmerData = savedSwimmerPositions[index]
+                const zone = this.board?.getZoneByName(swimmerData["zoneName"])
+                const numSwimmers = swimmerData["numSwimmers"]
+                const swimmer = new Swimmer(this, zone.zoneCfg.swimmerX, zone.zoneCfg.swimmerY, "swimmer_sprite", zone)
+                swimmer.play("swimmerDroppedAnim")
+                this.add.existing(swimmer)
+                this.interactiveObjects.push(swimmer)
+                for (let q=1; q<numSwimmers; q++) {
+                    zone?.updateSwimmers(Actions.ADD)
+                }
+            }
+        }
     }
 
     addBodyCounters() {
@@ -122,7 +163,9 @@ export default class Game extends Phaser.Scene implements IGame {
 
     addCharacters() {
         [Characters.BRODY, Characters.HOOPER, Characters.QUINT].forEach((charName) => {
-            const hunter = new Hunter(this, 0, 0, charName)
+            const savedHunterPositions = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.HUNTER_POSITIONS]
+            const hunterSavedPosition = savedHunterPositions && savedHunterPositions[charName]
+            const hunter = new Hunter(this, 0, 0, charName, hunterSavedPosition)
             this.interactiveObjects.push(hunter)
             this.hunters.push(hunter)
             this.add.existing(hunter)
@@ -412,10 +455,44 @@ export default class Game extends Phaser.Scene implements IGame {
             mainScene: this,
             type: type,
             callback: () => {
+                this.saveGameData()
                 this.enableInteractiveObjects(type)
                 this.scene.remove(SceneKeys.PhaseTitle)
             }
         })
+    }
+
+    saveGameData() {
+        let gameData = {}
+
+        // jaws
+        gameData[GameDataToSave.JAWS] = this.jawsAI?.Jaws
+        
+        // hunter positions
+        gameData[GameDataToSave.HUNTER_POSITIONS] = {};
+        [Characters.BRODY, Characters.HOOPER, Characters.QUINT].forEach((charName) => {
+            let hunterPosition = this.hunters.find((hunterItem) => {
+                return hunterItem.hunterName == charName
+            })?.currentZone.zoneName            
+            if (hunterPosition) {
+                gameData[GameDataToSave.HUNTER_POSITIONS][charName] = hunterPosition
+            }
+        })
+
+        // barrel positions
+        gameData[GameDataToSave.BARREL_POSITIONS] = this.jawsAI?.barrelPositions()
+        
+        // swimmers
+        let swimmersPositions: any[] = []
+        this.board.mapZones.forEach((zone) => {
+            const numSwimmers = this.jawsAI.findZoneBy(zone.zoneName)!.numSwimmers
+            if (numSwimmers > 0) {
+                swimmersPositions.push({ "zoneName": zone.zoneName, "numSwimmers": numSwimmers })
+            }
+        })
+        gameData[GameDataToSave.SWIMMER_POSITIONS] = swimmersPositions
+
+        this.localStorage.saveGameData(gameData)
     }
 
     onEndTurnButtonPressed(buttonKey: string) {

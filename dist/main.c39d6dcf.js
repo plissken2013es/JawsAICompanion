@@ -184619,7 +184619,7 @@ var Hunter = /*#__PURE__*/function (_Phaser$GameObjects$S) {
 
   var _super = _createSuper(Hunter);
 
-  function Hunter(scene, x, y, texture) {
+  function Hunter(scene, x, y, texture, startAtZone) {
     var _this;
 
     _classCallCheck(this, Hunter);
@@ -184635,20 +184635,23 @@ var Hunter = /*#__PURE__*/function (_Phaser$GameObjects$S) {
     _this.dijkstraManager = _DijkstraManager.default.getInstance();
     _this.logManager = _LogManager.default.getInstance(scene.logEnabled);
     var map = scene.getMap();
-    _this._currentZone = map.getZoneByName(_ZoneNames.default.S);
 
-    switch (_this.hunterName) {
-      case _Characters.default.BRODY:
-        _this._currentZone = map.getZoneByName(_ZoneNames.default.SEVEN);
-        break;
+    if (startAtZone) {
+      _this._currentZone = map.getZoneByName(startAtZone);
+    } else {
+      switch (_this.hunterName) {
+        case _Characters.default.BRODY:
+          _this._currentZone = map.getZoneByName(_ZoneNames.default.SEVEN);
+          break;
 
-      case _Characters.default.HOOPER:
-        _this._currentZone = map.getZoneByName(_ZoneNames.default.FIVE);
-        break;
+        case _Characters.default.HOOPER:
+          _this._currentZone = map.getZoneByName(_ZoneNames.default.FIVE);
+          break;
 
-      case _Characters.default.QUINT:
-        _this._currentZone = map.getZoneByName(_ZoneNames.default.EIGHT);
-        break;
+        case _Characters.default.QUINT:
+          _this._currentZone = map.getZoneByName(_ZoneNames.default.EIGHT);
+          break;
+      }
     }
 
     _this.moveTo(_this._currentZone);
@@ -185554,7 +185557,7 @@ var hungryMissions = [JawsMissionNames.MOST_SWIMMERS, JawsMissionNames.NEAREST_B
 var ninjaMissions = [JawsMissionNames.FARTHEST_BEACH, JawsMissionNames.LESS_SWIMMERS, JawsMissionNames.SILENT_RUNNING];
 
 var JawsAI = /*#__PURE__*/function () {
-  function JawsAI(scene) {
+  function JawsAI(scene, savedJaws) {
     _classCallCheck(this, JawsAI);
 
     this.jaws = {
@@ -185578,32 +185581,15 @@ var JawsAI = /*#__PURE__*/function () {
     this.random = new Phaser.Math.RandomDataGenerator();
     this.dijkstraManager = _DijkstraManager.default.getInstance();
     this.logManager = _LogManager.default.getInstance(this.scene.logEnabled);
-    this.logManager.log("JAWSAI CONSTRUCTOR");
+    console.log("JAWSAI CONSTRUCTOR");
+
+    if (savedJaws) {
+      console.log("saved jaws", savedJaws);
+      this.jaws = savedJaws;
+    }
   }
 
   _createClass(JawsAI, [{
-    key: "resetAI",
-    value: function resetAI() {
-      this.jaws = {
-        position: "",
-        numAttachedBarrels: 0,
-        currentTarget: null,
-        lastBeachAttacked: null,
-        path: [],
-        powerEnabledThisTurn: null,
-        powersAvailable: [],
-        turnsPlayed: 0,
-        swimmersEaten: 0,
-        status: JawsStatus.NORMAL,
-        activatedBarrelsThisTurn: [],
-        huntersVisitedThisTurn: [],
-        swimmersEatenThisTurn: {},
-        publicMessages: []
-      };
-      this.initGame();
-      this.logManager.reset();
-    }
-  }, {
     key: "realInRange",
     value: function realInRange(min, max) {
       return this.random.realInRange(min, max);
@@ -186199,11 +186185,16 @@ var JawsAI = /*#__PURE__*/function () {
     value: function numAttachedBarrelsToJaws() {
       return this.jaws.numAttachedBarrels;
     }
+  }, {
+    key: "Jaws",
+    get: function get() {
+      return this.jaws;
+    }
   }], [{
     key: "getInstance",
-    value: function getInstance(scene) {
+    value: function getInstance(scene, savedJaws) {
       if (!JawsAI.instance) {
-        JawsAI.instance = new JawsAI(scene);
+        JawsAI.instance = new JawsAI(scene, savedJaws);
       }
 
       return JawsAI.instance;
@@ -186916,7 +186907,102 @@ var FlavorTextsManager = /*#__PURE__*/function () {
 }();
 
 exports.default = FlavorTextsManager;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Characters":"consts/Characters.ts","~/consts/Languages":"consts/Languages.ts"}],"scenes/Game.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Characters":"consts/Characters.ts","~/consts/Languages":"consts/Languages.ts"}],"consts/GameDataToSave.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GameDataToSave = exports.LOCALSTORAGE_STRING = exports.LOCALSTORAGE_DATA_TO_SAVE = void 0;
+var GameDataToSave;
+exports.GameDataToSave = GameDataToSave;
+
+(function (GameDataToSave) {
+  GameDataToSave["TEMPORARY_LANGUAGE"] = "temporaryLanguage";
+  GameDataToSave["JAWS"] = "jaws";
+  GameDataToSave["HUNTER_POSITIONS"] = "hunterPositions";
+  GameDataToSave["BARREL_POSITIONS"] = "barrelPositions";
+  GameDataToSave["SWIMMER_POSITIONS"] = "swimmerPosittions";
+})(GameDataToSave || (exports.GameDataToSave = GameDataToSave = {}));
+
+var LOCALSTORAGE_STRING = "JawsAI_gamedata";
+exports.LOCALSTORAGE_STRING = LOCALSTORAGE_STRING;
+var LOCALSTORAGE_DATA_TO_SAVE = [GameDataToSave.TEMPORARY_LANGUAGE];
+exports.LOCALSTORAGE_DATA_TO_SAVE = LOCALSTORAGE_DATA_TO_SAVE;
+},{}],"utils/LocalStorage.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _GameDataToSave = require("~/consts/GameDataToSave");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var LocalStorage = /*#__PURE__*/function () {
+  function LocalStorage() {
+    _classCallCheck(this, LocalStorage);
+  }
+
+  _createClass(LocalStorage, [{
+    key: "loadGameData",
+    value: function loadGameData() {
+      var savedGameData = window.localStorage.getItem(_GameDataToSave.LOCALSTORAGE_STRING);
+
+      if (savedGameData) {
+        var parsedGameData = JSON.parse(savedGameData);
+
+        if (parsedGameData) {
+          console.log("game data found!", parsedGameData);
+
+          for (var prop in parsedGameData) {
+            return parsedGameData;
+          }
+        }
+      }
+    }
+  }, {
+    key: "removeItem",
+    value: function removeItem(key) {
+      var savedGameData = window.localStorage.getItem(_GameDataToSave.LOCALSTORAGE_STRING);
+
+      if (savedGameData) {
+        var parsedGameData = JSON.parse(savedGameData);
+
+        if (parsedGameData && parsedGameData[key]) {
+          delete parsedGameData[key];
+        }
+
+        this.saveGameData(parsedGameData);
+      }
+    }
+  }, {
+    key: "saveGameData",
+    value: function saveGameData(gameData) {
+      window.localStorage.setItem(_GameDataToSave.LOCALSTORAGE_STRING, JSON.stringify(gameData));
+    }
+  }], [{
+    key: "getInstance",
+    value: function getInstance() {
+      if (!LocalStorage.instance) {
+        LocalStorage.instance = new LocalStorage();
+      }
+
+      return LocalStorage.instance;
+    }
+  }]);
+
+  return LocalStorage;
+}();
+
+exports.default = LocalStorage;
+},{"~/consts/GameDataToSave":"consts/GameDataToSave.ts"}],"scenes/Game.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -186960,7 +187046,17 @@ var _TextButton = _interopRequireDefault(require("~/objects/TextButton"));
 
 var _SharkButtons = _interopRequireDefault(require("~/consts/SharkButtons"));
 
+var _Swimmer = _interopRequireDefault(require("~/objects/Swimmer"));
+
 var _FlavorTextsManager = _interopRequireDefault(require("~/utils/FlavorTextsManager"));
+
+var _Barrel = _interopRequireDefault(require("~/objects/Barrel"));
+
+var _GameDataToSave = require("~/consts/GameDataToSave");
+
+var _LocalStorage = _interopRequireDefault(require("~/utils/LocalStorage"));
+
+var _Actions = _interopRequireDefault(require("~/consts/Actions"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -187002,6 +187098,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     _this.lang = _Languages.default.English;
     _this.interactiveObjects = [];
     _this.hunters = [];
+    _this.localStorage = _LocalStorage.default.getInstance();
     _this.boardCenter = new _phaser.default.Geom.Point(0, 0);
     _this.numBarrelsObjetive = 2;
     return _this;
@@ -187033,12 +187130,16 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       }
 
       this.interactiveObjects = [];
+      this.hunters = [];
       this.locales = new _LocaleManager.default(this.lang);
       this.board = new _Board.default(this);
       this.flavorTexts = new _FlavorTextsManager.default(this.lang);
       this.add.existing(this.board);
-      this.jawsAI = _JawsAI.default.getInstance(this);
-      this.jawsAI.resetAI();
+      this.localStorage = _LocalStorage.default.getInstance();
+
+      var savedJaws = this.localStorage.loadGameData() && this.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.JAWS];
+
+      this.jawsAI = _JawsAI.default.getInstance(this, savedJaws);
     }
   }, {
     key: "preload",
@@ -187053,14 +187154,55 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     key: "create",
     value: function create() {
       console.log("CREATE!!!");
+      console.log(this.interactiveObjects);
       this.addCharacters();
       this.addButtons();
       this.bindButtonEvents();
       this.addSharkButtons();
       this.addBodyCounters();
       this.disableInteractiveObjects();
+      this.addBarrelsIfNeeded();
+      this.addSwimmersIfNeeded();
       this.launchPhaseTitle(_TitleType.default.EVENT_SHARK_PHASE);
-      console.log(this.interactiveObjects);
+    }
+  }, {
+    key: "addBarrelsIfNeeded",
+    value: function addBarrelsIfNeeded() {
+      var _a;
+
+      var savedBarrelPositions = this.localStorage.loadGameData() && this.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.BARREL_POSITIONS];
+
+      if (savedBarrelPositions) {
+        for (var index in savedBarrelPositions) {
+          var zone = (_a = this.board) === null || _a === void 0 ? void 0 : _a.getZoneByName(savedBarrelPositions[index]);
+          var barrel = new _Barrel.default(this, zone === null || zone === void 0 ? void 0 : zone.zoneCfg.barrelX, zone === null || zone === void 0 ? void 0 : zone.zoneCfg.barrelY, _Buttons.default.BARREL, zone);
+          this.add.existing(barrel);
+          this.interactiveObjects.push(barrel);
+        }
+      }
+    }
+  }, {
+    key: "addSwimmersIfNeeded",
+    value: function addSwimmersIfNeeded() {
+      var _a;
+
+      var savedSwimmerPositions = this.localStorage.loadGameData() && this.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.SWIMMER_POSITIONS];
+
+      if (savedSwimmerPositions) {
+        for (var index in savedSwimmerPositions) {
+          var swimmerData = savedSwimmerPositions[index];
+          var zone = (_a = this.board) === null || _a === void 0 ? void 0 : _a.getZoneByName(swimmerData["zoneName"]);
+          var numSwimmers = swimmerData["numSwimmers"];
+          var swimmer = new _Swimmer.default(this, zone.zoneCfg.swimmerX, zone.zoneCfg.swimmerY, "swimmer_sprite", zone);
+          swimmer.play("swimmerDroppedAnim");
+          this.add.existing(swimmer);
+          this.interactiveObjects.push(swimmer);
+
+          for (var q = 1; q < numSwimmers; q++) {
+            zone === null || zone === void 0 ? void 0 : zone.updateSwimmers(_Actions.default.ADD);
+          }
+        }
+      }
     }
   }, {
     key: "addBodyCounters",
@@ -187086,7 +187228,10 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       var _this3 = this;
 
       [_Characters.default.BRODY, _Characters.default.HOOPER, _Characters.default.QUINT].forEach(function (charName) {
-        var hunter = new _Hunter.default(_this3, 0, 0, charName);
+        var savedHunterPositions = _this3.localStorage.loadGameData() && _this3.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.HUNTER_POSITIONS];
+
+        var hunterSavedPosition = savedHunterPositions && savedHunterPositions[charName];
+        var hunter = new _Hunter.default(_this3, 0, 0, charName, hunterSavedPosition);
 
         _this3.interactiveObjects.push(hunter);
 
@@ -187450,11 +187595,53 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
         mainScene: this,
         type: type,
         callback: function callback() {
+          _this9.saveGameData();
+
           _this9.enableInteractiveObjects(type);
 
           _this9.scene.remove(_SceneKeys.default.PhaseTitle);
         }
       });
+    }
+  }, {
+    key: "saveGameData",
+    value: function saveGameData() {
+      var _this10 = this;
+
+      var _a, _b;
+
+      var gameData = {}; // jaws
+
+      gameData[_GameDataToSave.GameDataToSave.JAWS] = (_a = this.jawsAI) === null || _a === void 0 ? void 0 : _a.Jaws; // hunter positions
+
+      gameData[_GameDataToSave.GameDataToSave.HUNTER_POSITIONS] = {};
+      [_Characters.default.BRODY, _Characters.default.HOOPER, _Characters.default.QUINT].forEach(function (charName) {
+        var _a;
+
+        var hunterPosition = (_a = _this10.hunters.find(function (hunterItem) {
+          return hunterItem.hunterName == charName;
+        })) === null || _a === void 0 ? void 0 : _a.currentZone.zoneName;
+
+        if (hunterPosition) {
+          gameData[_GameDataToSave.GameDataToSave.HUNTER_POSITIONS][charName] = hunterPosition;
+        }
+      }); // barrel positions
+
+      gameData[_GameDataToSave.GameDataToSave.BARREL_POSITIONS] = (_b = this.jawsAI) === null || _b === void 0 ? void 0 : _b.barrelPositions(); // swimmers
+
+      var swimmersPositions = [];
+      this.board.mapZones.forEach(function (zone) {
+        var numSwimmers = _this10.jawsAI.findZoneBy(zone.zoneName).numSwimmers;
+
+        if (numSwimmers > 0) {
+          swimmersPositions.push({
+            "zoneName": zone.zoneName,
+            "numSwimmers": numSwimmers
+          });
+        }
+      });
+      gameData[_GameDataToSave.GameDataToSave.SWIMMER_POSITIONS] = swimmersPositions;
+      this.localStorage.saveGameData(gameData);
     }
   }, {
     key: "onEndTurnButtonPressed",
@@ -187496,7 +187683,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "attachBarrelToJaws",
     value: function attachBarrelToJaws() {
-      var _this10 = this;
+      var _this11 = this;
 
       var _a, _b;
 
@@ -187505,8 +187692,8 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       if (((_b = this.jawsAI) === null || _b === void 0 ? void 0 : _b.numAttachedBarrelsToJaws()) >= this.numBarrelsObjetive) {
         var callback = function callback(button, index) {
           switch (button.text) {
-            case _this10.getLocale("Yes"):
-              _this10.launchLogScreen();
+            case _this11.getLocale("Yes"):
+              _this11.launchLogScreen();
 
               break;
 
@@ -187514,7 +187701,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
               break;
           }
 
-          _this10.enableInteractiveObjects(_this10.currentPhaseTitle);
+          _this11.enableInteractiveObjects(_this11.currentPhaseTitle);
         };
 
         var dialog = new _Dialog.default(this, _DialogType.default.YES_NO, this.getLocale("Enough barrels! Do you want to end game?"), callback);
@@ -187524,17 +187711,17 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "launchLogScreen",
     value: function launchLogScreen() {
-      var _this11 = this;
+      var _this12 = this;
 
       this.scene.add(_SceneKeys.default.LogScreen, _LogScreen.default, true, {
         mainScene: this,
         boardCenter: this.boardCenter,
         language: this.lang,
         callback: function callback() {
-          _this11.scene.remove(_SceneKeys.default.LogScreen);
+          _this12.scene.remove(_SceneKeys.default.LogScreen);
 
-          _this11.scene.start(_SceneKeys.default.FinalOptions, {
-            language: _this11.lang
+          _this12.scene.start(_SceneKeys.default.FinalOptions, {
+            language: _this12.lang
           });
         }
       });
@@ -187561,7 +187748,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = Game;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Buttons":"consts/Buttons.ts","~/consts/Characters":"consts/Characters.ts","~/consts/DialogType":"consts/DialogType.ts","~/consts/TitleType":"consts/TitleType.ts","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/Board":"objects/Board.ts","~/objects/Dialog":"objects/Dialog.ts","~/objects/Hunter":"objects/Hunter.ts","~/objects/HunterButton":"objects/HunterButton.ts","~/objects/Michael":"objects/Michael.ts","~/utils/LocaleManager":"utils/LocaleManager.ts","~/utils/JawsAI":"utils/JawsAI.ts","./PhaseTitle":"scenes/PhaseTitle.ts","./LogScreen":"scenes/LogScreen.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/SharkButtons":"consts/SharkButtons.ts","~/utils/FlavorTextsManager":"utils/FlavorTextsManager.ts"}],"scenes/LanguageSelection.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Buttons":"consts/Buttons.ts","~/consts/Characters":"consts/Characters.ts","~/consts/DialogType":"consts/DialogType.ts","~/consts/TitleType":"consts/TitleType.ts","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/Board":"objects/Board.ts","~/objects/Dialog":"objects/Dialog.ts","~/objects/Hunter":"objects/Hunter.ts","~/objects/HunterButton":"objects/HunterButton.ts","~/objects/Michael":"objects/Michael.ts","~/utils/LocaleManager":"utils/LocaleManager.ts","~/utils/JawsAI":"utils/JawsAI.ts","./PhaseTitle":"scenes/PhaseTitle.ts","./LogScreen":"scenes/LogScreen.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/SharkButtons":"consts/SharkButtons.ts","~/objects/Swimmer":"objects/Swimmer.ts","~/utils/FlavorTextsManager":"utils/FlavorTextsManager.ts","~/objects/Barrel":"objects/Barrel.ts","~/consts/GameDataToSave":"consts/GameDataToSave.ts","~/utils/LocalStorage":"utils/LocalStorage.ts","~/consts/Actions":"consts/Actions.ts"}],"scenes/LanguageSelection.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -187574,6 +187761,10 @@ var _phaser = _interopRequireDefault(require("phaser"));
 var _SceneKeys = _interopRequireDefault(require("~/consts/SceneKeys"));
 
 var _Languages = _interopRequireDefault(require("~/consts/Languages"));
+
+var _GameDataToSave = require("~/consts/GameDataToSave");
+
+var _LocalStorage = _interopRequireDefault(require("~/utils/LocalStorage"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -187629,7 +187820,7 @@ var LanguageSelection = /*#__PURE__*/function (_Phaser$Scene) {
         frameWidth: 184,
         frameHeight: 92
       }) // fonts
-      .setPath("scripts/").script("webfont", "webfont.js"); //.script("rexUI", "rexuiplugin.min.js")
+      .setPath("scripts/").script("webfont", "webfont.js");
     }
   }, {
     key: "create",
@@ -187641,17 +187832,29 @@ var LanguageSelection = /*#__PURE__*/function (_Phaser$Scene) {
           families: ["Elite", "troika"]
         },
         active: function active() {
-          _this.add.image(_this.cameras.main.centerX - 128, _this.cameras.main.centerY, "flag_es").setOrigin(0.5).setInteractive().on(_phaser.default.Input.Events.POINTER_DOWN, function (pointer, x, y, event) {
-            _this.scene.start(_SceneKeys.default.Preloader, {
-              language: _Languages.default.Spanish
-            });
-          });
+          var localStorage = _LocalStorage.default.getInstance();
 
-          _this.add.image(_this.cameras.main.centerX + 128, _this.cameras.main.centerY, "flag_en").setOrigin(0.5).setInteractive().on(_phaser.default.Input.Events.POINTER_DOWN, function (pointer, x, y, event) {
+          var temporaryLanguage = localStorage.loadGameData() && localStorage.loadGameData()[_GameDataToSave.GameDataToSave.TEMPORARY_LANGUAGE];
+
+          if (temporaryLanguage) {
+            localStorage.removeItem(_GameDataToSave.GameDataToSave.TEMPORARY_LANGUAGE);
+
             _this.scene.start(_SceneKeys.default.Preloader, {
-              language: _Languages.default.English
+              language: temporaryLanguage
             });
-          });
+          } else {
+            _this.add.image(_this.cameras.main.centerX - 128, _this.cameras.main.centerY, "flag_es").setOrigin(0.5).setInteractive().on(_phaser.default.Input.Events.POINTER_DOWN, function (pointer, x, y, event) {
+              _this.scene.start(_SceneKeys.default.Preloader, {
+                language: _Languages.default.Spanish
+              });
+            });
+
+            _this.add.image(_this.cameras.main.centerX + 128, _this.cameras.main.centerY, "flag_en").setOrigin(0.5).setInteractive().on(_phaser.default.Input.Events.POINTER_DOWN, function (pointer, x, y, event) {
+              _this.scene.start(_SceneKeys.default.Preloader, {
+                language: _Languages.default.English
+              });
+            });
+          }
         }
       });
     }
@@ -187661,7 +187864,7 @@ var LanguageSelection = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = LanguageSelection;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/SceneKeys":"consts/SceneKeys.ts","~/consts/Languages":"consts/Languages.ts"}],"scenes/FinalOptions.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/SceneKeys":"consts/SceneKeys.ts","~/consts/Languages":"consts/Languages.ts","~/consts/GameDataToSave":"consts/GameDataToSave.ts","~/utils/LocalStorage":"utils/LocalStorage.ts"}],"scenes/FinalOptions.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -187676,6 +187879,10 @@ var _Languages = _interopRequireDefault(require("~/consts/Languages"));
 var _SceneKeys = _interopRequireDefault(require("~/consts/SceneKeys"));
 
 var _TextButton = _interopRequireDefault(require("~/objects/TextButton"));
+
+var _GameDataToSave = require("~/consts/GameDataToSave");
+
+var _LocalStorage = _interopRequireDefault(require("~/utils/LocalStorage"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -187737,9 +187944,12 @@ var FinalOptions = /*#__PURE__*/function (_Phaser$Scene) {
         fontSize: 30
       };
       var btn = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 50, "END GAME", buttonsCfg, "endGame", function () {
-        _this2.scene.start(_SceneKeys.default.Intro, {
-          language: _this2.lang
-        });
+        var gameData = {};
+        gameData[_GameDataToSave.GameDataToSave.TEMPORARY_LANGUAGE] = _this2.lang;
+
+        _LocalStorage.default.getInstance().saveGameData(gameData);
+
+        window.location.reload();
       }).setOrigin(0.5);
       this.add.existing(btn);
     }
@@ -187749,7 +187959,7 @@ var FinalOptions = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = FinalOptions;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/TextButton":"objects/TextButton.ts"}],"main.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/GameDataToSave":"consts/GameDataToSave.ts","~/utils/LocalStorage":"utils/LocalStorage.ts"}],"main.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -187825,7 +188035,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52515" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52077" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
