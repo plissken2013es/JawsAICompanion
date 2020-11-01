@@ -141,6 +141,24 @@ const Locale = {
     },
     "END GAME": {
         ES: "TERMINAR PARTIDA"
+    },
+    "I want to PLAY AGAIN": {
+        ES: "Quiero JUGAR OTRA VEZ"
+    },
+    "I want to suggest another board game SOLO AI App": {
+        ES: "Quiero sugerir una aplicación similar para un un juego de tablero"
+    },
+    "I'd like to rate this App": {
+        ES: "Quiero valorar esta App en Google Play"
+    },
+    "I want to invite the App creator to a coffee": {
+        ES: "Quiero invitar a un café al creador de la App"
+    },
+    "CONTINUE LAST GAME": {
+        ES: "CONTINUAR ÚLTIMA PARTIDA"
+    },
+    "NEW GAME": {
+        ES: "NUEVA PARTIDA"
     }
 }
 

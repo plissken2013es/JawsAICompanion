@@ -25,6 +25,7 @@ import Barrel from '~/objects/Barrel'
 import { GameDataToSave } from "~/consts/GameDataToSave"
 import LocalStorage from '~/utils/LocalStorage'
 import Actions from '~/consts/Actions'
+import LogManager from '~/utils/LogManager'
 
 export default class Game extends Phaser.Scene implements IGame {
 
@@ -42,6 +43,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
     private hunters: Hunter[] = []
     private jawsAI?: JawsAI
+    private logManager?: LogManager
     private localStorage: LocalStorage = LocalStorage.getInstance()
     private flavorTexts?: FlavorTextsManager
     private characterEyes?: Phaser.GameObjects.Image
@@ -60,7 +62,6 @@ export default class Game extends Phaser.Scene implements IGame {
     }
     
     init(data) {
-        console.log("INIT!!!")
         this.lang = data.language
         this.music = data.music
         if (data.numBarrelsObjetive) {
@@ -88,6 +89,8 @@ export default class Game extends Phaser.Scene implements IGame {
 
         const savedJaws = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.JAWS]
         this.jawsAI = JawsAI.getInstance(this, savedJaws)
+
+        this.logManager = LogManager.getInstance(this.logEnabled)
     }
 
 	preload() { 
@@ -99,19 +102,43 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     create() {
-        console.log("CREATE!!!")
-        console.log(this.interactiveObjects)
         this.addCharacters()
         this.addButtons()
         this.bindButtonEvents()
-        this.addSharkButtons()
         this.addBodyCounters()
         this.disableInteractiveObjects()
 
         this.addBarrelsIfNeeded()
         this.addSwimmersIfNeeded()
+        this.moveMichaelIfNeeded()
+        this.loadLogsIfNeeded()
 
-        this.launchPhaseTitle(TitleType.EVENT_SHARK_PHASE)
+        this.addProperPhaseButtons()
+
+        this.launchProperPhaseTitle()
+    }
+
+    addProperPhaseButtons() {
+        const savedPhaseTitle = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.CURRENT_PHASE_TITLE]
+        switch (savedPhaseTitle) {
+            case TitleType.CREW_PHASE:
+                this.addEndTurnButton()
+                this.addFlavorText()
+                break
+
+            default:
+                this.addSharkButtons()
+                break
+        }
+    }
+
+    launchProperPhaseTitle() {
+        const savedPhaseTitle = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.CURRENT_PHASE_TITLE]
+        if (savedPhaseTitle) {
+            this.launchPhaseTitle(savedPhaseTitle)
+        } else {
+            this.launchPhaseTitle(TitleType.EVENT_SHARK_PHASE)
+        }
     }
 
     addBarrelsIfNeeded() {
@@ -141,6 +168,21 @@ export default class Game extends Phaser.Scene implements IGame {
                     zone?.updateSwimmers(Actions.ADD)
                 }
             }
+        }
+    }
+
+    moveMichaelIfNeeded() {
+        const savedMichaelPosition = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.MICHAEL_POSITION]
+        if (savedMichaelPosition) {
+            const zone = this.board?.getZoneByName(savedMichaelPosition)
+            this.michael?.moveTo(zone)
+        }        
+    }
+
+    loadLogsIfNeeded() {
+        const savedLogs = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.SAVED_LOGS]
+        if (this.logManager && savedLogs) {
+            this.logManager.reset(savedLogs)
         }
     }
 
@@ -491,6 +533,21 @@ export default class Game extends Phaser.Scene implements IGame {
             }
         })
         gameData[GameDataToSave.SWIMMER_POSITIONS] = swimmersPositions
+
+        // michael
+        if (this.michael.linkedTo) {
+            gameData[GameDataToSave.MICHAEL_POSITION] = this.michael.linkedTo.zoneName
+        }
+
+        // saved logs
+        if (this.logManager) {
+            gameData[GameDataToSave.SAVED_LOGS] = this.logManager.savedLogs
+        }
+
+        // current phase
+        if (this.currentPhaseTitle) {
+            gameData[GameDataToSave.CURRENT_PHASE_TITLE] = this.currentPhaseTitle
+        }
 
         this.localStorage.saveGameData(gameData)
     }

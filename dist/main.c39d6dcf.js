@@ -182962,6 +182962,7 @@ var SceneKeys;
   SceneKeys["PhaseTitle"] = "phaseTitle";
   SceneKeys["LogScreen"] = "logScreen";
   SceneKeys["FinalOptions"] = "finalOptions";
+  SceneKeys["InitialOptions"] = "initialOptions";
 })(SceneKeys || (SceneKeys = {}));
 
 var _default = SceneKeys;
@@ -183101,7 +183102,10 @@ var Preloader = /*#__PURE__*/function (_Phaser$Scene) {
       .image("barrel", "barrel.png").image("bodycount", "bodycount.png").image("shark_bodycount", "shark_bodycount.png").spritesheet("shark_attack", "shark_attack_spritesheet.png", {
         frameWidth: 63,
         frameHeight: 50
-      }).image("jawsToken", "jaws.png") // intro
+      }).image("jawsToken", "jaws.png").spritesheet("attack_spritesheet", "attack_spritesheet.png", {
+        frameWidth: 69 * 4,
+        frameHeight: 33 * 4
+      }) // intro
       .setPath("img/intro/").image("corals2", "corals2.png").image("corals", "corals.png").image("shallow_sea", "shallow_sea.png").image("orca", "orca.png").image("jawsInWater", "jaws_in_water.png").image("jawsTitle", "jaws_title_alt.png").image("waterMovement", "water_movement1.png").image("waterMovement2", "water_movement2.png").spritesheet("diver", "diver_sprite.png", {
         frameWidth: 72,
         frameHeight: 60
@@ -183398,7 +183402,7 @@ var Intro = /*#__PURE__*/function (_Phaser$Scene) {
       var bso = this.sound.add("jaws_theme");
       bso.play();
       this.input.on(_phaser.default.Input.Events.POINTER_DOWN, function () {
-        _this2.scene.start(_SceneKeys.default.Game, {
+        _this2.scene.start(_SceneKeys.default.InitialOptions, {
           music: bso,
           language: _this2.lang
         });
@@ -184533,7 +184537,9 @@ var LogManager = /*#__PURE__*/function () {
   _createClass(LogManager, [{
     key: "reset",
     value: function reset() {
-      this._savedLogs = [];
+      var savedLogs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      this._savedLogs = savedLogs || [];
+      console.log("Log Manager logs:", this._savedLogs);
     }
   }, {
     key: "log",
@@ -185464,6 +185470,24 @@ var Locale = {
   },
   "END GAME": {
     ES: "TERMINAR PARTIDA"
+  },
+  "I want to PLAY AGAIN": {
+    ES: "Quiero JUGAR OTRA VEZ"
+  },
+  "I want to suggest another board game SOLO AI App": {
+    ES: "Quiero sugerir una aplicación similar para un un juego de tablero"
+  },
+  "I'd like to rate this App": {
+    ES: "Quiero valorar esta App en Google Play"
+  },
+  "I want to invite the App creator to a coffee": {
+    ES: "Quiero invitar a un café al creador de la App"
+  },
+  "CONTINUE LAST GAME": {
+    ES: "CONTINUAR ÚLTIMA PARTIDA"
+  },
+  "NEW GAME": {
+    ES: "NUEVA PARTIDA"
   }
 };
 
@@ -185581,7 +185605,6 @@ var JawsAI = /*#__PURE__*/function () {
     this.random = new Phaser.Math.RandomDataGenerator();
     this.dijkstraManager = _DijkstraManager.default.getInstance();
     this.logManager = _LogManager.default.getInstance(this.scene.logEnabled);
-    console.log("JAWSAI CONSTRUCTOR");
 
     if (savedJaws) {
       console.log("saved jaws", savedJaws);
@@ -186913,7 +186936,7 @@ exports.default = FlavorTextsManager;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.GameDataToSave = exports.LOCALSTORAGE_STRING = exports.LOCALSTORAGE_DATA_TO_SAVE = void 0;
+exports.GameDataToSave = exports.LOCALSTORAGE_STRING = void 0;
 var GameDataToSave;
 exports.GameDataToSave = GameDataToSave;
 
@@ -186923,12 +186946,14 @@ exports.GameDataToSave = GameDataToSave;
   GameDataToSave["HUNTER_POSITIONS"] = "hunterPositions";
   GameDataToSave["BARREL_POSITIONS"] = "barrelPositions";
   GameDataToSave["SWIMMER_POSITIONS"] = "swimmerPosittions";
+  GameDataToSave["MICHAEL_POSITION"] = "michaelPosition";
+  GameDataToSave["SAVED_LOGS"] = "savedLogs";
+  GameDataToSave["CURRENT_PHASE_TITLE"] = "currentPhaseTitle";
+  GameDataToSave["TEMPORARY_LANGUAGE"] = "temporaryLanguage";
 })(GameDataToSave || (exports.GameDataToSave = GameDataToSave = {}));
 
 var LOCALSTORAGE_STRING = "JawsAI_gamedata";
 exports.LOCALSTORAGE_STRING = LOCALSTORAGE_STRING;
-var LOCALSTORAGE_DATA_TO_SAVE = [GameDataToSave.TEMPORARY_LANGUAGE];
-exports.LOCALSTORAGE_DATA_TO_SAVE = LOCALSTORAGE_DATA_TO_SAVE;
 },{}],"utils/LocalStorage.ts":[function(require,module,exports) {
 "use strict";
 
@@ -186981,6 +187006,11 @@ var LocalStorage = /*#__PURE__*/function () {
 
         this.saveGameData(parsedGameData);
       }
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      window.localStorage.removeItem(_GameDataToSave.LOCALSTORAGE_STRING);
     }
   }, {
     key: "saveGameData",
@@ -187058,6 +187088,8 @@ var _LocalStorage = _interopRequireDefault(require("~/utils/LocalStorage"));
 
 var _Actions = _interopRequireDefault(require("~/consts/Actions"));
 
+var _LogManager = _interopRequireDefault(require("~/utils/LogManager"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -187109,7 +187141,6 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
     value: function init(data) {
       var _this2 = this;
 
-      console.log("INIT!!!");
       this.lang = data.language;
       this.music = data.music;
 
@@ -187140,6 +187171,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
       var savedJaws = this.localStorage.loadGameData() && this.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.JAWS];
 
       this.jawsAI = _JawsAI.default.getInstance(this, savedJaws);
+      this.logManager = _LogManager.default.getInstance(this.logEnabled);
     }
   }, {
     key: "preload",
@@ -187153,17 +187185,44 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
   }, {
     key: "create",
     value: function create() {
-      console.log("CREATE!!!");
-      console.log(this.interactiveObjects);
       this.addCharacters();
       this.addButtons();
       this.bindButtonEvents();
-      this.addSharkButtons();
       this.addBodyCounters();
       this.disableInteractiveObjects();
       this.addBarrelsIfNeeded();
       this.addSwimmersIfNeeded();
-      this.launchPhaseTitle(_TitleType.default.EVENT_SHARK_PHASE);
+      this.moveMichaelIfNeeded();
+      this.loadLogsIfNeeded();
+      this.addProperPhaseButtons();
+      this.launchProperPhaseTitle();
+    }
+  }, {
+    key: "addProperPhaseButtons",
+    value: function addProperPhaseButtons() {
+      var savedPhaseTitle = this.localStorage.loadGameData() && this.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.CURRENT_PHASE_TITLE];
+
+      switch (savedPhaseTitle) {
+        case _TitleType.default.CREW_PHASE:
+          this.addEndTurnButton();
+          this.addFlavorText();
+          break;
+
+        default:
+          this.addSharkButtons();
+          break;
+      }
+    }
+  }, {
+    key: "launchProperPhaseTitle",
+    value: function launchProperPhaseTitle() {
+      var savedPhaseTitle = this.localStorage.loadGameData() && this.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.CURRENT_PHASE_TITLE];
+
+      if (savedPhaseTitle) {
+        this.launchPhaseTitle(savedPhaseTitle);
+      } else {
+        this.launchPhaseTitle(_TitleType.default.EVENT_SHARK_PHASE);
+      }
     }
   }, {
     key: "addBarrelsIfNeeded",
@@ -187202,6 +187261,27 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
             zone === null || zone === void 0 ? void 0 : zone.updateSwimmers(_Actions.default.ADD);
           }
         }
+      }
+    }
+  }, {
+    key: "moveMichaelIfNeeded",
+    value: function moveMichaelIfNeeded() {
+      var _a, _b;
+
+      var savedMichaelPosition = this.localStorage.loadGameData() && this.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.MICHAEL_POSITION];
+
+      if (savedMichaelPosition) {
+        var zone = (_a = this.board) === null || _a === void 0 ? void 0 : _a.getZoneByName(savedMichaelPosition);
+        (_b = this.michael) === null || _b === void 0 ? void 0 : _b.moveTo(zone);
+      }
+    }
+  }, {
+    key: "loadLogsIfNeeded",
+    value: function loadLogsIfNeeded() {
+      var savedLogs = this.localStorage.loadGameData() && this.localStorage.loadGameData()[_GameDataToSave.GameDataToSave.SAVED_LOGS];
+
+      if (this.logManager && savedLogs) {
+        this.logManager.reset(savedLogs);
       }
     }
   }, {
@@ -187640,7 +187720,22 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
           });
         }
       });
-      gameData[_GameDataToSave.GameDataToSave.SWIMMER_POSITIONS] = swimmersPositions;
+      gameData[_GameDataToSave.GameDataToSave.SWIMMER_POSITIONS] = swimmersPositions; // michael
+
+      if (this.michael.linkedTo) {
+        gameData[_GameDataToSave.GameDataToSave.MICHAEL_POSITION] = this.michael.linkedTo.zoneName;
+      } // saved logs
+
+
+      if (this.logManager) {
+        gameData[_GameDataToSave.GameDataToSave.SAVED_LOGS] = this.logManager.savedLogs;
+      } // current phase
+
+
+      if (this.currentPhaseTitle) {
+        gameData[_GameDataToSave.GameDataToSave.CURRENT_PHASE_TITLE] = this.currentPhaseTitle;
+      }
+
       this.localStorage.saveGameData(gameData);
     }
   }, {
@@ -187748,7 +187843,7 @@ var Game = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = Game;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Buttons":"consts/Buttons.ts","~/consts/Characters":"consts/Characters.ts","~/consts/DialogType":"consts/DialogType.ts","~/consts/TitleType":"consts/TitleType.ts","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/Board":"objects/Board.ts","~/objects/Dialog":"objects/Dialog.ts","~/objects/Hunter":"objects/Hunter.ts","~/objects/HunterButton":"objects/HunterButton.ts","~/objects/Michael":"objects/Michael.ts","~/utils/LocaleManager":"utils/LocaleManager.ts","~/utils/JawsAI":"utils/JawsAI.ts","./PhaseTitle":"scenes/PhaseTitle.ts","./LogScreen":"scenes/LogScreen.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/SharkButtons":"consts/SharkButtons.ts","~/objects/Swimmer":"objects/Swimmer.ts","~/utils/FlavorTextsManager":"utils/FlavorTextsManager.ts","~/objects/Barrel":"objects/Barrel.ts","~/consts/GameDataToSave":"consts/GameDataToSave.ts","~/utils/LocalStorage":"utils/LocalStorage.ts","~/consts/Actions":"consts/Actions.ts"}],"scenes/LanguageSelection.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Buttons":"consts/Buttons.ts","~/consts/Characters":"consts/Characters.ts","~/consts/DialogType":"consts/DialogType.ts","~/consts/TitleType":"consts/TitleType.ts","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/Board":"objects/Board.ts","~/objects/Dialog":"objects/Dialog.ts","~/objects/Hunter":"objects/Hunter.ts","~/objects/HunterButton":"objects/HunterButton.ts","~/objects/Michael":"objects/Michael.ts","~/utils/LocaleManager":"utils/LocaleManager.ts","~/utils/JawsAI":"utils/JawsAI.ts","./PhaseTitle":"scenes/PhaseTitle.ts","./LogScreen":"scenes/LogScreen.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/SharkButtons":"consts/SharkButtons.ts","~/objects/Swimmer":"objects/Swimmer.ts","~/utils/FlavorTextsManager":"utils/FlavorTextsManager.ts","~/objects/Barrel":"objects/Barrel.ts","~/consts/GameDataToSave":"consts/GameDataToSave.ts","~/utils/LocalStorage":"utils/LocalStorage.ts","~/consts/Actions":"consts/Actions.ts","~/utils/LogManager":"utils/LogManager.ts"}],"scenes/LanguageSelection.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -187943,7 +188038,7 @@ var FinalOptions = /*#__PURE__*/function (_Phaser$Scene) {
         },
         fontSize: 30
       };
-      var btn = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 50, "END GAME", buttonsCfg, "endGame", function () {
+      var btnPlayAgain = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 200, "I want to PLAY AGAIN", buttonsCfg, "playAgain", function () {
         var gameData = {};
         gameData[_GameDataToSave.GameDataToSave.TEMPORARY_LANGUAGE] = _this2.lang;
 
@@ -187951,7 +188046,19 @@ var FinalOptions = /*#__PURE__*/function (_Phaser$Scene) {
 
         window.location.reload();
       }).setOrigin(0.5);
-      this.add.existing(btn);
+      this.add.existing(btnPlayAgain);
+      var btnRateApp = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 100, "I'd like to rate this App", buttonsCfg, "rateApp", function () {
+        window.open("https://play.google.com/store/apps/details?id=com.islamoncloa.elSecretoDeIslaMoncloa", "_blank");
+      }).setOrigin(0.5);
+      this.add.existing(btnRateApp);
+      var btnSuggest = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 150, "I want to suggest another board game SOLO AI App", buttonsCfg, "suggest", function () {
+        window.open("https://ko-fi.com/luisquin", "_blank");
+      }).setOrigin(0.5);
+      this.add.existing(btnSuggest);
+      var btnKofi = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 50, "I want to invite the App creator to a coffee", buttonsCfg, "kofi", function () {
+        window.open("https://ko-fi.com/luisquin", "_blank");
+      }).setOrigin(0.5);
+      this.add.existing(btnKofi);
     }
   }]);
 
@@ -187959,7 +188066,131 @@ var FinalOptions = /*#__PURE__*/function (_Phaser$Scene) {
 }(_phaser.default.Scene);
 
 exports.default = FinalOptions;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/GameDataToSave":"consts/GameDataToSave.ts","~/utils/LocalStorage":"utils/LocalStorage.ts"}],"main.ts":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/TextButton":"objects/TextButton.ts","~/consts/GameDataToSave":"consts/GameDataToSave.ts","~/utils/LocalStorage":"utils/LocalStorage.ts"}],"scenes/InitialOptions.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _phaser = _interopRequireDefault(require("phaser"));
+
+var _Languages = _interopRequireDefault(require("~/consts/Languages"));
+
+var _SceneKeys = _interopRequireDefault(require("~/consts/SceneKeys"));
+
+var _TextButton = _interopRequireDefault(require("~/objects/TextButton"));
+
+var _LocalStorage = _interopRequireDefault(require("~/utils/LocalStorage"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var InitialOptions = /*#__PURE__*/function (_Phaser$Scene) {
+  _inherits(InitialOptions, _Phaser$Scene);
+
+  var _super = _createSuper(InitialOptions);
+
+  function InitialOptions() {
+    var _this;
+
+    _classCallCheck(this, InitialOptions);
+
+    _this = _super.call(this, _SceneKeys.default.InitialOptions);
+    _this.lang = _Languages.default.English;
+    _this.localStorage = _LocalStorage.default.getInstance();
+    return _this;
+  }
+
+  _createClass(InitialOptions, [{
+    key: "init",
+    value: function init(data) {
+      this.lang = data.language;
+      this.music = data.music;
+      this.localStorage = _LocalStorage.default.getInstance();
+    }
+  }, {
+    key: "create",
+    value: function create() {
+      var savedGameData = this.localStorage.loadGameData();
+
+      if (savedGameData) {
+        this.createButtons();
+      } else {
+        this.scene.start(_SceneKeys.default.Game, {
+          music: this.music,
+          language: this.lang
+        });
+      }
+    }
+  }, {
+    key: "createButtons",
+    value: function createButtons() {
+      var _this2 = this;
+
+      var jawsAttack = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, "attack_spritesheet").setOrigin(0.5, 1);
+      var attackAnim = this.anims.create({
+        key: "attackAnim",
+        frames: this.anims.generateFrameNumbers("attack_spritesheet", {}),
+        frameRate: 8,
+        repeat: -1
+      });
+      jawsAttack.play("attackAnim");
+      var buttonsCfg = {
+        fill: "#fff",
+        backgroundColor: "#004258",
+        padding: {
+          x: 6,
+          y: 6
+        },
+        fontSize: 30
+      };
+      var btnPlayAgain = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 200, "CONTINUE LAST GAME", buttonsCfg, "continueGame", function () {
+        _this2.scene.start(_SceneKeys.default.Game, {
+          music: _this2.music,
+          language: _this2.lang
+        });
+      }).setOrigin(0.5);
+      this.add.existing(btnPlayAgain);
+      var btnRateApp = new _TextButton.default(this, this.cameras.main.centerX, this.cameras.main.height - 150, "NEW GAME", buttonsCfg, "newGame", function () {
+        _this2.localStorage.reset();
+
+        _this2.scene.start(_SceneKeys.default.Game, {
+          music: _this2.music,
+          language: _this2.lang
+        });
+      }).setOrigin(0.5);
+      this.add.existing(btnRateApp);
+    }
+  }]);
+
+  return InitialOptions;
+}(_phaser.default.Scene);
+
+exports.default = InitialOptions;
+},{"phaser":"../node_modules/phaser/dist/phaser.js","~/consts/Languages":"consts/Languages.ts","~/consts/SceneKeys":"consts/SceneKeys.ts","~/objects/TextButton":"objects/TextButton.ts","~/utils/LocalStorage":"utils/LocalStorage.ts"}],"main.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -187981,6 +188212,8 @@ var _LanguageSelection = _interopRequireDefault(require("./scenes/LanguageSelect
 
 var _FinalOptions = _interopRequireDefault(require("./scenes/FinalOptions"));
 
+var _InitialOptions = _interopRequireDefault(require("./scenes/InitialOptions"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var config = {
@@ -188001,13 +188234,13 @@ var config = {
     autoCenter: _phaser.default.Scale.CENTER_BOTH
   },
   backgroundColor: "#00001a",
-  scene: [_LanguageSelection.default, _Preloader.default, _StudiosLogo.default, _Intro.default, _Game.default, _FinalOptions.default]
+  scene: [_LanguageSelection.default, _Preloader.default, _StudiosLogo.default, _InitialOptions.default, _Intro.default, _Game.default, _FinalOptions.default]
 };
 
 var _default = new _phaser.default.Game(config);
 
 exports.default = _default;
-},{"phaser":"../node_modules/phaser/dist/phaser.js","./scenes/Preloader":"scenes/Preloader.ts","./scenes/StudiosLogo":"scenes/StudiosLogo.ts","./scenes/Intro":"scenes/Intro.ts","./scenes/Game":"scenes/Game.ts","./scenes/LanguageSelection":"scenes/LanguageSelection.ts","./scenes/FinalOptions":"scenes/FinalOptions.ts"}],"C:/Users/luisq/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"phaser":"../node_modules/phaser/dist/phaser.js","./scenes/Preloader":"scenes/Preloader.ts","./scenes/StudiosLogo":"scenes/StudiosLogo.ts","./scenes/Intro":"scenes/Intro.ts","./scenes/Game":"scenes/Game.ts","./scenes/LanguageSelection":"scenes/LanguageSelection.ts","./scenes/FinalOptions":"scenes/FinalOptions.ts","./scenes/InitialOptions":"scenes/InitialOptions.ts"}],"C:/Users/luisq/AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -188035,7 +188268,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52077" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64420" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -89,7 +89,7 @@ export default class Intro extends Phaser.Scene {
         bso.play()
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-            this.scene.start(SceneKeys.Game, { music: bso, language: this.lang })
+            this.scene.start(SceneKeys.InitialOptions, { music: bso, language: this.lang })
         })
     }
 

@@ -97,6 +97,7 @@ export default class Preloader extends Phaser.Scene {
             .image("shark_bodycount", "shark_bodycount.png")
             .spritesheet("shark_attack", "shark_attack_spritesheet.png", { frameWidth: 63, frameHeight: 50 })
             .image("jawsToken", "jaws.png")
+            .spritesheet("attack_spritesheet", "attack_spritesheet.png", { frameWidth: 69*4, frameHeight: 33*4 })
 
             // intro
             .setPath("img/intro/")

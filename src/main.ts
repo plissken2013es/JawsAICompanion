@@ -9,6 +9,7 @@ import Game from './scenes/Game'
 import LanguageSelection from './scenes/LanguageSelection'
 import FinalOptions from './scenes/FinalOptions'
 import LogScreen from './scenes/LogScreen'
+import InitialOptions from './scenes/InitialOptions'
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
@@ -26,7 +27,7 @@ const config: Phaser.Types.Core.GameConfig = {
 		autoCenter: Phaser.Scale.CENTER_BOTH
 	},
 	backgroundColor: "#00001a",
-	scene: [LanguageSelection, Preloader, StudiosLogo, Intro, Game, FinalOptions]
+	scene: [LanguageSelection, Preloader, StudiosLogo, InitialOptions, Intro, Game, FinalOptions]
 }
 
 export default new Phaser.Game(config)

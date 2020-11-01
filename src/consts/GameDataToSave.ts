@@ -3,12 +3,13 @@ enum GameDataToSave {
     JAWS = "jaws",
     HUNTER_POSITIONS = "hunterPositions",
     BARREL_POSITIONS = "barrelPositions",
-    SWIMMER_POSITIONS = "swimmerPosittions"
+    SWIMMER_POSITIONS = "swimmerPosittions",
+    MICHAEL_POSITION = "michaelPosition",
+    SAVED_LOGS = "savedLogs",
+    CURRENT_PHASE_TITLE = "currentPhaseTitle",
+    TEMPORARY_LANGUAGE = "temporaryLanguage"
 }
 
 const LOCALSTORAGE_STRING = "JawsAI_gamedata"
-const LOCALSTORAGE_DATA_TO_SAVE = [
-    GameDataToSave.TEMPORARY_LANGUAGE
-]
 
-export { LOCALSTORAGE_DATA_TO_SAVE, LOCALSTORAGE_STRING, GameDataToSave }
+export { LOCALSTORAGE_STRING, GameDataToSave }

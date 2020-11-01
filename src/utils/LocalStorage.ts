@@ -1,4 +1,4 @@
-import { LOCALSTORAGE_DATA_TO_SAVE, LOCALSTORAGE_STRING, GameDataToSave } from "~/consts/GameDataToSave"
+import { LOCALSTORAGE_STRING, GameDataToSave } from "~/consts/GameDataToSave"
 
 export default class LocalStorage {
     
@@ -36,6 +36,10 @@ export default class LocalStorage {
             }
             this.saveGameData(parsedGameData)
         }
+    }
+
+    reset() {
+        window.localStorage.removeItem(LOCALSTORAGE_STRING)
     }
 
     saveGameData(gameData: any) {

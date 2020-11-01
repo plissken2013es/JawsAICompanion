@@ -115,7 +115,6 @@ export default class JawsAI {
         this.random = new Phaser.Math.RandomDataGenerator()
         this.dijkstraManager = DijkstraManager.getInstance()
         this.logManager = LogManager.getInstance(this.scene.logEnabled)
-        console.log("JAWSAI CONSTRUCTOR")
         if (savedJaws) {
             console.log("saved jaws", savedJaws)
             this.jaws = savedJaws

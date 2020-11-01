@@ -6,7 +6,8 @@ enum SceneKeys {
     Game = "game",
     PhaseTitle = "phaseTitle",
     LogScreen = "logScreen",
-    FinalOptions = "finalOptions"
+    FinalOptions = "finalOptions",
+    InitialOptions = "initialOptions"
 }
 
 export default SceneKeys
