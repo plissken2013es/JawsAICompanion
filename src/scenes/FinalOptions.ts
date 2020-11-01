@@ -39,7 +39,7 @@ export default class FinalOptions extends Phaser.Scene {
         this.add.existing(btnPlayAgain)
 
         const btnRateApp = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 100, 
-            "I'd like to rate this App", buttonsCfg, "rateApp", 
+            "I'd like to rate this App and/or suggest another one", buttonsCfg, "rateApp", 
             () => {
                 window.open("https://play.google.com/store/apps/details?id=com.islamoncloa.elSecretoDeIslaMoncloa", "_blank")
             })
@@ -47,9 +47,9 @@ export default class FinalOptions extends Phaser.Scene {
         this.add.existing(btnRateApp)
 
         const btnSuggest = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 150, 
-            "I want to suggest another board game SOLO AI App", buttonsCfg, "suggest", 
+            "I want to get the source code of this App", buttonsCfg, "suggest", 
             () => {
-                window.open("https://ko-fi.com/luisquin", "_blank")
+                window.open("https://github.com/plissken2013es/islaMoncloa_codigoFuente", "_blank")
             })
             .setOrigin(0.5)
         this.add.existing(btnSuggest)

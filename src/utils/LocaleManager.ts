@@ -145,11 +145,11 @@ const Locale = {
     "I want to PLAY AGAIN": {
         ES: "Quiero JUGAR OTRA VEZ"
     },
-    "I want to suggest another board game SOLO AI App": {
-        ES: "Quiero sugerir una aplicación similar para un un juego de tablero"
+    "I want to get the source code of this App": {
+        ES: "Quiero ver/descargar el código fuente de esta App"
     },
-    "I'd like to rate this App": {
-        ES: "Quiero valorar esta App en Google Play"
+    "I'd like to rate this App and/or suggest another one": {
+        ES: "Quiero valorar esta App y/o sugerir una  para otro juego"
     },
     "I want to invite the App creator to a coffee": {
         ES: "Quiero invitar a un café al creador de la App"
