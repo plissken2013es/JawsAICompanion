@@ -22,7 +22,6 @@ export default class LogManager {
 
     reset(savedLogs: string[] = []) {
         this._savedLogs = savedLogs || []
-        console.log("Log Manager logs:", this._savedLogs)
     }
 
     log(msg: string | string[], saveLogMsg?: boolean) {

@@ -4,12 +4,14 @@ import SceneKeys from "~/consts/SceneKeys"
 import TextButton from '~/objects/TextButton'
 import { GameDataToSave } from "~/consts/GameDataToSave"
 import LocalStorage from '~/utils/LocalStorage'
+import LocaleManager from '~/utils/LocaleManager'
 
 export default class InitialOptions extends Phaser.Scene {
     
     private lang: string = Languages.English
     private music?: Phaser.Sound.BaseSound
     private localStorage: LocalStorage = LocalStorage.getInstance()
+    private locales?: LocaleManager
 
     constructor() {
         super(SceneKeys.InitialOptions)
@@ -19,6 +21,7 @@ export default class InitialOptions extends Phaser.Scene {
         this.lang = data.language
         this.music = data.music
         this.localStorage = LocalStorage.getInstance()
+        this.locales = new LocaleManager(this.lang)
     }
 
     create() {
@@ -48,7 +51,7 @@ export default class InitialOptions extends Phaser.Scene {
         }
 
         const btnPlayAgain = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 200, 
-            "CONTINUE LAST GAME", buttonsCfg, "continueGame", 
+            this.locales?.getLocale("CONTINUE LAST GAME"), buttonsCfg, "continueGame", 
             () => {
                 this.scene.start(SceneKeys.Game, { music: this.music, language: this.lang })
             })
@@ -56,7 +59,7 @@ export default class InitialOptions extends Phaser.Scene {
         this.add.existing(btnPlayAgain)
         
         const btnRateApp = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 150, 
-            "NEW GAME", buttonsCfg, "newGame", 
+            this.locales?.getLocale("NEW GAME"), buttonsCfg, "newGame", 
             () => {
                 this.localStorage.reset()
                 this.scene.start(SceneKeys.Game, { music: this.music, language: this.lang })

@@ -4,10 +4,12 @@ import SceneKeys from "~/consts/SceneKeys"
 import TextButton from '~/objects/TextButton'
 import { GameDataToSave } from "~/consts/GameDataToSave"
 import LocalStorage from '~/utils/LocalStorage'
+import LocaleManager from '~/utils/LocaleManager'
 
 export default class FinalOptions extends Phaser.Scene {
     
     private lang: string = Languages.English
+    private locales?: LocaleManager
 
     constructor() {
         super(SceneKeys.FinalOptions)
@@ -15,6 +17,7 @@ export default class FinalOptions extends Phaser.Scene {
 
     init(data) {
         this.lang = data.language
+        this.locales = new LocaleManager(this.lang)
     }
 
     create() {
@@ -28,7 +31,7 @@ export default class FinalOptions extends Phaser.Scene {
         }
 
         const btnPlayAgain = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 200, 
-            "I want to PLAY AGAIN", buttonsCfg, "playAgain", 
+            this.locales?.getLocale("I want to PLAY AGAIN"), buttonsCfg, "playAgain", 
             () => {
                 let gameData = {}
                 gameData[GameDataToSave.TEMPORARY_LANGUAGE] = this.lang
@@ -39,7 +42,7 @@ export default class FinalOptions extends Phaser.Scene {
         this.add.existing(btnPlayAgain)
 
         const btnRateApp = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 100, 
-            "I'd like to rate this App and/or suggest another one", buttonsCfg, "rateApp", 
+            this.locales?.getLocale("I'd like to rate this App and/or suggest another one"), buttonsCfg, "rateApp", 
             () => {
                 window.open("https://play.google.com/store/apps/details?id=com.islamoncloa.elSecretoDeIslaMoncloa", "_blank")
             })
@@ -47,7 +50,7 @@ export default class FinalOptions extends Phaser.Scene {
         this.add.existing(btnRateApp)
 
         const btnSuggest = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 150, 
-            "I want to get the source code of this App", buttonsCfg, "suggest", 
+            this.locales?.getLocale("I want to get the source code of this App"), buttonsCfg, "suggest", 
             () => {
                 window.open("https://github.com/plissken2013es/islaMoncloa_codigoFuente", "_blank")
             })
@@ -55,7 +58,7 @@ export default class FinalOptions extends Phaser.Scene {
         this.add.existing(btnSuggest)
 
         const btnKofi = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 50, 
-            "I want to invite the App creator to a coffee", buttonsCfg, "kofi", 
+            this.locales?.getLocale("I want to invite the App creator to a coffee"), buttonsCfg, "kofi", 
             () => {
                 window.open("https://ko-fi.com/luisquin", "_blank")
             })

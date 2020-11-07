@@ -4,6 +4,7 @@ import SceneKeys from "~/consts/SceneKeys"
 import IGame from '~/objects/IGame'
 import ScrollablePanel from '~/objects/ScrollablePanel'
 import TextButton from '~/objects/TextButton'
+import LocaleManager from '~/utils/LocaleManager'
 import LogManager from '~/utils/LogManager'
 
 export default class LogScreen extends Phaser.Scene {
@@ -15,6 +16,7 @@ export default class LogScreen extends Phaser.Scene {
     private panel: any
     private lang: string = Languages.English
     private logManager: LogManager
+    private locales?: LocaleManager
 
     private COLOR_PRIMARY: number = 0x004258
     private COLOR_LIGHT: number = 0x7b5e57
@@ -38,6 +40,7 @@ export default class LogScreen extends Phaser.Scene {
         }
         if (data.language) {
             this.lang = data.language
+            this.locales = new LocaleManager(this.lang)
         }
     }
 
@@ -59,7 +62,7 @@ export default class LogScreen extends Phaser.Scene {
         }
 
         const btn = new TextButton(this, this.boardCenter.x, this.cameras.main.height - 50, 
-            "END GAME", buttonsCfg, "endGame", this.callback)
+            this.locales?.getLocale("END GAME"), buttonsCfg, "endGame", this.callback)
             .setOrigin(0.5)
         this.add.existing(btn)
     }

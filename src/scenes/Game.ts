@@ -29,7 +29,7 @@ import LogManager from '~/utils/LogManager'
 
 export default class Game extends Phaser.Scene implements IGame {
 
-    readonly logEnabled:boolean = true // deactivate for DIST version
+    readonly logEnabled:boolean = false // deactivate for DIST version
 
     private lang: string = Languages.English
     private music?: Phaser.Sound.BaseSound
@@ -87,10 +87,10 @@ export default class Game extends Phaser.Scene implements IGame {
         this.add.existing(this.board)
         this.localStorage = LocalStorage.getInstance()
 
+        this.logManager = LogManager.getInstance(this.logEnabled)
+
         const savedJaws = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.JAWS]
         this.jawsAI = JawsAI.getInstance(this, savedJaws)
-
-        this.logManager = LogManager.getInstance(this.logEnabled)
     }
 
 	preload() { 
@@ -114,6 +114,8 @@ export default class Game extends Phaser.Scene implements IGame {
         this.loadLogsIfNeeded()
 
         this.addProperPhaseButtons()
+
+        this.jawsAI.updateBodyCount()
 
         this.launchProperPhaseTitle()
     }

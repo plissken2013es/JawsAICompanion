@@ -116,7 +116,6 @@ export default class JawsAI {
         this.dijkstraManager = DijkstraManager.getInstance()
         this.logManager = LogManager.getInstance(this.scene.logEnabled)
         if (savedJaws) {
-            console.log("saved jaws", savedJaws)
             this.jaws = savedJaws
         }
     }
@@ -322,6 +321,10 @@ export default class JawsAI {
     
         let quintIsFarSoTakeYourChances = this.oppositeBeachFromCurrent() == this.currentQuintPosition() ? this.random.realInRange(0, 10) : 0
         return quintIsFarSoTakeYourChances > 4 // TO-DO: change this value if Jaws fear Quint?
+    }
+
+    updateBodyCount() {
+        this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels)
     }
 
     // Start JAWS POWERS -----------------

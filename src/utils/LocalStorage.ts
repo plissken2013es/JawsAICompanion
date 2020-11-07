@@ -19,7 +19,6 @@ export default class LocalStorage {
         if (savedGameData) {
             const parsedGameData = JSON.parse(savedGameData)
             if (parsedGameData) {
-                console.log("game data found!", parsedGameData)
                 for (let prop in parsedGameData) {
                     return parsedGameData
                 }
