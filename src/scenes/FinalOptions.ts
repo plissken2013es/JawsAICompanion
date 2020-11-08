@@ -49,15 +49,17 @@ export default class FinalOptions extends Phaser.Scene {
             })
             .setOrigin(0.5)
         this.add.existing(btnRateApp)
+        */
 
         const btnSuggest = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 150, 
             this.locales?.getLocale("I want to get the source code of this App"), buttonsCfg, "suggest", 
             () => {
-                window.open("https://github.com/plissken2013es/islaMoncloa_codigoFuente", "_blank")
+                window.open("https://github.com/plissken2013es/JawsAICompanion", "_blank")
             })
             .setOrigin(0.5)
         this.add.existing(btnSuggest)
 
+        /*
         const btnKofi = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 50, 
             this.locales?.getLocale("I want to invite the App creator to a coffee"), buttonsCfg, "kofi", 
             () => {
