@@ -449,7 +449,7 @@ export default class Game extends Phaser.Scene implements IGame {
 
     findSwimmerAt(beach: Zone): Swimmer {
         const swimmer = this.interactiveObjects.find(swimmer => {
-            if (swimmer && swimmer.linkedTo) {
+            if (swimmer && swimmer.linkedTo && swimmer.eatenByJaws) {
                 return swimmer.linkedTo.zoneName === beach.zoneName
             }
             return false
@@ -620,5 +620,20 @@ export default class Game extends Phaser.Scene implements IGame {
     updateBodyCount(swimmers: number, barrels: number) {
         this.swimmersEatenText.text = swimmers
         this.barrelsAttachedToJawsText.text = barrels
+
+        if (swimmers >= 9) {
+            const callback = (button, index) => {
+                switch (button.text) {
+                    case this.getLocale("Yes"):
+                        this.launchLogScreen()
+                        break
+                    default:
+                        break
+                }
+                this.enableInteractiveObjects(this.currentPhaseTitle)
+            }
+            const dialog = new Dialog(this, DialogType.YES_NO, this.getLocale("The shark had eaten a lot of people. End game?"), callback)
+            this.disableInteractiveObjects()
+        }
     }
 }

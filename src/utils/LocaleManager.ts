@@ -136,6 +136,9 @@ const Locale = {
     "Enough barrels! Do you want to end game?": {
         ES: "¡Suficientes bidones! ¿Terminamos la partida?"
     },
+    "The shark had eaten a lot of people. End game?": {
+        ES: "El tiburón se ha hartado de comer gente. ¿Terminamos?"
+    },
     "THE JAWS LOG": {
         ES: "EL DIARIO DE TIBURÓN"
     },
@@ -149,7 +152,7 @@ const Locale = {
         ES: "Quiero ver/descargar el código fuente de esta App"
     },
     "I'd like to rate this App and/or suggest another one": {
-        ES: "Quiero valorar esta App y/o sugerir una  para otro juego"
+        ES: "Quiero valorar esta App y/o sugerir otro juego"
     },
     "I want to invite the App creator to a coffee": {
         ES: "Quiero invitar a un café al creador de la App"

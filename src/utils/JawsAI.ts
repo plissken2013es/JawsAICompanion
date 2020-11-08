@@ -532,9 +532,11 @@ export default class JawsAI {
     jawsEatsSwimmerAt(beach: Zone) {
         this.logManager.log(this.scene.getLocale("Jaws eats 1 swimmer on beach ") + this.scene.getLocale(beach.zoneName), true)
         const swimmer = this.scene.findSwimmerAt(beach)
-        swimmer.eatenByJaws()
-        this.jaws.swimmersEaten += 1
-        this.jaws.swimmersEatenThisTurn[beach.zoneName]["swimmers"]++
+        if (swimmer && swimmer.eatenByJaws) {
+            swimmer.eatenByJaws()
+            this.jaws.swimmersEaten += 1
+            this.jaws.swimmersEatenThisTurn[beach.zoneName]["swimmers"]++
+        }
     }
 
     jawsMovesTo(destination, isGardnersBoat) {

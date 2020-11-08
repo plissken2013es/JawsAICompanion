@@ -41,6 +41,7 @@ export default class FinalOptions extends Phaser.Scene {
             .setOrigin(0.5)
         this.add.existing(btnPlayAgain)
 
+        /*
         const btnRateApp = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 100, 
             this.locales?.getLocale("I'd like to rate this App and/or suggest another one"), buttonsCfg, "rateApp", 
             () => {
@@ -64,6 +65,7 @@ export default class FinalOptions extends Phaser.Scene {
             })
             .setOrigin(0.5)
         this.add.existing(btnKofi)
+        */
     }
 
 }
