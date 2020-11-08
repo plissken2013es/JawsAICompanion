@@ -1,11 +1,9 @@
-![phaser3-parceljs-template](https://user-images.githubusercontent.com/2236153/71606463-37a0da80-2b2e-11ea-9b5f-5d26ccc84f91.png)
+![phaser3-parceljs-template](https://github.com/plissken2013es/Jaws/blob/main/public/img/jaws_pixel.png)
 
-# Phaser3 + TypeScript + Parcel Template
-> For people who want to spend time making Phaser 3 games in TypeScript instead of configuring build tools.
+# Jaws Board game AI Companion. Based on Phaser3 + TypeScript + Parcel
+> We're gonna need a bigger boat.
 
 ![License](https://img.shields.io/badge/license-MIT-green)
-
-This is a TypeScript specific fork of [phaser3-parcel-template](https://github.com/ourcade/phaser3-parcel-template).
 
 ## Prerequisites
 
@@ -36,13 +34,13 @@ npm install -g parcel-bundler
 Clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/ourcade/phaser3-typescript-parcel-template.git
+git clone https://github.com/plissken2013es/Jaws.git
 ```
 
-This will create a folder named `phaser3-typescript-parcel-template`. You can specify a different folder name like this:
+This will create a folder named `Jaws`. You can specify a different folder name like this:
 
 ```bash
-git clone https://github.com/ourcade/phaser3-typescript-parcel-template.git my-folder-name
+git clone https://github.com/plissken2013es/Jaws.git my-folder-name
 ```
 
 Go into your new project folder and install dependencies:
@@ -74,20 +72,22 @@ Production files will be placed in the `dist` folder. Then upload those files to
     ├── node_modules
     ├── public
     ├── src
+    │   ├── consts
+    │   │   ├── ZoneNames.ts
+    │   ├── objects
+    │   │   ├── Swimmer.ts    
     │   ├── scenes
-    │   │   ├── HelloWorldScene.ts
+    │   │   ├── Intro.ts
+    │   ├── utils
+    │   │   ├── JawsAI.ts    
     │   ├── index.html
     │   ├── main.ts
     ├── package.json
 ```
 
-The contents of this template is the basic [Phaser3 getting started example](http://phaser.io/tutorials/getting-started-phaser3/part5).
-
-This template assumes you will want to organize your code into multiple files and use TypeScript.
-
 TypeScript files are intended for the `src` folder. `main.ts` is the entry point referenced by `index.html`.
 
-Other than that there is no opinion on how you should structure your project. There is a `scenes` folder in `src` where the `HelloWorldScene.ts` lives but you can do whatever you want.
+If you want to know how the shark thinks / behaves... go directly to the `JawsAI.ts` code logic.
 
 ## Static Assets
 
@@ -97,21 +97,17 @@ Example `public` structure:
 
 ```
     public
-    ├── images
-    │   ├── my-image.png
-    ├── music
+    ├── img
+    │   ├── attack.png
+    ├── audio
     │   ├── ...
-    ├── sfx
+    ├── fonts
     │   ├── ...
+    ├── scripts
+    │   ├── ...    
 ```
 
-They can then be loaded by Phaser with `this.image.load('my-image', 'images/my-image.png')`.
-
-## TypeScript ESLint
-
-This template uses a basic `typescript-eslint` set up for code linting.
-
-It does not aim to be opinionated.
+Phaser framework loads those assets like this: `this.image.load('my-image', 'images/my-image.png')`.
 
 ## Dev Server Port
 
@@ -133,4 +129,4 @@ Change 8000 to whatever you want.
 
 ## License
 
-[MIT License](https://github.com/ourcade/phaser3-typescript-parcel-template/blob/master/LICENSE)
+[MIT License](https://github.com/plissken2013es/Jaws/blob/master/LICENSE)
