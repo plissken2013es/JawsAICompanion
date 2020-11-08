@@ -439,7 +439,7 @@ export default class Game extends Phaser.Scene implements IGame {
 
     findBarrelAt(beachName: string): Barrel {
         const barrel = this.interactiveObjects.find(barrel => {
-            if (barrel && barrel.linkedTo) {
+            if (barrel && barrel.linkedTo && barrel.animate) {
                 return barrel.linkedTo.zoneName === beachName
             }
             return false

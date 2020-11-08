@@ -485,7 +485,10 @@ export default class JawsAI {
             this.logManager.log(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels), true)
             this.jaws.publicMessages.push(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels))
             this.jaws.activatedBarrelsThisTurn.forEach((zoneName) => {
-                this.scene.findBarrelAt(zoneName).animate()
+                const barrel = this.scene.findBarrelAt(zoneName)
+                if (barrel && barrel.animate) {
+                    barrel.animate()
+                }
             })
         }
         if (isGardnersBoat && this.jaws.huntersVisitedThisTurn.length > 0) {
