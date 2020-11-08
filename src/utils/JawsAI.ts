@@ -312,7 +312,7 @@ export default class JawsAI {
 
     shouldAmbushAtBeach(numActions): boolean {
         let beach = this.findZoneBy(this.jaws.position)
-        let beachName = beach.name
+        let beachName = beach.zoneName
         return this.isJawsAtBeach() && beach.hasSomethingToEat() && numActions < 2 && this.jaws.lastBeachAttacked != beachName
     }
     
@@ -571,12 +571,12 @@ export default class JawsAI {
             let isGoingToRunAwayOrHide = this.shouldUseSpeedBurstPowerToRunAway(numActions) || this.shouldUseOutOfSightPower()
             let conditionsArePositive = numActions > 1 || this.shouldTakeMyChancesBecauseQuintIsFarAway() || isGoingToRunAwayOrHide
             if (beach.hasSomethingToEat() && conditionsArePositive) {
-                this.jaws.lastBeachAttacked = beach.name
+                this.jaws.lastBeachAttacked = beach.zoneName
                 
                 // Feeding Frenzy
                 if (this.shouldUseFeedingFrenzy(isGoingToRunAwayOrHide)) {
                     if (!isGoingToRunAwayOrHide) {
-                        this.logManager.log(this.scene.getLocale("Jaws uses FEEDING FRENZY power at ") + this.scene.getLocale(beach.name), true)
+                        this.logManager.log(this.scene.getLocale("Jaws uses FEEDING FRENZY power at ") + this.scene.getLocale(beach.zoneName), true)
                         this.useJawsPower(PowerTokens.FEEDING_FRENZY)
                         if (beach.isMichaelHere) {
                             this.jawsEatsMichaelAt(beach)     
@@ -596,7 +596,7 @@ export default class JawsAI {
                     this.jawsEatsSwimmerAt(beach)    
                 }
                 return true
-            } else if (!beach.hasSomethingToEat() && this.jaws.lastBeachAttacked == beach.name && numActions == 1) {
+            } else if (!beach.hasSomethingToEat() && this.jaws.lastBeachAttacked == beach.zoneName && numActions == 1) {
                 // if shark have just eaten all swimmers in a beach, maybe it should remain in that beach for a while...
                 if (this.integerInRange(1, 10) < 4) { // let's say 30% of times
                     return true
