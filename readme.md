@@ -1,4 +1,4 @@
-![phaser3-parceljs-template](https://github.com/plissken2013es/Jaws/blob/main/public/img/jaws_pixel.png)
+![phaser3-parceljs-template](https://github.com/plissken2013es/JawsAICompanion/blob/main/public/img/jaws_pixel.png)
 
 # Jaws Board game AI Companion. Based on Phaser3 + TypeScript + Parcel
 > We're gonna need a bigger boat.
