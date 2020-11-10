@@ -41,15 +41,13 @@ export default class FinalOptions extends Phaser.Scene {
             .setOrigin(0.5)
         this.add.existing(btnPlayAgain)
 
-        /*
         const btnRateApp = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 100, 
             this.locales?.getLocale("I'd like to rate this App and/or suggest another one"), buttonsCfg, "rateApp", 
             () => {
-                window.open("https://play.google.com/store/apps/details?id=com.islamoncloa.elSecretoDeIslaMoncloa", "_blank")
+                window.open("https://play.google.com/store/apps/details?id=com.netlify.JawsCompanion", "_blank")
             })
             .setOrigin(0.5)
         this.add.existing(btnRateApp)
-        */
 
         const btnSuggest = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 150, 
             this.locales?.getLocale("I want to get the source code of this App"), buttonsCfg, "suggest", 
@@ -59,7 +57,6 @@ export default class FinalOptions extends Phaser.Scene {
             .setOrigin(0.5)
         this.add.existing(btnSuggest)
 
-        /*
         const btnKofi = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 50, 
             this.locales?.getLocale("I want to invite the App creator to a coffee"), buttonsCfg, "kofi", 
             () => {
@@ -67,7 +64,7 @@ export default class FinalOptions extends Phaser.Scene {
             })
             .setOrigin(0.5)
         this.add.existing(btnKofi)
-        */
+
     }
 
 }
