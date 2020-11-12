@@ -59,6 +59,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
     private swimmersEatenText?: Phaser.GameObjects.Text
     private barrelsAttachedToJawsText?: Phaser.GameObjects.Text
+    private usedPowersText?: Phaser.GameObjects.Text
     private numBarrelsObjetive: number = 2
 
 	constructor() {
@@ -216,6 +217,10 @@ export default class Game extends Phaser.Scene implements IGame {
         this.barrelsAttachedToJawsText = this.add.text(x + 90, y + 50, "0", textCfg)
         this.barrelsAttachedToJawsText.setOrigin(0.5)
         this.add.image(x + 90, y, "shark_bodycount")
+
+        this.add.image(x + 44, y, "jaws_power")
+        this.usedPowersText = this.add.text(x + 44, y + 50, "0", textCfg)
+        this.usedPowersText.setOrigin(0.5)
     }
 
     addCharacters() {
@@ -630,9 +635,10 @@ export default class Game extends Phaser.Scene implements IGame {
         })
     }
 
-    updateBodyCount(swimmers: number, barrels: number) {
+    updateBodyCount(swimmers: number, barrels: number, usedPowers: number) {
         this.swimmersEatenText.text = swimmers
         this.barrelsAttachedToJawsText.text = barrels
+        this.usedPowersText.text = usedPowers
 
         if (swimmers >= 9) {
             const callback = (button, index) => {

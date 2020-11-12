@@ -117,6 +117,8 @@ export default class JawsAI {
         this.logManager = LogManager.getInstance(this.scene.logEnabled)
         if (savedJaws) {
             this.jaws = savedJaws
+        } else {
+            this.initGame()
         }
     }
 
@@ -324,7 +326,7 @@ export default class JawsAI {
     }
 
     updateBodyCount() {
-        this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels)
+        this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels, 4 - this.jaws.powersAvailable.length)
     }
 
     // Start JAWS POWERS -----------------
@@ -514,7 +516,7 @@ export default class JawsAI {
                 this.findZoneBy(beachName)!.showAttack()
             }
         }
-        this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels)
+        this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels, 4 - this.jaws.powersAvailable.length)
         if (this.jaws.powerEnabledThisTurn) {
             this.jaws.publicMessages.push(this.scene.getLocale("Jaws has used a POWER."))
         }
@@ -624,7 +626,7 @@ export default class JawsAI {
 
     attachBarrelToJaws() {
         this.jaws.numAttachedBarrels += 1
-        this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels)
+        this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels, 4 - this.jaws.powersAvailable.length)
     }
 
     numAttachedBarrelsToJaws(): number {

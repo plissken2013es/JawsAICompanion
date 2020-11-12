@@ -19,7 +19,7 @@ interface IGame extends Phaser.Scene {
     isJawsVisible(): boolean
     getJawsPosition(): string
     launchMessage(msg: string, isSharkTurnFinished?: boolean)
-    updateBodyCount(swimmers: number, barrels: number)
+    updateBodyCount(swimmers: number, barrels: number, usedPowers: number)
     attachBarrelToJaws()
 }
 
