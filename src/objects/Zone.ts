@@ -45,7 +45,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         })
         const sharkAttack = this.scene.add.sprite(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, "shark_attack")
         const chompSnd = this.scene.sound.add("chomp")
-        chompSnd.play({ volume: 0.5, loop: true })
+        if (this.scene.audioOn) chompSnd.play({ volume: 0.5, loop: true })
         sharkAttack.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
             sharkAttack.destroy()
             chompSnd.destroy()
@@ -56,7 +56,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
     showShark() {
         const jawsToken = this.scene.add.image(this.zoneCfg.sharkX, this.zoneCfg.sharkY, "jawsToken").setOrigin(0.5, 1)
         const jawsAppear = this.scene.sound.add("jaws_appear")
-        jawsAppear.play({ volume: 0.5 })
+        if (this.scene.audioOn) jawsAppear.play({ volume: 0.5 })
         this.scene.tweens.add({
             targets: jawsToken,
             alpha: 0,

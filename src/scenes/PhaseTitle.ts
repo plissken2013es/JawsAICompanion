@@ -80,7 +80,7 @@ export default class PhaseTitle extends Phaser.Scene {
         maskShape.x = -this.cameras.main.width
         bloodBg.mask = new Phaser.Display.Masks.GeometryMask(this, maskShape)
         const phaseAudio = this.sound.add("phase_title")
-        phaseAudio.play({ volume: 0.5 })
+        if (this.mainScene?.audioOn) phaseAudio.play({ volume: 0.4 })
         this.tweens.add({
             targets: maskShape,
             x: 0,
@@ -97,7 +97,7 @@ export default class PhaseTitle extends Phaser.Scene {
         })
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
-            phaseAudio.play({ volume: 0.5 })
+            if (this.mainScene?.audioOn) phaseAudio.play({ volume: 0.4 })
             this.tweens.add({
                 targets: maskShape,
                 x: this.cameras.main.width,

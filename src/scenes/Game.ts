@@ -33,6 +33,10 @@ export default class Game extends Phaser.Scene implements IGame {
 
     private lang: string = Languages.English
     private music?: Phaser.Sound.BaseSound
+    private _audioOn: Boolean = true
+    public get audioOn(): Boolean {
+        return this._audioOn
+    }
     private board?: Board
     private locales?: LocaleManager
     private dialog?: any
@@ -104,6 +108,7 @@ export default class Game extends Phaser.Scene implements IGame {
     create() {
         this.addCharacters()
         this.addButtons()
+        this.addAudioButton()
         this.bindButtonEvents()
         this.addBodyCounters()
         this.disableInteractiveObjects()
@@ -186,6 +191,14 @@ export default class Game extends Phaser.Scene implements IGame {
         if (this.logManager && savedLogs) {
             this.logManager.reset(savedLogs)
         }
+    }
+
+    addAudioButton() {
+        const audioButton = this.add.sprite(this.cameras.main.width - 30, 15, "audio_button")
+        audioButton.setInteractive().on(Phaser.Input.Events.POINTER_DOWN, (pointer) => {
+            this._audioOn = !this._audioOn
+            audioButton.setFrame(this.audioOn ? 0 : 1)
+        })
     }
 
     addBodyCounters() {
@@ -331,7 +344,7 @@ export default class Game extends Phaser.Scene implements IGame {
                 return true
             }
         })
-    } 
+    }
 
     bindButtonEvents() {
         const dragSounds = [
@@ -356,7 +369,7 @@ export default class Game extends Phaser.Scene implements IGame {
                 gameObject.play(gameObject.spriteSelectAnim)
             }
             const snd = Phaser.Utils.Array.GetRandom(dragSounds)
-            snd.play()
+            if (this.audioOn) snd.play()
         })
     
         this.input.on(Phaser.Input.Events.DRAG, (pointer, gameObject, dragX, dragY) => {    
@@ -366,7 +379,7 @@ export default class Game extends Phaser.Scene implements IGame {
 
         this.input.on(Phaser.Input.Events.DRAG_END, (pointer, gameObject, dropped) => {
             const snd = Phaser.Utils.Array.GetRandom(dropSounds)
-            snd.play()
+            if (this.audioOn) snd.play()
             if (gameObject.shouldRemove) { // barrels and swimmers can be removed
                 gameObject.shouldRemove()
             }

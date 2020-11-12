@@ -24,7 +24,7 @@ export default class Barrel extends Phaser.GameObjects.Sprite {
 
     animate() {
         const sirenSnd = this.scene.sound.add("siren")
-        sirenSnd.play({ volume: 0.25 })
+        if (this.scene.audioOn) sirenSnd.play({ volume: 0.25 })
         this.scene.tweens.add({
             targets: this,
             alpha: 0,

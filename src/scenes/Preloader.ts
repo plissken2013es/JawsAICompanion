@@ -90,6 +90,7 @@ export default class Preloader extends Phaser.Scene {
             // bg && UI
             .image("blood_bg", "blood_bg.png")
             .image("jaws_pixel", "jaws_pixel.png")
+            .spritesheet("audio_button", "audio_button.png", { frameWidth: 50, frameHeight: 33 })
 
             // other tokens
             .image("barrel", "barrel.png")

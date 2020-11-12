@@ -151,7 +151,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
 
     animate() {
         const splashSnd = this.scene.sound.add("splash")
-        splashSnd.play({ volume: 0.4 })
+        if (this.scene.audioOn) splashSnd.play({ volume: 0.4 })
         this.scene.tweens.add({
             targets: this,
             alpha: 0,
