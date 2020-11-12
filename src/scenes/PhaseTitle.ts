@@ -81,6 +81,14 @@ export default class PhaseTitle extends Phaser.Scene {
         bloodBg.mask = new Phaser.Display.Masks.GeometryMask(this, maskShape)
         const phaseAudio = this.sound.add("phase_title")
         if (this.mainScene?.audioOn) phaseAudio.play({ volume: 0.4 })
+
+        const touchIconAnim = this.anims.create({
+            key: "touchIconAnim",
+            frames: this.anims.generateFrameNumbers("touch_icon", {}),
+            frameRate: 6,
+            yoyo: true,
+            repeat: -1
+        })
         this.tweens.add({
             targets: maskShape,
             x: 0,
@@ -92,6 +100,10 @@ export default class PhaseTitle extends Phaser.Scene {
                 } else {
                     displaySharkTexts()
                 }
+                this.time.delayedCall(2500, () => {
+                    const touchIcon = this.add.sprite(this.boardCenter.x, this.boardCenter.y + 150, "touch_icon").setOrigin(0.5)
+                    touchIcon.anims.play(touchIconAnim)
+                }, [], this)
             },
             onCompleteScope: this
         })
