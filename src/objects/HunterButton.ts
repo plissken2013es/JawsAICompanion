@@ -11,6 +11,7 @@ import DialogType from '~/consts/DialogType'
 import IGame from '~/objects/IGame'
 import Characters from '~/consts/Characters'
 import LogManager from '~/utils/LogManager'
+import TitleType from '~/consts/TitleType'
 
 export default class HunterButton extends Phaser.GameObjects.Sprite {
 
@@ -47,7 +48,7 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
         }
     }
 
-    addTo(zone: Zone) {
+    addTo(zone: Zone, phaseTitle: string) {
         const scene = this.scene as IGame
         switch (this.buttonName) {
             case Buttons.ADD_BARREL:
@@ -56,35 +57,49 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                 const posX = zone.zoneCfg.barrelX
                 const posY = zone.zoneCfg.barrelY
                 if (zone.zoneCfg && posX && posY) {
-                    const msg = scene.getLocale("Are you sure that you want to launch a barrel\nat zone ") + scene.getLocale(zone.zoneName) + "?"
-                    const callback = (button, index) => {
-                        switch (button.text) {
-                            case scene.getLocale("Yes"):
-                                this.logManager.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(zone.zoneName), true)
-                                if (scene.getJawsPosition() == zone.zoneName) {
-                                    scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"))
-                                    this.logManager.log(scene.getLocale("You've attached a barrel to the shark!"), true)
-                                    zone.showShark()
-                                    scene.attachBarrelToJaws()
-                                } else {
-                                    if (zone.hasBarrels()) {
-                                        zone.updateBarrels(Actions.ADD)
-                                    } else {
-                                        const barrel = new Barrel(this.scene, posX, posY, Buttons.BARREL, zone)
-                                        this.scene.add.existing(barrel)
-                                        scene.interactiveObjects.push(barrel)
-                                    }
+                    switch (phaseTitle) {
+                        case TitleType.EVENT_SHARK_PHASE:
+                            if (zone.hasBarrels()) {
+                                zone.updateBarrels(Actions.ADD)
+                            } else {
+                                const barrel = new Barrel(this.scene, posX, posY, Buttons.BARREL, zone)
+                                this.scene.add.existing(barrel)
+                                scene.interactiveObjects.push(barrel)
+                            }
+                            break
+
+                        case TitleType.CREW_PHASE:
+                            const msg = scene.getLocale("Are you sure that you want to launch a barrel\nat zone ") + scene.getLocale(zone.zoneName) + "?"
+                            const callback = (button, index) => {
+                                switch (button.text) {
+                                    case scene.getLocale("Yes"):
+                                        this.logManager.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(zone.zoneName), true)
+                                        if (scene.getJawsPosition() == zone.zoneName) {
+                                            scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"))
+                                            this.logManager.log(scene.getLocale("You've attached a barrel to the shark!"), true)
+                                            zone.showShark()
+                                            scene.attachBarrelToJaws()
+                                        } else {
+                                            if (zone.hasBarrels()) {
+                                                zone.updateBarrels(Actions.ADD)
+                                            } else {
+                                                const barrel = new Barrel(this.scene, posX, posY, Buttons.BARREL, zone)
+                                                this.scene.add.existing(barrel)
+                                                scene.interactiveObjects.push(barrel)
+                                            }
+                                        }
+                                        break
+                                    default:
+                                        break
                                 }
-                                break
-                            default:
-                                break
-                        }
-                        scene.enableInteractiveObjects(scene.currentPhaseTitle)
+                                scene.enableInteractiveObjects(scene.currentPhaseTitle)
+                            }
+                            this.scene.time.delayedCall(150, () => {
+                                const dialog = new Dialog(scene, DialogType.YES_NO, msg, callback)
+                                scene.disableInteractiveObjects()
+                            }, [], this)
+                            break
                     }
-                    this.scene.time.delayedCall(150, () => {
-                        const dialog = new Dialog(scene, DialogType.YES_NO, msg, callback)
-                        scene.disableInteractiveObjects()
-                    }, [], this)
                 }
                 break
 

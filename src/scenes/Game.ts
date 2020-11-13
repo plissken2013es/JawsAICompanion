@@ -407,7 +407,7 @@ export default class Game extends Phaser.Scene implements IGame {
                 gameObject.moveTo(dropZone)
             }
             if (gameObject.addTo) { // barrels and swimmers can be added
-                gameObject.addTo(dropZone)
+                gameObject.addTo(dropZone, this._currentPhaseTitle)
             }
         })
     }
@@ -425,7 +425,8 @@ export default class Game extends Phaser.Scene implements IGame {
         }
         switch (currentPhase) {
             case TitleType.EVENT_SHARK_PHASE:
-                if (name == Buttons.ADD_SWIMMER || name == Buttons.MICHAEL) {
+                if (name == Buttons.ADD_SWIMMER || name == Buttons.ADD_BARREL ||
+                    name == Buttons.BARREL || name == Buttons.MICHAEL) {
                     return true
                 }
                 return false
