@@ -72,13 +72,15 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                             const msg = scene.getLocale("Are you sure that you want to launch a barrel\nat zone ") + scene.getLocale(zone.zoneName) + "?"
                             const callback = (button, index) => {
                                 switch (button.text) {
-                                    case scene.getLocale("Yes"):
+                                    case scene.getLocale("Yes"):                                        
+                                        zone.showShark()
+                                        scene.attachBarrelToJaws()
                                         this.logManager.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(zone.zoneName), true)
                                         if (scene.getJawsPosition() == zone.zoneName) {
-                                            scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"))
                                             this.logManager.log(scene.getLocale("You've attached a barrel to the shark!"), true)
-                                            zone.showShark()
-                                            scene.attachBarrelToJaws()
+                                            if (scene.numAttachedBarrelsToJaws() < scene.numBarrelsObjetive) {
+                                                scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"))                                                
+                                            }
                                         } else {
                                             if (zone.hasBarrels()) {
                                                 zone.updateBarrels(Actions.ADD)

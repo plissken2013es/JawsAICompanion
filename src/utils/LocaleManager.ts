@@ -70,6 +70,9 @@ const Locale = {
     "Nothing on the water...": {
         ES: "No hay nada en el agua..."
     },
+    "Brody is not at beach!": {
+        ES: "Brody no está en la playa."
+    },
     "Jaws current mission now is: ": {
         ES: "La misión actual del tiburón es: "
     },
@@ -79,8 +82,8 @@ const Locale = {
     "Jaws 3 actions": {
         ES: "Tiburón 3 acciones"
     },
-    "Jaws 4 actions": {
-        ES: "Tiburón 4 acciones"
+    "Jaws 4 actions (wrong shark)": {
+        ES: "Tiburón (equivocado) 4 acciones"
     },
     "Jaws (Gardner's boat)": {
         ES: "Tiburón (Bote de Gardner)"

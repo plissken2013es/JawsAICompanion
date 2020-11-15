@@ -31,7 +31,7 @@ export default class Barrel extends Phaser.GameObjects.Sprite {
             duration: 666,
             ease: Phaser.Math.Easing.Expo,
             yoyo: true,
-            repeat: 6,
+            repeat: 10,
             onComplete: () => {
                 sirenSnd.destroy()
             },

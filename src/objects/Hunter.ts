@@ -76,16 +76,21 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
     }
 
     askUserAboutBinoculars() {
-        if (this.hunterName != Characters.BRODY || !this.currentZone.zoneCfg.isBeach) return
+        if (this.hunterName != Characters.BRODY) return
 
         const scene = this.scene as IGame
 
         let failMsg = scene.getLocale("Nothing on the water...")
         let successMsg = scene.getLocale("SHAAARK!!")
+        let notBeach = scene.getLocale("Brody is not at beach!")
 
         const callback = (button, index) => {
             switch (button.text) {
                 case scene.getLocale("Yes"):
+                    if (!this.currentZone.zoneCfg.isBeach) {
+                        scene.launchMessage(notBeach)
+                        return
+                    }
                     if (!scene.isJawsVisible()) {
                         scene.launchMessage(failMsg)
                         return

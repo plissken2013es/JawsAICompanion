@@ -4,7 +4,7 @@ import Swimmer from './Swimmer';
 import Zone from './Zone';
 
 interface IGame extends Phaser.Scene {
-    boardCenter: Phaser.Geom.Point
+    readonly boardCenter: Phaser.Geom.Point
     interactiveObjects: Phaser.GameObjects.GameObject[]
     currentPhaseTitle: string
     logEnabled: boolean
@@ -18,9 +18,11 @@ interface IGame extends Phaser.Scene {
     findBarrelAt(beachName: string): Barrel
     isJawsVisible(): boolean
     getJawsPosition(): string
-    launchMessage(msg: string, isSharkTurnFinished?: boolean)
+    launchMessage(msg: string, isSharkTurnFinished?: boolean, delay?: number)
     updateBodyCount(swimmers: number, barrels: number, usedPowers: number)
     attachBarrelToJaws()
+    numAttachedBarrelsToJaws(): number
+    readonly numBarrelsObjetive: number
 }
 
 export default IGame

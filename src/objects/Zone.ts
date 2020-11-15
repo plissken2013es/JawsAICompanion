@@ -41,11 +41,11 @@ export default class Zone extends Phaser.GameObjects.Sprite {
             frames: this.scene.anims.generateFrameNumbers("shark_attack", {}),
             frameRate: 4,
             yoyo: true,
-            repeat: 3
+            repeat: 6
         })
         const sharkAttack = this.scene.add.sprite(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, "shark_attack")
         const chompSnd = this.scene.sound.add("chomp")
-        if (this.scene.audioOn) chompSnd.play({ volume: 0.5, loop: true })
+        if (this.scene.audioOn) chompSnd.play({ volume: 0.25, loop: true })
         sharkAttack.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
             sharkAttack.destroy()
             chompSnd.destroy()
@@ -63,7 +63,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
             duration: 666,
             ease: Phaser.Math.Easing.Expo,
             yoyo: true,
-            repeat: 6,
+            repeat: 10,
             onComplete: () => {
                 jawsAppear.destroy()
                 jawsToken.destroy()

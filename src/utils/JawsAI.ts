@@ -333,7 +333,7 @@ export default class JawsAI {
 
     shouldUseSpeedBurstPowerToRunAway(numActions): boolean {
         if (!this.jaws.powerEnabledThisTurn && this.jaws.powersAvailable.includes(PowerTokens.SPEED_BURST) && numActions == 2) {
-            if (this.integerInRange(2, 4) < this.jaws.turnsPlayed) {
+            if (this.integerInRange(0, 4) <= this.jaws.turnsPlayed) {
                 this.useJawsPower(PowerTokens.SPEED_BURST)
                 return true
             }
@@ -356,7 +356,7 @@ export default class JawsAI {
 
     shouldUseOutOfSightPower(): boolean {
         if (!this.jaws.powerEnabledThisTurn && this.jaws.powersAvailable.includes(PowerTokens.OUT_OF_SIGHT)) {
-            if (this.integerInRange(2, 4) < this.jaws.turnsPlayed) {
+            if (this.integerInRange(0, 4) <= this.jaws.turnsPlayed) {
                 this.useJawsPower(PowerTokens.OUT_OF_SIGHT)
                 return true
             }
@@ -482,6 +482,7 @@ export default class JawsAI {
             this.logManager.log(this.scene.getLocale("Jaws remaining actions: ") + numActions, true)
         }
 
+        let shouldIncreaseMessageDelay = false
         if (this.jaws.activatedBarrelsThisTurn.length > 0) {
             const shuffledBarrels = Phaser.Utils.Array.Shuffle(this.jaws.activatedBarrelsThisTurn)
             this.logManager.log(this.scene.getLocale("Jaws has activated barrels at: ") + this.scene.getLocale(shuffledBarrels), true)
@@ -490,6 +491,7 @@ export default class JawsAI {
                 const barrel = this.scene.findBarrelAt(zoneName)
                 if (barrel && barrel.animate) {
                     barrel.animate()
+                    shouldIncreaseMessageDelay = true
                 }
             })
         }
@@ -501,6 +503,7 @@ export default class JawsAI {
             this.jaws.publicMessages.push(this.scene.getLocale("Jaws has kicked captain: ") + captains)
             this.jaws.huntersVisitedThisTurn.forEach((captain) => {
                 captain.animate()
+                shouldIncreaseMessageDelay = true
             })
         }
         for (let beachName in this.jaws.swimmersEatenThisTurn) {
@@ -514,6 +517,7 @@ export default class JawsAI {
             const jawsFeeds = numSwimmersEaten > 0 || this.jaws.swimmersEatenThisTurn[beachName]["michael"]
             if (beachName && jawsFeeds) {
                 this.findZoneBy(beachName)!.showAttack()
+                shouldIncreaseMessageDelay = true
             }
         }
         this.scene.updateBodyCount(this.jaws.swimmersEaten, this.jaws.numAttachedBarrels, 4 - this.jaws.powersAvailable.length)
@@ -521,7 +525,7 @@ export default class JawsAI {
             this.jaws.publicMessages.push(this.scene.getLocale("Jaws has used a POWER."))
         }
         this.jaws.publicMessages.push(this.scene.getLocale("Jaws ends its turn."))
-        this.scene.launchMessage(this.jaws.publicMessages.join("\n"), true)
+        this.scene.launchMessage(this.jaws.publicMessages.join("\n"), true, shouldIncreaseMessageDelay ? 5000 : 500)
         this.jaws.publicMessages = []
         this.logManager.log("----------------" + this.scene.getLocale("END TURN ") + this.jaws.turnsPlayed + "-------------", true)
     }
