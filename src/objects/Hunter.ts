@@ -82,7 +82,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
 
         let failMsg = scene.getLocale("Nothing on the water...")
         let successMsg = scene.getLocale("SHAAARK!!")
-        let notBeach = scene.getLocale("Brody is not at beach!")
+        let notBeach = scene.getLocale("Sorry. Brody can only use the binoculars at a swimming beach (N, S, E or W).")
 
         const callback = (button, index) => {
             switch (button.text) {

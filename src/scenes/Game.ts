@@ -198,7 +198,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     addAudioButton() {
-        const audioButton = this.add.sprite(this.cameras.main.width - 30, 15, "audio_button", 1)
+        const audioButton = this.add.sprite(this.cameras.main.width - 30, 30, "audio_button", 1)
         audioButton.setInteractive().on(Phaser.Input.Events.POINTER_DOWN, (pointer) => {
             this._audioOn = !this._audioOn
             audioButton.setFrame(this.audioOn ? 1 : 0)
@@ -206,7 +206,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     addLogButton() {
-        this.logButton = this.add.image(this.cameras.main.width - 100, 15, "log_button")
+        this.logButton = this.add.image(this.cameras.main.width - 100, 30, "log_button")
         this.logButton.setInteractive().on(Phaser.Input.Events.POINTER_DOWN, (pointer) => {
             this.launchMessage(this.lastDisplayedMessage || "", false, 50)
         })
@@ -246,6 +246,13 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     addButtons() {
+        let initialX = 950
+        let initialY = 100
+
+        let bgGraphics = this.add.graphics()
+        bgGraphics.fillStyle(0xff00ff, 0.12)
+        bgGraphics.fillRoundedRect(initialX - 65, initialY - 40, 130, 400, 8)
+
         const swimmerSelectAnim = this.anims.create({
             key: "swimmerSelectAnim",
             frames: this.anims.generateFrameNumbers("swimmer_sprite", { start: 0, end: 2 }),
@@ -260,7 +267,7 @@ export default class Game extends Phaser.Scene implements IGame {
             repeat: -1
         })
 
-        this._michael = new Michael(this, 920, 80, Buttons.MICHAEL)
+        this._michael = new Michael(this, initialX, initialY, Buttons.MICHAEL)
         this.add.existing(this._michael)
         this.interactiveObjects.push(this._michael);
         [
@@ -273,7 +280,7 @@ export default class Game extends Phaser.Scene implements IGame {
             { btnName: Buttons.FISH_FINDER, onlyClickable: true },
             { btnName: Buttons.BINOCULARS, onlyClickable: true }
         ].forEach((btnCfg, index) => {
-            const hunterButton = new HunterButton(this, 920, 160 + (index * 70), btnCfg)
+            const hunterButton = new HunterButton(this, initialX, initialY + 80 + (index * 80), btnCfg)
             this.add.existing(hunterButton)
             this.interactiveObjects.push(hunterButton)
         })

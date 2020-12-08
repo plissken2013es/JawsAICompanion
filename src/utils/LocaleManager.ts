@@ -70,8 +70,8 @@ const Locale = {
     "Nothing on the water...": {
         ES: "No hay nada en el agua..."
     },
-    "Brody is not at beach!": {
-        ES: "Brody no está en la playa."
+    "Sorry. Brody can only use the binoculars at a swimming beach (N, S, E or W).": {
+        ES: "Brody sólo puede usar los prismáticos en una playa (N, S, E o O)."
     },
     "Jaws current mission now is: ": {
         ES: "La misión actual del tiburón es: "
@@ -165,6 +165,14 @@ const Locale = {
     },
     "NEW GAME": {
         ES: "NUEVA PARTIDA"
+    },
+    "Credits": {
+        EN: "Who made this?",
+        ES: "¿Quién ha hecho esto?"
+    },
+    "Credits:\n\n\nCode:\n@impactophaser (Twitter)\n\n\nGame testers:\nJeff Rowley, Seattle, WA, USA\njrowley (boardgamegeek.com)\n\nQuimérico Inquilino\n(Spain, labsk.net)":
+    {
+        ES: "Créditos:\n\n\nCódigo:\n@impactophaser (Twitter)\n\n\nPruebas:\nJeff Rowley, Seattle, WA, USA\njrowley (boardgamegeek.com)\n\nQuimérico Inquilino\n(España, labsk.net)"
     }
 }
 
