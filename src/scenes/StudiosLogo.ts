@@ -22,7 +22,15 @@ export default class StudiosLogo extends Phaser.Scene {
             repeat: 0
         })
 
-        const proudlyPresents = this.lang == "ES" ? "Se enorgullece de presentar..." : "Proudly presents..."
+        let proudlyPresents = "Proudly presents..."
+        switch (this.lang) {
+            case "ES":
+                proudlyPresents = "Se enorgullece de presentar..."
+                break
+            case "DE":
+                proudlyPresents = "Präsentiert stolz"
+                break
+        }
 
         logoAnim.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 140, proudlyPresents, 

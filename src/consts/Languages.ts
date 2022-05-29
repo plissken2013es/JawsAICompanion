@@ -1,6 +1,7 @@
 enum Languages {
     Spanish = "ES",
-    English = "EN"
+    English = "EN",
+    German = "DE"
 }
 
 export default Languages

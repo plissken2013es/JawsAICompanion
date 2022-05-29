@@ -24,6 +24,7 @@ export default class LanguageSelection extends Phaser.Scene {
         this.load.setPath("img/")
             .image("flag_en", "flag_en.png")
             .image("flag_es", "flag_es.png")
+            .image("flag_de", "flag_de.png")
             .spritesheet("jaws-loader", "jaws-loader.png", { frameWidth: 184, frameHeight: 92 })
 
             // fonts
@@ -43,13 +44,19 @@ export default class LanguageSelection extends Phaser.Scene {
                     localStorage.removeItem(GameDataToSave.TEMPORARY_LANGUAGE)
                     this.scene.start(SceneKeys.Preloader, { language: temporaryLanguage })
                 } else {
-                    this.add.image(this.cameras.main.centerX - 128, this.cameras.main.centerY, "flag_es")
+                    this.add.image(this.cameras.main.centerX - 128 - 64, this.cameras.main.centerY, "flag_es")
                         .setOrigin(0.5)
                         .setInteractive()
                         .on(Phaser.Input.Events.POINTER_DOWN, (pointer, x, y, event) => {
                             this.scene.start(SceneKeys.Preloader, { language: Languages.Spanish })
                         })
-                    this.add.image(this.cameras.main.centerX + 128, this.cameras.main.centerY, "flag_en")
+                    this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, "flag_de")
+                        .setOrigin(0.5)
+                        .setInteractive()
+                        .on(Phaser.Input.Events.POINTER_DOWN, (pointer, x, y, event) => {
+                            this.scene.start(SceneKeys.Preloader, { language: Languages.German })
+                        })
+                    this.add.image(this.cameras.main.centerX + 128 + 64, this.cameras.main.centerY, "flag_en")
                         .setOrigin(0.5)
                         .setInteractive()
                         .on(Phaser.Input.Events.POINTER_DOWN, (pointer, x, y, event) => {
