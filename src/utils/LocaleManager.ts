@@ -223,11 +223,11 @@ const Locale = {
     },
     "I'd like to rate this App and/or suggest another one": {
       ES: "Quiero valorar esta App y/o sugerir otro juego",
-      DE: "Ich möchte diese App bewerten und/oder eine andere vorschlagen"
+      DE: "Ich möchte die App bewerten oder eine andere vorschlagen"
     },
     "I want to invite the App creator to a coffee": {
       ES: "Quiero invitar a un café al creador de la App",
-      DE: "Ich möchte den Schöpfer dieser App auf einen Kaffee einladen"
+      DE: "Ich möchte dem App-Ersteller einen Kaffee spendieren"
     },
     "CONTINUE LAST GAME": {
         ES: "CONTINUAR ÚLTIMA PARTIDA",

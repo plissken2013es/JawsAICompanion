@@ -239,9 +239,41 @@ export default class Preloader extends Phaser.Scene {
             "",
             "",
             "Que lo disfruten."
-        ]            
+        ]
+        
+        const legalTextDE = [
+            "Diese APP ist ein NICHT KOMMERZIELLES Programm, das nur der Unterhaltung und der Bildung dient.",
+            "",
+            "Zur sinnvollen Nutzung müssen Sie das Brettspiel 'Der weiße Hai' physikalisch BESITZEN.",
+            "",
+            "Alle CHARAKTERE, alle genutzten ZEICHEN, LOGOS und die entsprechenden NAMEN und REFERENZEN unterstehen",
+            "dem Copyright und den geschützten Marken ihrer entsprechenden Eigner.",
+            "",
+            "Diese FAN PRODUKTION verwendet keine kommerzielle WERBUNG und ist nicht zum Verkauf irgendeiner Art gedacht.",
+            "",
+            "Die kommerzielle Ausstellung oder Verteilung ist verboten (sowohl der APP selbst",
+            "als auch ihres QUELLCODES).",
+            "",
+            "Der Inhalt dieser APP (und ihres QUELLCODES) kann nicht verkauft, vermietet oder",
+            "für irgendein kommerzielles Unternhemen in irgendeiner Weise genutzt werden.",
+            "",
+            "Diese APP ist kostenlos und WERBEFREI und wird es für alle Zeit bleiben.",
+            "",
+            "",
+            "Viel Spaß damit!"
+        ]
 
-        this.add.text(50, 50, this.lang == "ES" ? legalTextES : legalTextEN , { fontFamily: "Elite", color: "#5656ee", align: "left", fontSize: 20 })
+        let legalText = legalTextEN
+        switch (this.lang) {
+            case "ES":
+                legalText = legalTextES
+                break
+            case "DE":
+                legalText = legalTextDE
+                break
+        }
+
+        this.add.text(50, 50, legalText , { fontFamily: "Elite", color: "#5656ee", align: "left", fontSize: 20 })
 
     }
 }
