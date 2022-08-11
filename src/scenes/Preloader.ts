@@ -242,14 +242,15 @@ export default class Preloader extends Phaser.Scene {
         ]
         
         const legalTextDE = [
-            "Diese APP ist ein NICHT KOMMERZIELLES Programm, das nur der Unterhaltung und der Bildung dient.",
+            "Diese APP ist ein NICHT KOMMERZIELLES Programm, das nur Unterhaltung und Bildung dient.",
             "",
             "Zur sinnvollen Nutzung müssen Sie das Brettspiel 'Der weiße Hai' physikalisch BESITZEN.",
             "",
             "Alle CHARAKTERE, alle genutzten ZEICHEN, LOGOS und die entsprechenden NAMEN und REFERENZEN unterstehen",
             "dem Copyright und den geschützten Marken ihrer entsprechenden Eigner.",
             "",
-            "Diese FAN PRODUKTION verwendet keine kommerzielle WERBUNG und ist nicht zum Verkauf irgendeiner Art gedacht.",
+            "Diese FAN PRODUKTION verwendet keine kommerzielle WERBUNG und ist nicht zum Verkauf", 
+            "irgendeiner Art gedacht.",
             "",
             "Die kommerzielle Ausstellung oder Verteilung ist verboten (sowohl der APP selbst",
             "als auch ihres QUELLCODES).",
