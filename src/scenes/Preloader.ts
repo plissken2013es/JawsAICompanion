@@ -246,7 +246,7 @@ export default class Preloader extends Phaser.Scene {
             "",
             "Zur sinnvollen Nutzung müssen Sie das Brettspiel 'Der weiße Hai' physikalisch BESITZEN.",
             "",
-            "Alle CHARAKTERE, alle genutzten ZEICHEN, LOGOS und die entsprechenden NAMEN und REFERENZEN",
+            "Alle CHARAKTERE, alle genutzten ZEICHEN, LOGOS und die NAMEN und REFERENZEN",
             "unterstehen dem Copyright und den geschützten Marken ihrer entsprechenden Eigner.",
             "",
             "Diese FAN PRODUKTION verwendet keine kommerzielle WERBUNG und ist nicht zum Verkauf", 
