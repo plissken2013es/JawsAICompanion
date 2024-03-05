@@ -3,239 +3,298 @@
 const Locale = {
     "EVENT PHASE + SHARK PHASE": {
       ES: "FASE SUCESOS + FASE TIBURÓN",
-      DE: "EREIGNIS-PHASE + HAI-PHASE"
+      DE: "EREIGNIS-PHASE + HAI-PHASE",
+      RU: "ФАЗА СОБЫТИЯ + ФАЗА АКУЛЫ"
     },
     "Draw Amity Event card.\nDeploy swimmers.\nClick on any Shark Action button.": {
       ES: "Roba una carta Sucesos Amity.\nColoca bañistas.\nPulsa en el botón de Acción del Tiburón.",
-      DE: "Ziehe Amity-Ereigniskarte.\nVerteile Schwimmer.\nKlicke einen Hai-Aktions-Button."
+      DE: "Ziehe Amity-Ereigniskarte.\nVerteile Schwimmer.\nKlicke einen Hai-Aktions-Button.",
+      RU: "Возьмите карту Событие Эмити.\nРазместите купальщиков.\nНажмите на любую кнопку Действия Акулы."
     },
     "CREW PHASE": {
       ES: "FASE TRIPULACIÓN",
-      DE: "BESATZUNGS-PHASE"
+      DE: "BESATZUNGS-PHASE",
+      RU: "ФАЗА КОМАНДЫ"
     },
     "Move characters.\nPerform actions.\nWhen finished, click 'End turn' button.": {
       ES: "Mueve a los personajes.\nLleva a cabo acciones.\nCuando termines, pulsa en el botón 'Fin Turno'.",
-      DE: "Bewege Figuren.\nFühre Aktionen durch.\nWenn fertig, klicke 'Zug beenden'."
+      DE: "Bewege Figuren.\nFühre Aktionen durch.\nWenn fertig, klicke 'Zug beenden'.",
+      RU: "Передвиньте персонажей.\nВыполните действия.\nКогда закончите, нажмите на кнопку 'Конец хода'."
     },
     "End Turn": {
       ES: "Fin Turno",
-      DE: "Zug beenden"
+      DE: "Zug beenden",
+      RU: "Конец хода"
     },
     "Ok": {
       ES: "De acuerdo",
-      DE: "Ok"
+      DE: "Ok",
+      RU: "Хорошо"
     },
     "Yes": {
       ES: "Sí",
-      DE: "Ja"
+      DE: "Ja",
+      RU: "Да"
     },
     "No": {
       ES: "No",
-      DE: "Nein"
+      DE: "Nein",
+      RU: "нет"
     },
     "ninja": {
       ES: "silencioso",
-      DE: "ninja"
+      DE: "ninja",
+      RU: "ниндзя"
     },
     "hungry": {
       ES: "hambriento",
-      DE: "hungrig"
+      DE: "hungrig",
+      RU: "голодна"
     },
     "N": {
       ES: "N",
-      DE: ""
+      DE: "N",
+      RU: "С"
     },
     "S": {
       ES: "S",
-      DE: "S"
+      DE: "S",
+      RU: "Ю"
     },
     "W": {
       ES: "O",
-      DE: "W"
+      DE: "W",
+      RU: "З"
     },
     "E": {
       ES: "E",
-      DE: "O"
+      DE: "O",
+      RU: "В"
     },
     "Binoculars used at: ": {
       ES: "Prismáticos activados en: ",
-      DE: "Fernglas benutzt an Strand "
+      DE: "Fernglas benutzt an Strand ",
+      RU: "Бинокль использован на: "
     },
     "Fish Finder activated at: ": {
       ES: "Detector de peces activado en: ",
-      DE: "Fischfinder aktiviert in Zone "
+      DE: "Fischfinder aktiviert in Zone ",
+      RU: "Эхолот активирован в: "
     },
     "Barrel launch at: ": {
       ES: "Se lanza un barril en: ",
-      DE: "Fass ausgeworfen in Zone "
+      DE: "Fass ausgeworfen in Zone ",
+      RU: "Бочка заброшена в: "
     },
     "Jaws status is: ": {
       ES: "El comportamiento del tiburón es: ",
-      DE: "Hai Status ist: "
+      DE: "Hai Status ist: ",
+      RU: "Статус Акулы: "
     },
     "Jaws uses SPEED BURST to go to ": {
       ES: "El tiburón utiliza la RÁFAGA de VELOCIDAD para ir a ",
-      DE: "Hai benutzt TURBO, denn er will nach Zone "
+      DE: "Hai benutzt TURBO, denn er will nach Zone ",
+      RU: "Акула использует ИМПУЛЬС СКОРОСТИ, чтобы переместиться в "
     },
     "Jaws uses FEEDING FRENZY power at ": {
       ES: "El tiburón usa el poder FRENESÍ ALIMENTICIO en ",
-      DE: "Hai benutzt FRESSRAUSCH an Strand "
+      DE: "Hai benutzt FRESSRAUSCH an Strand ",
+      RU: "Акула использует НЕИСТОВОЕ ПОЖИРАНИЕ в "
     },
     "Jaws has used a POWER.": {
       ES: "El tiburón ha utilizado un PODER especial.",
-      DE: "Hai hat eine ZUSATZFÄHIGKEIT genutzt "
+      DE: "Hai hat eine ZUSATZFÄHIGKEIT genutzt ",
+      RU: "Акула использовала жетон СИЛЫ."
     },
     "You've attached a barrel to the shark!": {
       ES: "¡Diana! ¡Has enganchado un barril al tiburón!",
-      DE: "Du hast ein Fass am Hai befestigt!"
+      DE: "Du hast ein Fass am Hai befestigt!",
+      RU: "Вы прицепили бочку к акуле!"
     },
     "Jaws has kicked captain: ": {
       ES: "El tiburón ha lanzado al agua a: ",
-      DE: "Hai hat einen Kapitän ins Wasser befördert in Zone "
+      DE: "Hai hat einen Kapitän ins Wasser befördert in Zone ",
+      RU: "Акула столкнула капитана: "
     },
     "Jaws has activated barrels at: ": {
       ES: "El tiburón ha activado barriles en: ",
-      DE: "Hai hat ein Fass aktiviert in Zone "
+      DE: "Hai hat ein Fass aktiviert in Zone ",
+      RU: "Акула задела бочку в: "
     },
     "Are you sure that you want to launch a barrel\nat zone ": {
       ES: "¿Seguro que quieres lanzar un barril\nen la zona ",
-      DE: "Willst Du ein Fass auswerfen in Zone "
+      DE: "Willst Du ein Fass auswerfen in Zone ",
+      RU: "Вы уверены, что хотите забросить бочку\nв зону "
     },
     "Do you want to use binoculars at Brody's location?": {
       ES: "¿Quieres que Brody use los prismáticos en su posición actual?",
-      DE: "Willst Du das Fernglas an Brodys Position verwenden?"
+      DE: "Willst Du das Fernglas an Brodys Position verwenden?",
+      RU: "Вы хотите применить бинокль в локации Броуди?"
     },
     "Sorry. Brody can only use the binoculars at a swimming beach (N, S, E or W).": {
       ES: "Brody sólo puede usar los prismáticos en una playa (N, S, E u O).",
-      DE: "Brody kann das Fernglas nur am Strand benutzen (N, S, O oder W)."
+      DE: "Brody kann das Fernglas nur am Strand benutzen (N, S, O oder W).",
+      RU: "Извини. Броуди может использовать бинокль только на пляже для купания (С, Ю, З или В)."
     },
     "Nothing on the water...": {
       ES: "No hay nada en el agua...",
-      DE: "Nichts im Wasser zu sehen..."
+      DE: "Nichts im Wasser zu sehen...",
+      RU: "На воде все тихо…"
     },
     "Jaws current mission now is: ": {
       ES: "La misión actual del tiburón es: ",
-      DE: "Aktuelle Mission des Hais ist nun: "
+      DE: "Aktuelle Mission des Hais ist nun: ",
+      RU: "Текущая миссия Акулы: "
     },
     "END TURN ": {
       ES: "FIN TURNO ",
-      DE: "ENDE RUNDE "
+      DE: "ENDE RUNDE ",
+      RU: "КОНЕЦ ХОДА "
     },
     "Jaws 3 actions": {
       ES: "Tiburón 3 acciones",
-      DE: "Hai 3 Aktionen"
+      DE: "Hai 3 Aktionen",
+      RU: "Акула 3 действия"
     },
     "Jaws 4 actions (wrong shark)": {
       ES: "Tiburón 4 acciones (tiburón equivocado)",
-      DE: "Hai 4 Aktionen (Falscher Hai)"
+      DE: "Hai 4 Aktionen (Falscher Hai)",
+      RU: "Акула 4 действия (неправильная акула)"
     },
     "Jaws (Gardner's boat)": {
       ES: "Tiburón (Bote de Gardner)",
-      DE: "Hai (Gardners Boot)"
+      DE: "Hai (Gardners Boot)",
+      RU: "Акула (лодка Гарднера)"
     },
     "Jaws chooses INITIAL position ": {
       ES: "El tiburón elige la posición inicial ",
-      DE: "Hai wählt Startfeld "
+      DE: "Hai wählt Startfeld ",
+      RU: "Акула выбрала НАЧАЛЬНУЮ позицию "
     },
     "Jaws' task path is: ": {
       ES: "La ruta de la misión del tiburón es: ",
-      DE: "Missionsroute des Hais ist: "
+      DE: "Missionsroute des Hais ist: ",
+      RU: "Маршрут Акулы: "
     },
     "Jaws current target now is: ": {
       ES: "El objetivo actual del tiburón es ",
-      DE: "Aktuelles Ziel des Hais ist nun: "
+      DE: "Aktuelles Ziel des Hais ist nun: ",
+      RU: "Текущая цель Акулы "
     },
     "No current target...?": {
       ES: "¿No hay un objetivo?",
-      DE: "Kein aktuelles Ziel?"
+      DE: "Kein aktuelles Ziel?",
+      RU: "Нет текущей цели…?"
     },
     "Jaws remaining actions: ": {
       ES: "Acciones restantes del tiburón: ",
-      DE: "Verbleibende Aktionen: "
+      DE: "Verbleibende Aktionen: ",
+      RU: "Остальные действия Акулы: "
     },
     "Jaws eats Michael Brody on beach ": {
       ES: "El tiburón devora a Michael Brody en la playa ",
-      DE: "Hai frißt Michael Brody an Strand "
+      DE: "Hai frißt Michael Brody an Strand ",
+      RU: "Акула съела Майкла Броуди на пляже "
     },
     "Jaws eats 1 swimmer on beach ": {
       ES: "El tiburón devora a un bañista en la playa ",
-      DE: "Hai frißt 1 Schwimmer an Strand "
+      DE: "Hai frißt 1 Schwimmer an Strand ",
+      RU: "Акула съела 1 купальщика на пляже "
     },
     "Jaws eats ": {
       ES: "El tiburón ha devorado ",
-      DE: "Hai frißt "
+      DE: "Hai frißt ",
+      RU: "Акула съела "
     },
     " swimmer(s) on beach ": {
       ES: " bañista(s) en la playa ",
-      DE: " Schwimmer an Strand "
+      DE: " Schwimmer an Strand ",
+      RU: " купальщиков на пляже "
     },
     "Jaws moves to ": {
       ES: "El tiburón se mueve a ",
-      DE: "Hai schwimmt nach "
+      DE: "Hai schwimmt nach ",
+      RU: "Акула переместилась в "
     },
     "Jaws ends its turn.": {
       ES: "El tiburón ha terminado su turno",
-      DE: "Hai beendet seinen Zug"
+      DE: "Hai beendet seinen Zug",
+      RU: "Акула закончила ход."
     },
     "Do you want to activate the Fish Finder at Hooper's location?": {
       ES: "¿Quieres activar el DETECTOR de peces en la posición de Hooper?",
-      DE: "Willst Du den Fischfinder an Hoopers Position verwenden?"
+      DE: "Willst Du den Fischfinder an Hoopers Position verwenden?",
+      RU: "Хотите активировать Эхолот в локации Хупера?"
     },
     "SHAAARK!!": {
       ES: "¡TIBURÓOOON!",
-      DE: "HAAAAAI!"
+      DE: "HAAAAAI!",
+      RU: "АКУЛА!!!"
     },
     "The shark is nearby from here...": {
       ES: "El tiburón anda cerca...",
-      DE: "Der Hai ist IN DER NÄHE..."
+      DE: "Der Hai ist IN DER NÄHE...",
+      RU: "Акула поблизости..."
     },
     "NOTHING on the screen...": {
       ES: "No hay NADA en la pantalla...",
-      DE: "Der Hai ist NICHT HIER und auch NICHT IN DER NÄHE..."
+      DE: "Der Hai ist NICHT HIER und auch NICHT IN DER NÄHE...",
+      RU: "На экране ЧИСТО..."
     },
     "TURN ": {
       ES: "TURNO ",
-      DE: "RUNDE "
+      DE: "RUNDE ",
+      RU: "ХОД "
     },
     "Enough barrels! Do you want to end game?": {
       ES: "¡Suficientes bidones! ¿Terminamos la partida?",
-      DE: "Genug Fässer! Willst Du das Spiel beenden?"
+      DE: "Genug Fässer! Willst Du das Spiel beenden?",
+      RU: "Достаточно бочек! Хотите завершить игру?"
     },
     "The shark had eaten a lot of people. End game?": {
       ES: "El tiburón se ha hartado de comer gente. ¿Terminamos?",
-      DE: "Der Hai hat eine Menge Schwimmer gefressen. Spiel beenden?"
+      DE: "Der Hai hat eine Menge Schwimmer gefressen. Spiel beenden?",
+      RU: "Акула съела слишком много людей. Закончить игру?"
     },
     "THE JAWS LOG": {
       ES: "EL DIARIO DE TIBURÓN",
-      DE: "DAS HAI PROTOKOLL"
+      DE: "DAS HAI PROTOKOLL",
+      RU: "ЖУРНАЛ АКУЛЫ"
     },
     "END GAME": {
       ES: "TERMINAR PARTIDA",
-      DE: "SPIEL BEENDEN"
+      DE: "SPIEL BEENDEN",
+      RU: "КОНЕЦ ИГРЫ"
     },
     "I want to PLAY AGAIN": {
       ES: "Quiero JUGAR OTRA VEZ",
-      DE: "Ich will ERNEUT SPIELEN"
+      DE: "Ich will ERNEUT SPIELEN",
+      RU: "Сыграть ЕЩЕ РАЗ"
     },
     "I want to get the source code of this App": {
       ES: "Quiero ver/descargar el código fuente de esta App",
-      DE: "Ich will den Quellcode dieser App sehen"
+      DE: "Ich will den Quellcode dieser App sehen",
+      RU: "Получить исходный код приложения"
     },
     "I'd like to rate this App and/or suggest another one": {
       ES: "Quiero valorar esta App y/o sugerir otro juego",
-      DE: "Ich möchte die App bewerten oder eine andere vorschlagen"
+      DE: "Ich möchte die App bewerten oder eine andere vorschlagen",
+      RU: "Оценить приложение и/или что-то предложить"
     },
     "I want to invite the App creator to a coffee": {
       ES: "Quiero invitar a un café al creador de la App",
-      DE: "Ich möchte dem App-Ersteller einen Kaffee spendieren"
+      DE: "Ich möchte dem App-Ersteller einen Kaffee spendieren",
+      RU: "Купить создателю приложения чашечку кофе"
     },
     "CONTINUE LAST GAME": {
         ES: "CONTINUAR ÚLTIMA PARTIDA",
-        DE: "LETZTES SPIEL FORTSETZEN"
+        DE: "LETZTES SPIEL FORTSETZEN",
+        RU: "ПРОДОЛЖИТЬ ИГРУ"
     },
     "NEW GAME": {
         ES: "NUEVA PARTIDA",
-        DE: "NEUES SPIEL"
+        DE: "NEUES SPIEL",
+        RU: "НОВАЯ ИГРА"
     }
 }
 
