@@ -18,6 +18,12 @@ export default class LanguageSelection extends Phaser.Scene {
         if (sheet) sheet.insertRule(styles, 0);
         styles = "@font-face { font-family: 'Elite'; src: url('fonts/special-elite.ttf') format('truetype'); }"
         if (sheet) sheet.insertRule(styles, 0);
+        styles = "@font-face { font-family: 'American'; src: url('fonts/american.otf') format('opentype'); }"
+        if (sheet) sheet.insertRule(styles, 0);
+        styles = "@font-face { font-family: 'Noto'; src: url('fonts/noto.ttf') format('truetype'); }"
+        if (sheet) sheet.insertRule(styles, 0);
+        styles = "@font-face { font-family: 'Alice'; src: url('fonts/Alice.ttf') format('truetype'); }"
+        if (sheet) sheet.insertRule(styles, 0);
     }
 
     preload() {
@@ -36,7 +42,7 @@ export default class LanguageSelection extends Phaser.Scene {
     create() {
         WebFont.load({
             custom: {
-                families: [ "Elite", "troika" ]
+                families: [ "Alice", "Noto", "American", "Elite", "troika" ]
             },
             active: () => {
                 let localStorage = LocalStorage.getInstance()

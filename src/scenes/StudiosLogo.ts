@@ -34,7 +34,7 @@ export default class StudiosLogo extends Phaser.Scene {
 
         logoAnim.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 140, proudlyPresents, 
-                { fontFamily: "Elite", color: "#5656ee", align: "center", fontSize: 20 }).setOrigin(0.5)
+                { fontFamily: "Alice", color: "#5656ee", align: "center", fontSize: 20 }).setOrigin(0.5)
             this.time.delayedCall(2000, () => {
                 this.scene.start(SceneKeys.Intro, { language: this.lang })
             }, [], this)

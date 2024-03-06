@@ -299,7 +299,7 @@ export default class Preloader extends Phaser.Scene {
                 break
         }
 
-        this.add.text(50, 50, legalText , { fontFamily: "Elite", color: "#5656ee", align: "left", fontSize: 20 })
+        this.add.text(50, 50, legalText , { fontFamily: "Alice", color: "#5656ee", align: "left", fontSize: 20 })
 
     }
 }

@@ -23,7 +23,7 @@ export default class Dialog {
             background: this.rexUI.add.roundRectangle(0, 0, 200, 150, 5, 0x1565c0),
 
             content: this.scene.add.text(0, 0, message, {
-                fontFamily: "Elite",
+                fontFamily: "Alice",
                 align: "center",
                 fontSize: 20
             }),
@@ -81,7 +81,7 @@ export default class Dialog {
             background: this.rexUI.add.roundRectangle(0, 0, 0, 0, 5, 0x5e92f3),
     
             text: this.scene.add.text(0, 0, text, {
-                fontFamily: "Elite",
+                fontFamily: "Alice",
                 color: "#004258",
                 align: "center",
                 fontSize: 18

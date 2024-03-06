@@ -217,7 +217,7 @@ export default class Game extends Phaser.Scene implements IGame {
         const x = this.boardCenter.x * 2  + 30
         const y = this.boardCenter.y*2 - 60
         const textCfg = {
-            fontFamily: "Elite", 
+            fontFamily: "Alice", 
             color: "#fff", 
             align: "center", 
             fontSize: 30 
@@ -321,7 +321,7 @@ export default class Game extends Phaser.Scene implements IGame {
         this.characterEyes = this.add.image(20, y, eyes)
         this.characterEyes.setOrigin(0, 0.5)
         this.characterText = this.add.text(160, y, "'" + flavor.text + "'", {
-            fontFamily: "Elite", 
+            fontFamily: "Alice", 
             color: "#e9c29f", 
             align: "left", 
             fontSize: 20 })

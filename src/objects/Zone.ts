@@ -29,7 +29,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         this.zoneCfg = cfg
 
         if (cfg.text && cfg.textX && cfg.textY) {
-            scene.add.text(cfg.textX, cfg.textY, scene.getLocale(cfg.text), { fontFamily: "Elite", color: "#fff", align: "center", fontSize: 30 }).setOrigin(0.5)
+            scene.add.text(cfg.textX, cfg.textY, scene.getLocale(cfg.text), { fontFamily: "Alice", color: "#fff", align: "center", fontSize: 30 }).setOrigin(0.5)
         }
     }
 
@@ -110,7 +110,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
                     if (this.numBarrelsText) {
                         this.numBarrelsText.destroy()
                     }
-                    this.numBarrelsText = this.scene.add.text(this.zoneCfg.barrelX, this.zoneCfg.barrelY, this.numBarrels.toString(), { fontFamily: "Elite", color: "#004258", align: "center", fontSize: 30 })
+                    this.numBarrelsText = this.scene.add.text(this.zoneCfg.barrelX, this.zoneCfg.barrelY, this.numBarrels.toString(), { fontFamily: "Alice", color: "#004258", align: "center", fontSize: 30 })
                     this.numBarrelsText.setOrigin(0.5)
                 }
                 return false
@@ -120,7 +120,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
                     this.numBarrelsText.destroy()
                 }
                 if (--this.numBarrels > 1) {
-                    this.numBarrelsText = this.scene.add.text(this.zoneCfg.barrelX, this.zoneCfg.barrelY, this.numBarrels.toString(), { fontFamily: "Elite", color: "#004258", align: "center", fontSize: 30 })
+                    this.numBarrelsText = this.scene.add.text(this.zoneCfg.barrelX, this.zoneCfg.barrelY, this.numBarrels.toString(), { fontFamily: "Alice", color: "#004258", align: "center", fontSize: 30 })
                     this.numBarrelsText.setOrigin(0.5)
                 }
                 if (this.numBarrels < 1) {
@@ -159,7 +159,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
                     if (this.numSwimmersText) {
                         this.numSwimmersText.destroy()
                     }
-                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this._numSwimmers.toString(), { fontFamily: "Elite", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
+                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this._numSwimmers.toString(), { fontFamily: "Alice", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
                     this.numSwimmersText.setOrigin(0.5)
                 }
                 return false
@@ -169,7 +169,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
                     this.numSwimmersText.destroy()
                 }
                 if (--this._numSwimmers > 1) {
-                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this._numSwimmers.toString(), { fontFamily: "Elite", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
+                    this.numSwimmersText = this.scene.add.text(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, this._numSwimmers.toString(), { fontFamily: "Alice", backgroundColor: "#004258", color: "#fff", align: "center", fontSize: 20 })
                     this.numSwimmersText.setOrigin(0.5)
                 }
                 if (this._numSwimmers < 1) {

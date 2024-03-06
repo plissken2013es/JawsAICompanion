@@ -37,7 +37,7 @@ export default class PhaseTitle extends Phaser.Scene {
             const title = this.add.text(this.boardCenter.x, this.boardCenter.y - 50, 
                 this.mainScene!.getLocale("EVENT PHASE + SHARK PHASE"),
             {
-                fontFamily: "Elite",
+                fontFamily: "Alice",
                 color: "#e9c29f", 
                 align: "center", 
                 fontSize: 50 
@@ -45,7 +45,7 @@ export default class PhaseTitle extends Phaser.Scene {
             const desc = this.add.text(this.boardCenter.x, this.boardCenter.y, 
                 this.mainScene!.getLocale("Draw Amity Event card.\nDeploy swimmers.\nClick on any Shark Action button."),
             {
-                fontFamily: "Elite",
+                fontFamily: "Alice",
                 color: "#fff", 
                 align: "center", 
                 fontSize: 30 
@@ -57,7 +57,7 @@ export default class PhaseTitle extends Phaser.Scene {
             const title = this.add.text(this.boardCenter.x, this.boardCenter.y - 50, 
                 this.mainScene!.getLocale("CREW PHASE"),
             {
-                fontFamily: "Elite",
+                fontFamily: "Alice",
                 color: "#e9c29f", 
                 align: "center", 
                 fontSize: 50 
@@ -65,7 +65,7 @@ export default class PhaseTitle extends Phaser.Scene {
             const desc = this.add.text(this.boardCenter.x, this.boardCenter.y, 
                 this.mainScene!.getLocale("Move characters.\nPerform actions.\nWhen finished, click 'End turn' button."),
             {
-                fontFamily: "Elite",
+                fontFamily: "Alice",
                 color: "#fff", 
                 align: "center", 
                 fontSize: 30 
