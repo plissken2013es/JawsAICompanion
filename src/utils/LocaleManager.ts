@@ -19,7 +19,7 @@ const Locale = {
     "Move characters.\nPerform actions.\nWhen finished, click 'End turn' button.": {
       ES: "Mueve a los personajes.\nLleva a cabo acciones.\nCuando termines, pulsa en el botón 'Fin Turno'.",
       DE: "Bewege Figuren.\nFühre Aktionen durch.\nWenn fertig, klicke 'Zug beenden'.",
-      RU: "Передвиньте персонажей.\nВыполните действия.\nКогда закончите, нажмите на кнопку 'Конец хода'."
+      RU: "Передвиньте персонажей.\nВыполните действия.\nНажмите на кнопку 'Конец хода'."
     },
     "End Turn": {
       ES: "Fin Turno",
@@ -39,7 +39,7 @@ const Locale = {
     "No": {
       ES: "No",
       DE: "Nein",
-      RU: "нет"
+      RU: "Нет"
     },
     "ninja": {
       ES: "silencioso",
@@ -74,7 +74,7 @@ const Locale = {
     "Binoculars used at: ": {
       ES: "Prismáticos activados en: ",
       DE: "Fernglas benutzt an Strand ",
-      RU: "Бинокль использован на: "
+      RU: "Бинокль использован в: "
     },
     "Fish Finder activated at: ": {
       ES: "Detector de peces activado en: ",
@@ -124,7 +124,7 @@ const Locale = {
     "Are you sure that you want to launch a barrel\nat zone ": {
       ES: "¿Seguro que quieres lanzar un barril\nen la zona ",
       DE: "Willst Du ein Fass auswerfen in Zone ",
-      RU: "Вы уверены, что хотите забросить бочку\nв зону "
+      RU: "Вы уверены, что хотите забросить\nбочку в "
     },
     "Do you want to use binoculars at Brody's location?": {
       ES: "¿Quieres que Brody use los prismáticos en su posición actual?",
@@ -159,7 +159,7 @@ const Locale = {
     "Jaws 4 actions (wrong shark)": {
       ES: "Tiburón 4 acciones (tiburón equivocado)",
       DE: "Hai 4 Aktionen (Falscher Hai)",
-      RU: "Акула 4 действия (неправильная акула)"
+      RU: "Акула 4 действия (не та акула)"
     },
     "Jaws (Gardner's boat)": {
       ES: "Tiburón (Bote de Gardner)",
@@ -189,7 +189,7 @@ const Locale = {
     "Jaws remaining actions: ": {
       ES: "Acciones restantes del tiburón: ",
       DE: "Verbleibende Aktionen: ",
-      RU: "Остальные действия Акулы: "
+      RU: "Осталось действий у Акулы: "
     },
     "Jaws eats Michael Brody on beach ": {
       ES: "El tiburón devora a Michael Brody en la playa ",
@@ -209,7 +209,7 @@ const Locale = {
     " swimmer(s) on beach ": {
       ES: " bañista(s) en la playa ",
       DE: " Schwimmer an Strand ",
-      RU: " купальщиков на пляже "
+      RU: "х купальщиков на пляже "
     },
     "Jaws moves to ": {
       ES: "El tiburón se mueve a ",
