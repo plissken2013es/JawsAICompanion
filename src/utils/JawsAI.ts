@@ -498,7 +498,7 @@ export default class JawsAI {
         if (isGardnersBoat && this.jaws.huntersVisitedThisTurn.length > 0) {
             let captains: string[] = []
             this.jaws.huntersVisitedThisTurn.forEach((captain) => {
-                captains.push(captain.hunterName)
+                captains.push(this.scene.getLocale(captain.hunterName))
             })
             this.jaws.publicMessages.push(this.scene.getLocale("Jaws has kicked captain: ") + captains)
             this.jaws.huntersVisitedThisTurn.forEach((captain) => {

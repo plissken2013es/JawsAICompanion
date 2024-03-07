@@ -295,6 +295,21 @@ const Locale = {
         ES: "NUEVA PARTIDA",
         DE: "NEUES SPIEL",
         RU: "НОВАЯ ИГРА"
+    },
+    "quint": {        
+      ES: "Quint",
+      DE: "Quint",
+      RU: "Квинт"
+    },
+    "hooper": {        
+      ES: "Hooper",
+      DE: "Hooper",
+      RU: "Хупер"
+    },
+    "brody": {        
+      ES: "Brody",
+      DE: "Brody",
+      RU: "Броуди"
     }
 }
 
