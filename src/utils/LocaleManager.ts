@@ -129,12 +129,12 @@ const Locale = {
     "Do you want to use binoculars at Brody's location?": {
       ES: "¿Quieres que Brody use los prismáticos en su posición actual?",
       DE: "Willst Du das Fernglas an Brodys Position verwenden?",
-      RU: "Вы хотите применить бинокль в локации Броуди?"
+      RU: "Хотите использовать бинокль в локации Броуди?"
     },
     "Sorry. Brody can only use the binoculars at a swimming beach (N, S, E or W).": {
       ES: "Brody sólo puede usar los prismáticos en una playa (N, S, E u O).",
       DE: "Brody kann das Fernglas nur am Strand benutzen (N, S, O oder W).",
-      RU: "Извини. Броуди может использовать бинокль только на пляже для купания (С, Ю, З или В)."
+      RU: "Извините. Броуди может использовать бинокль\nтолько на пляже для купания (С, Ю, З или В)."
     },
     "Nothing on the water...": {
       ES: "No hay nada en el agua...",
@@ -209,7 +209,7 @@ const Locale = {
     " swimmer(s) on beach ": {
       ES: " bañista(s) en la playa ",
       DE: " Schwimmer an Strand ",
-      RU: "х купальщиков на пляже "
+      RU: " купальщика(ов) на пляже "
     },
     "Jaws moves to ": {
       ES: "El tiburón se mueve a ",
@@ -296,17 +296,17 @@ const Locale = {
         DE: "NEUES SPIEL",
         RU: "НОВАЯ ИГРА"
     },
-    "quint": {        
+    "quint": {
       ES: "Quint",
       DE: "Quint",
       RU: "Квинт"
     },
-    "hooper": {        
+    "hooper": {
       ES: "Hooper",
       DE: "Hooper",
       RU: "Хупер"
     },
-    "brody": {        
+    "brody": {
       ES: "Brody",
       DE: "Brody",
       RU: "Броуди"
