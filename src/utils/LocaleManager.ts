@@ -152,17 +152,17 @@ const Locale = {
       RU: "КОНЕЦ ХОДА "
     },
     "Jaws 3 actions": {
-      ES: "Tiburón 3 acciones",
+      ES: "3 acciones",
       DE: "Hai 3 Aktionen",
       RU: "Акула 3 действия"
     },
     "Jaws 4 actions (wrong shark)": {
-      ES: "Tiburón 4 acciones (tiburón equivocado)",
+      ES: "4 acciones (tiburón equivocado)",
       DE: "Hai 4 Aktionen (Falscher Hai)",
       RU: "Акула 4 действия (не та акула)"
     },
     "Jaws (Gardner's boat)": {
-      ES: "Tiburón (Bote de Gardner)",
+      ES: "Bote de Gardner",
       DE: "Hai (Gardners Boot)",
       RU: "Акула (лодка Гарднера)"
     },
