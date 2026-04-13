@@ -1,6 +1,6 @@
-![phaser3-parceljs-template](https://github.com/plissken2013es/Jaws/blob/main/public/img/jaws_pixel.png)
+![phaser3-vite-template](https://github.com/plissken2013es/Jaws/blob/main/public/img/jaws_pixel.png)
 
-# Jaws Board game AI Companion. Based on Phaser3 + TypeScript + Parcel
+# Jaws Board game AI Companion. Based on Phaser3 + TypeScript + Vite
 > We're gonna need a bigger boat.
 
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -9,7 +9,7 @@ Live demo: https://robojaws.netlify.app/
 
 ## Prerequisites
 
-You'll need [Node.js](https://nodejs.org/en/), [npm](https://www.npmjs.com/), and [Parcel](https://parceljs.org/) installed.
+You'll need [Node.js](https://nodejs.org/en/) and [npm](https://www.npmjs.com/) installed.
 
 It is highly recommended to use [Node Version Manager](https://github.com/nvm-sh/nvm) (nvm) to install Node.js and npm.
 
@@ -25,12 +25,6 @@ nvm use node
 
 Replace 'node' with 'latest' for `nvm-windows`.
 
-Then install Parcel:
-
-```bash
-npm install -g parcel-bundler
-```
-
 ## Getting Started
 
 Clone this repository to your local machine:
@@ -39,23 +33,17 @@ Clone this repository to your local machine:
 git clone https://github.com/plissken2013es/Jaws.git
 ```
 
-This will create a folder named `Jaws`. You can specify a different folder name like this:
-
-```bash
-git clone https://github.com/plissken2013es/Jaws.git my-folder-name
-```
-
 Go into your new project folder and install dependencies:
 
 ```bash
-cd phaser3-typescript-parcel-template # or 'my-folder-name'
+cd phaser3-typescript-parcel-template
 npm install
 ```
 
 Start development server:
 
 ```
-npm run start
+npm start
 ```
 
 To create a production build:
@@ -84,6 +72,7 @@ Production files will be placed in the `dist` folder. Then upload those files to
     │   │   ├── JawsAI.ts    
     │   ├── index.html
     │   ├── main.ts
+    ├── vite.config.ts
     ├── package.json
 ```
 
@@ -93,7 +82,7 @@ If you want to know how the shark thinks / behaves... go directly to the `JawsAI
 
 ## Static Assets
 
-Any static assets like images or audio files should be placed in the `public` folder. It'll then be served at http://localhost:8000/images/my-image.png
+Any static assets like images or audio files should be placed in the `public` folder. They'll be served at the root path, e.g. `http://localhost:8000/img/my-image.png`.
 
 Example `public` structure:
 
@@ -109,25 +98,17 @@ Example `public` structure:
     │   ├── ...    
 ```
 
-Phaser framework loads those assets like this: `this.image.load('my-image', 'images/my-image.png')`.
+Phaser framework loads those assets like this: `this.load.image('my-image', 'img/my-image.png')`.
 
 ## Dev Server Port
 
-You can change the dev server's port number by modifying the `start` script in `package.json`. We use Parcel's `-p` option to specify the port number.
+You can change the dev server port in `vite.config.ts`:
 
-The script looks like this:
-
+```ts
+server: {
+    port: 8000
+}
 ```
-parcel src/index.html -p 8000
-```
-
-Change 8000 to whatever you want.
-
-## Other Notes
-
-[parcel-plugin-clean-easy](https://github.com/lifuzhao100/parcel-plugin-clean-easy) is used to ensure only the latest files are in the `dist` folder. You can modify this behavior by changing `parcelCleanPaths` in `package.json`.
-
-[parcel-plugin-static-files](https://github.com/elwin013/parcel-plugin-static-files-copy#readme) is used to copy static files from `public` into the output directory and serve it. You can add additional paths by modifying `staticFiles` in `package.json`.
 
 ## License
 
