@@ -6,7 +6,9 @@
 		"start": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
 		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
 	},
 	"author": "supertommy",
@@ -20,11 +22,14 @@
 		"@types/node": "^22.0.0",
 		"@typescript-eslint/eslint-plugin": "^2.29.0",
 		"@typescript-eslint/parser": "^2.29.0",
+		"@vitest/coverage-v8": "^4.1.4",
 		"eslint": "^6.8.0",
+		"jsdom": "^28.1.0",
 		"minimist": ">=1.2.2",
 		"typescript": "^3.8.3",
 		"vite": "^5.0.0",
-		"vite-tsconfig-paths": "^4.0.0"
+		"vite-tsconfig-paths": "^4.0.0",
+		"vitest": "^4.1.4"
 	},
 	"dependencies": {
 		"phaser": "^3.24.1"
