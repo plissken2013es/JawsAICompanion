@@ -320,9 +320,9 @@ export default class LocaleManager {
         this.selectedLang = lang
     }
 
-    getLocale = (key:string  | string[]) => {
+    getLocale = (key: string  | string[]) => {
         if (Array.isArray(key)) {
-            let result: any[] = []
+            const result: any[] = []
             key.forEach((item) => {
                 if (Locale[item] && Locale[item][this.selectedLang]) {
                     result.push(Locale[item][this.selectedLang])

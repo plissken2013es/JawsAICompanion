@@ -3,7 +3,7 @@ import SceneKeys from "~/consts/SceneKeys"
 
 export default class StudiosLogo extends Phaser.Scene {
 
-    private lang: string = "EN"
+    private lang = "EN"
 
     constructor() {
         super(SceneKeys.StudiosLogo)
@@ -14,7 +14,7 @@ export default class StudiosLogo extends Phaser.Scene {
     }
 
     create() {
-        let logo = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, "studiosLogo").setOrigin(0.5)
+        const logo = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, "studiosLogo").setOrigin(0.5)
         const logoAnim = this.anims.create({
             key: "logo",
             frames: this.anims.generateFrameNumbers("studiosLogo", {}),

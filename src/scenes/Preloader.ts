@@ -4,7 +4,7 @@ import Buttons from "~/consts/Buttons"
 
 export default class Preloader extends Phaser.Scene {
     
-    private lang: string = "EN"
+    private lang = "EN"
     
     constructor() {
         super(SceneKeys.Preloader)
@@ -27,7 +27,7 @@ export default class Preloader extends Phaser.Scene {
         })
         jaws.play("jaws-swim")
 
-        let position = { x: 0 }
+        const position = { x: 0 }
         let tweenJaws
 
         this.load.on(Phaser.Loader.Events.PROGRESS, (value) => {

@@ -9,14 +9,14 @@ export default class Zone extends Phaser.GameObjects.Sprite {
 
     readonly zoneName: string
     readonly zoneCfg: IZoneCfg
-    private numBarrels: number = 0
-    private _numSwimmers: number = 0
+    private numBarrels = 0
+    private _numSwimmers = 0
     public get numSwimmers(): number {
         return this._numSwimmers
     }
     private numBarrelsText?: Phaser.GameObjects.Text
     private numSwimmersText?: Phaser.GameObjects.Text
-    private _isMichaelHere: boolean = false
+    private _isMichaelHere = false
     public get isMichaelHere(): boolean {
         return this._isMichaelHere
     }

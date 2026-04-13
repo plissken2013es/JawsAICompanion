@@ -11,7 +11,7 @@ export default class Intro extends Phaser.Scene {
     private jawsShadow?: Phaser.GameObjects.Sprite
     private diver?: Phaser.GameObjects.Sprite
     private corals?: Phaser.GameObjects.TileSprite
-    private pause: boolean = false
+    private pause = false
     private lang: string = Languages.English
 
     constructor() {

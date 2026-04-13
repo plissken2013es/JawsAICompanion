@@ -230,7 +230,7 @@ export default class FlavorTextsManager {
     constructor(lang: string) {
         this.selectedLang = lang
         this.random = new Phaser.Math.RandomDataGenerator()
-        for (let text in FlavorTexts) {
+        for (const text in FlavorTexts) {
             const toReturn = { text: "", char: FlavorTexts[text]["char"] }
             if (FlavorTexts[text]["text"][this.selectedLang]) {
                 toReturn.text = FlavorTexts[text]["text"][this.selectedLang]

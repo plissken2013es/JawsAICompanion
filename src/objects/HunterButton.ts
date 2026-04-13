@@ -19,7 +19,7 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     private positionOnDragStart = new Phaser.Geom.Point(0, 0)
     private readonly spriteSelectAnim?: string
     private readonly spriteDroppedAnim?: string
-    private onlyClickable: boolean = false
+    private onlyClickable = false
     private logManager: LogManager
 
     constructor(scene: IGame, x: number, y: number, cfg: any) {
@@ -51,7 +51,7 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
     addTo(zone: Zone, phaseTitle: string) {
         const scene = this.scene as IGame
         switch (this.buttonName) {
-            case Buttons.ADD_BARREL:
+            case Buttons.ADD_BARREL: {
                 this.x = this.positionOnDragStart.x
                 this.y = this.positionOnDragStart.y
                 const posX = zone.zoneCfg.barrelX
@@ -68,18 +68,18 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                             }
                             break
 
-                        case TitleType.CREW_PHASE:
+                        case TitleType.CREW_PHASE: {
                             const msg = scene.getLocale("Are you sure that you want to launch a barrel\nat zone ") + scene.getLocale(zone.zoneName) + "?"
                             const callback = (button, index) => {
                                 switch (button.text) {
-                                    case scene.getLocale("Yes"):                                        
+                                    case scene.getLocale("Yes"):
                                         this.logManager.log(scene.getLocale("Barrel launch at: ") + scene.getLocale(zone.zoneName), true)
                                         if (scene.getJawsPosition() == zone.zoneName) {
                                             zone.showShark()
                                             scene.attachBarrelToJaws()
                                             this.logManager.log(scene.getLocale("You've attached a barrel to the shark!"), true)
                                             if (scene.numAttachedBarrelsToJaws() < scene.numBarrelsObjetive) {
-                                                scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"))                                                
+                                                scene.launchMessage(scene.getLocale("You've attached a barrel to the shark!"))
                                             }
                                         } else {
                                             if (zone.hasBarrels()) {
@@ -101,22 +101,25 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                                 scene.disableInteractiveObjects()
                             }, [], this)
                             break
+                        }
                     }
                 }
                 break
+            }
 
-            case Buttons.MICHAEL:
+            case Buttons.MICHAEL: {
                 this.x = this.positionOnDragStart.x
                 this.y = this.positionOnDragStart.y
                 const mX = zone.zoneCfg.swimmerX
                 const mY = zone.zoneCfg.swimmerY
                 if (zone.zoneCfg && mX && mY) {
                     this.x = mX
-                    this.y = mY                    
+                    this.y = mY
                 }
                 break
+            }
 
-            case Buttons.ADD_SWIMMER:
+            case Buttons.ADD_SWIMMER: {
                 this.x = this.positionOnDragStart.x
                 this.y = this.positionOnDragStart.y
                 const x = zone.zoneCfg.swimmerX
@@ -134,21 +137,24 @@ export default class HunterButton extends Phaser.GameObjects.Sprite {
                     }
                 }
                 break
+            }
         }
     }
 
     onClick() {
         const scene = this.scene as IGame
         switch (this.buttonName) {
-            case Buttons.FISH_FINDER:
+            case Buttons.FISH_FINDER: {
                 const hooper = scene.findCharacterBy(Characters.HOOPER)
                 hooper?.askUserAboutFishFinder()
                 break
+            }
 
-            case Buttons.BINOCULARS:
+            case Buttons.BINOCULARS: {
                 const brody = scene.findCharacterBy(Characters.BRODY)
                 brody?.askUserAboutBinoculars()
                 break
+            }
         }
     }
 }

@@ -18,9 +18,9 @@ export default class LogScreen extends Phaser.Scene {
     private logManager: LogManager
     private locales?: LocaleManager
 
-    private COLOR_PRIMARY: number = 0x004258
-    private COLOR_LIGHT: number = 0x7b5e57
-    private COLOR_DARK: number = 0x00001a
+    private COLOR_PRIMARY = 0x004258
+    private COLOR_LIGHT = 0x7b5e57
+    private COLOR_DARK = 0x00001a
 
     constructor() {
         super(SceneKeys.LogScreen)
@@ -50,7 +50,7 @@ export default class LogScreen extends Phaser.Scene {
         maskShape.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height)
         this.add.existing(maskShape)
 
-        let logs = this.logManager.savedLogs
+        const logs = this.logManager.savedLogs
         logs.unshift(this.mainScene?.getLocale("THE JAWS LOG") + "\n------------------------")
         const panel = new ScrollablePanel(this, this.boardCenter, logs.join("\n"))
 

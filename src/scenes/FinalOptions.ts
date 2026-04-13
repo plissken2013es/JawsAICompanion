@@ -59,7 +59,7 @@ export default class FinalOptions extends Phaser.Scene {
         const btnPlayAgain = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 200, 
             this.getLocale("I want to PLAY AGAIN"), buttonsCfg, "playAgain", 
             () => {
-                let gameData = {}
+                const gameData = {}
                 gameData[GameDataToSave.TEMPORARY_LANGUAGE] = this.lang
                 LocalStorage.getInstance().saveGameData(gameData)
                 window.location.reload()
@@ -94,7 +94,7 @@ export default class FinalOptions extends Phaser.Scene {
         this.interactiveObjects.push(btnCredits, btnKofi, btnPlayAgain, btnRateApp, btnSuggest)
     }
 
-    enableInteractiveObjects(onOff: Boolean = true) {
+    enableInteractiveObjects(onOff = true) {
         this.interactiveObjects.forEach((obj) => {
             onOff ? this.input.enable(obj) : this.input.disable(obj)
         })

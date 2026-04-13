@@ -29,12 +29,12 @@ import LogManager from '~/utils/LogManager'
 
 export default class Game extends Phaser.Scene implements IGame {
 
-    readonly logEnabled:boolean = false // deactivate for DIST version
+    readonly logEnabled: boolean = false // deactivate for DIST version
 
     private lang: string = Languages.English
     private music?: Phaser.Sound.BaseSound
-    private _audioOn: Boolean = true
-    public get audioOn(): Boolean {
+    private _audioOn = true
+    public get audioOn(): boolean {
         return this._audioOn
     }
     private board?: Board
@@ -155,7 +155,7 @@ export default class Game extends Phaser.Scene implements IGame {
     addBarrelsIfNeeded() {
         const savedBarrelPositions = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.BARREL_POSITIONS]
         if (savedBarrelPositions) {
-            for (let index in savedBarrelPositions) {
+            for (const index in savedBarrelPositions) {
                 const zone = this.board?.getZoneByName(savedBarrelPositions[index])
                 const barrel = new Barrel(this, zone?.zoneCfg.barrelX, zone?.zoneCfg.barrelY, Buttons.BARREL, zone)
                 this.add.existing(barrel)
@@ -167,7 +167,7 @@ export default class Game extends Phaser.Scene implements IGame {
     addSwimmersIfNeeded() {
         const savedSwimmerPositions = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.SWIMMER_POSITIONS]
         if (savedSwimmerPositions) {
-            for (let index in savedSwimmerPositions) {
+            for (const index in savedSwimmerPositions) {
                 const swimmerData = savedSwimmerPositions[index]
                 const zone = this.board?.getZoneByName(swimmerData["zoneName"])
                 const numSwimmers = swimmerData["numSwimmers"]
@@ -246,10 +246,10 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     addButtons() {
-        let initialX = 950
-        let initialY = 100
+        const initialX = 950
+        const initialY = 100
 
-        let bgGraphics = this.add.graphics()
+        const bgGraphics = this.add.graphics()
         bgGraphics.fillStyle(0xff00ff, 0.12)
         bgGraphics.fillRoundedRect(initialX - 65, initialY - 40, 130, 400, 8)
 
@@ -437,7 +437,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     shouldBeInteractiveObjectFor(currentPhase: string, object: Phaser.GameObjects.GameObject) {
-        let name = object.buttonName || object.hunterName
+        const name = object.buttonName || object.hunterName
         if (object.isTextButton  || name == Characters.BRODY || name == Characters.HOOPER || name == Characters.QUINT) { 
             return true
         }
@@ -511,7 +511,7 @@ export default class Game extends Phaser.Scene implements IGame {
     }
 
     launchMessage(msg: string, isSharkTurnFinished?: boolean, delay?: number) {
-        let delayInMilliseconds = delay || 500
+        const delayInMilliseconds = delay || 500
         this.time.delayedCall(delayInMilliseconds, () => {
             const callback = (button, index) => {
                 this.enableInteractiveObjects(this._currentPhaseTitle)
@@ -558,13 +558,13 @@ export default class Game extends Phaser.Scene implements IGame {
             fontSize: 20
         }
 
-        let text = type === TitleType.CREW_PHASE ? this.getLocale("CREW PHASE") : this.getLocale("EVENT PHASE + SHARK PHASE")
+        const text = type === TitleType.CREW_PHASE ? this.getLocale("CREW PHASE") : this.getLocale("EVENT PHASE + SHARK PHASE")
         if (this.phaseTitle) this.phaseTitle.destroy()
         this.phaseTitle = this.add.text(5, 5, text, textCfg)
     }
 
     saveGameData() {
-        let gameData = {}
+        const gameData = {}
 
         // jaws
         gameData[GameDataToSave.JAWS] = this.jawsAI?.Jaws
@@ -572,7 +572,7 @@ export default class Game extends Phaser.Scene implements IGame {
         // hunter positions
         gameData[GameDataToSave.HUNTER_POSITIONS] = {};
         [Characters.BRODY, Characters.HOOPER, Characters.QUINT].forEach((charName) => {
-            let hunterPosition = this.hunters.find((hunterItem) => {
+            const hunterPosition = this.hunters.find((hunterItem) => {
                 return hunterItem.hunterName == charName
             })?.currentZone.zoneName            
             if (hunterPosition) {
@@ -584,7 +584,7 @@ export default class Game extends Phaser.Scene implements IGame {
         gameData[GameDataToSave.BARREL_POSITIONS] = this.jawsAI?.barrelPositions()
         
         // swimmers
-        let swimmersPositions: any[] = []
+        const swimmersPositions: any[] = []
         this.board.mapZones.forEach((zone) => {
             const numSwimmers = this.jawsAI.findZoneBy(zone.zoneName)!.numSwimmers
             if (numSwimmers > 0) {

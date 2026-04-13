@@ -4,7 +4,7 @@ export default class LocalStorage {
     
     private static instance: LocalStorage
 
-    private constructor() {}
+    private constructor() { /* singleton */ }
 
     public static getInstance(): LocalStorage {
         if (!LocalStorage.instance) {
@@ -19,7 +19,7 @@ export default class LocalStorage {
         if (savedGameData) {
             const parsedGameData = JSON.parse(savedGameData)
             if (parsedGameData) {
-                for (let prop in parsedGameData) {
+                for (const prop in parsedGameData) {
                     return parsedGameData
                 }
             }

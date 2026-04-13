@@ -30,7 +30,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
         this.dijkstraManager = DijkstraManager.getInstance()
         this.logManager = LogManager.getInstance(scene.logEnabled)
 
-        let map = scene.getMap()
+        const map = scene.getMap()
 
         if (startAtZone) {
             this._currentZone = map.getZoneByName(startAtZone)
@@ -80,9 +80,9 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
 
         const scene = this.scene as IGame
 
-        let failMsg = scene.getLocale("Nothing on the water...")
-        let successMsg = scene.getLocale("SHAAARK!!")
-        let notBeach = scene.getLocale("Sorry. Brody can only use the binoculars at a swimming beach (N, S, E or W).")
+        const failMsg = scene.getLocale("Nothing on the water...")
+        const successMsg = scene.getLocale("SHAAARK!!")
+        const notBeach = scene.getLocale("Sorry. Brody can only use the binoculars at a swimming beach (N, S, E or W).")
 
         const callback = (button, index) => {
             switch (button.text) {
@@ -116,9 +116,9 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
 
         const scene = this.scene as IGame
 
-        let failMsg = scene.getLocale("NOTHING on the screen...")
-        let partialSuccessMsg = scene.getLocale("The shark is nearby from here...")
-        let successMsg = scene.getLocale("SHAAARK!!")
+        const failMsg = scene.getLocale("NOTHING on the screen...")
+        const partialSuccessMsg = scene.getLocale("The shark is nearby from here...")
+        const successMsg = scene.getLocale("SHAAARK!!")
 
         const callback = (button, index) => {
             switch (button.text) {

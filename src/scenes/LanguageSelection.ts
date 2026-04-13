@@ -45,8 +45,8 @@ export default class LanguageSelection extends Phaser.Scene {
                 families: [ "Alice", "Noto", "American", "Elite", "troika" ]
             },
             active: () => {
-                let localStorage = LocalStorage.getInstance()
-                let temporaryLanguage = localStorage.loadGameData() && localStorage.loadGameData()[GameDataToSave.TEMPORARY_LANGUAGE]
+                const localStorage = LocalStorage.getInstance()
+                const temporaryLanguage = localStorage.loadGameData() && localStorage.loadGameData()[GameDataToSave.TEMPORARY_LANGUAGE]
                 if (temporaryLanguage) {
                     localStorage.removeItem(GameDataToSave.TEMPORARY_LANGUAGE)
                     this.scene.start(SceneKeys.Preloader, { language: temporaryLanguage })
@@ -77,6 +77,6 @@ export default class LanguageSelection extends Phaser.Scene {
                         })
                 }
             }
-        }
+        })
     }
 }

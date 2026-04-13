@@ -3,9 +3,9 @@ import IGame from '~/objects/IGame'
 
 export default class ScrollablePanel {
 
-    private COLOR_PRIMARY: number = 0x004258
-    private COLOR_LIGHT: number = 0x7b5e57
-    private COLOR_DARK: number = 0x00001a
+    private COLOR_PRIMARY = 0x004258
+    private COLOR_LIGHT = 0x7b5e57
+    private COLOR_DARK = 0x00001a
 
     private rexUI: any
     private panel: any
@@ -65,9 +65,9 @@ export default class ScrollablePanel {
         const scene = panel.scene
 
         sizer.clear(true)
-        let lines = content.split('\n')
+        const lines = content.split('\n')
         for (let li = 0, lcnt = lines.length; li < lcnt; li++) {
-            let words = lines[li].split(' ');
+            const words = lines[li].split(' ');
             for (let wi = 0, wcnt = words.length; wi < wcnt; wi++) {
                 sizer.add(
                     scene.add.text(0, 0, words[wi], {
