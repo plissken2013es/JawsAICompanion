@@ -72,4 +72,20 @@ describe('LogManager.reset', () => {
         lm.reset(['pre-seeded'])
         expect(lm.savedLogs).toEqual(['pre-seeded'])
     })
+
+    it('reset([]) discards logs from a previous game session', () => {
+        // Simulates: game 1 runs and accumulates logs in the singleton
+        const lm = LogManager.getInstance(false)
+        lm.log('turn 1 - español', true)
+        lm.log('turn 2 - español', true)
+        expect(lm.savedLogs).toHaveLength(2)
+
+        // Simulates: new game starts — loadLogsIfNeeded calls reset([]) because savedLogs is null
+        lm.reset([])
+        expect(lm.savedLogs).toHaveLength(0)
+
+        // Game 2 logs should be the only entries
+        lm.log('turn 1 - russian', true)
+        expect(lm.savedLogs).toEqual(['turn 1 - russian'])
+    })
 })

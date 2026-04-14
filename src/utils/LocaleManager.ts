@@ -101,6 +101,16 @@ const Locale = {
       DE: "Hai benutzt FRESSRAUSCH an Strand ",
       RU: "Акула использует НЕИСТОВОЕ ПОЖИРАНИЕ в "
     },
+    "Jaws uses EVASIVE MOVES power": {
+      ES: "El tiburón usa el poder MOVIMIENTOS EVASIVOS",
+      DE: "Hai benutzt AUSWEICHMANÖVER",
+      RU: "Акула использует УКЛОНЕНИЕ"
+    },
+    "Jaws uses OUT OF SIGHT power": {
+      ES: "El tiburón usa el poder FUERA DE LA VISTA",
+      DE: "Hai benutzt UNSICHTBARKEIT",
+      RU: "Акула использует ИСЧЕЗНОВЕНИЕ"
+    },
     "Jaws has used a POWER.": {
       ES: "El tiburón ha utilizado un PODER especial.",
       DE: "Hai hat eine ZUSATZFÄHIGKEIT genutzt ",

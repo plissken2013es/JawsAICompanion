@@ -192,8 +192,8 @@ export default class Game extends Phaser.Scene implements IGame {
 
     loadLogsIfNeeded() {
         const savedLogs = this.localStorage.loadGameData() && this.localStorage.loadGameData()[GameDataToSave.SAVED_LOGS]
-        if (this.logManager && savedLogs) {
-            this.logManager.reset(savedLogs)
+        if (this.logManager) {
+            this.logManager.reset(savedLogs || [])
         }
     }
 

@@ -385,6 +385,14 @@ export default class JawsAI {
         this.jaws.powersAvailable = this.jaws.powersAvailable.filter((item) => {
             return item != power
         })
+        if (power === PowerTokens.FEEDING_FRENZY) {
+            this.logManager.log(this.scene.getLocale("Jaws uses FEEDING FRENZY power at ") + this.scene.getLocale(this.jaws.position), true)
+        } else if (power === PowerTokens.EVASIVE_MOVES) {
+            this.logManager.log(this.scene.getLocale("Jaws uses EVASIVE MOVES power"), true)
+        } else if (power === PowerTokens.OUT_OF_SIGHT) {
+            this.logManager.log(this.scene.getLocale("Jaws uses OUT OF SIGHT power"), true)
+        }
+        // SPEED_BURST is logged in performSpeedBurstMove() with the specific destination
     }
 
     performSpeedBurstMove(isGardnersBoat) {

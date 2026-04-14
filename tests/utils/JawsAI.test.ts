@@ -194,6 +194,44 @@ describe('JawsAI.useJawsPower', () => {
     })
 })
 
+describe('JawsAI.useJawsPower — logging', () => {
+    it('FEEDING_FRENZY (ff) writes a saved log entry containing the current position', () => {
+        const ai = makeJawsAI()
+        ;(ai as any).jaws.position = 'N'
+        ai.useJawsPower('ff')
+        const logs = (ai as any).logManager.savedLogs as string[]
+        expect(logs.some(msg => msg.includes('FEEDING FRENZY') && msg.includes('N'))).toBe(true)
+    })
+
+    it('EVASIVE_MOVES (em) writes a saved log entry', () => {
+        const ai = makeJawsAI()
+        ai.useJawsPower('em')
+        const logs = (ai as any).logManager.savedLogs as string[]
+        expect(logs.some(msg => msg.includes('EVASIVE MOVES'))).toBe(true)
+    })
+
+    it('OUT_OF_SIGHT (oos) writes a saved log entry', () => {
+        const ai = makeJawsAI()
+        ai.useJawsPower('oos')
+        const logs = (ai as any).logManager.savedLogs as string[]
+        expect(logs.some(msg => msg.includes('OUT OF SIGHT'))).toBe(true)
+    })
+
+    it('SPEED_BURST (sb) does NOT write a log entry in useJawsPower — it is logged in performSpeedBurstMove', () => {
+        const ai = makeJawsAI()
+        ai.useJawsPower('sb')
+        const logs = (ai as any).logManager.savedLogs as string[]
+        expect(logs).toHaveLength(0)
+    })
+
+    it('a non-existent power writes nothing to the log', () => {
+        const ai = makeJawsAI()
+        ai.useJawsPower('nonexistent')
+        const logs = (ai as any).logManager.savedLogs as string[]
+        expect(logs).toHaveLength(0)
+    })
+})
+
 describe('JawsAI.isJawsVisible', () => {
     it('returns true when no power is active', () => {
         const ai = makeJawsAI()
