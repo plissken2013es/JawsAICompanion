@@ -46,7 +46,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         const sharkAttack = this.scene.add.sprite(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, "shark_attack")
         const chompSnd = this.scene.sound.add("chomp")
         if (this.scene.audioOn) chompSnd.play({ volume: 0.25, loop: true })
-        sharkAttack.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+        sharkAttack.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             sharkAttack.destroy()
             chompSnd.destroy()
         })

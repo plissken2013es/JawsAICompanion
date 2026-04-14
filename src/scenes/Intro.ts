@@ -53,12 +53,12 @@ export default class Intro extends Phaser.Scene {
         })
         this.diver.play("swim")
 
-        const jawsShadowAnim = this.anims.create({
+        this.anims.create({
             key: "jawsShadow",
             frames: this.anims.generateFrameNumbers("jawsShadow", {}),
             frameRate: 1
-        }) as Phaser.Animations.Animation
-        jawsShadowAnim.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        })
+        this.jawsShadow!.on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             this.jawsShadow!.destroy()
             this.diver!.anims.stop()
             this.pause = true
