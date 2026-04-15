@@ -1,0 +1,9 @@
+la contraseña es el josele y el año todo en minúsculas
+"upload" es el alias_name
+
+  export JAWS_STORE_PASSWORD="[PASSW]"
+  export JAWS_KEY_PASSWORD="[PASSW]"
+  cd "D:/_TRABAJOS/_DEV/_____PROYECTOS/18_RoboJawsJS/phaser3-typescript-parcel-temp  late"
+  npm run build:android
+  cd android
+  ./gradlew bundleRelease

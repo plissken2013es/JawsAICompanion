@@ -2,3 +2,9 @@
 /node_modules
 /_OLD
 /dist
+
+# Capacitor — local/generated files (android/ and ios/ folders ARE committed)
+android/.gradle/
+android/app/new-jaws-keystore.jks
+ios/.xcode.env.local
+ios/App/Pods/

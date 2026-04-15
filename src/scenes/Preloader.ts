@@ -1,4 +1,6 @@
 ﻿import Phaser from "phaser"
+import { Capacitor } from "@capacitor/core"
+import { SplashScreen } from "@capacitor/splash-screen"
 import SceneKeys from "~/consts/SceneKeys"
 import Buttons from "~/consts/Buttons"
 
@@ -48,6 +50,9 @@ export default class Preloader extends Phaser.Scene {
 
         this.load.on(Phaser.Loader.Events.COMPLETE, () => {
             progress.destroy()
+            if (Capacitor.isNativePlatform()) {
+                SplashScreen.hide()
+            }
             this.time.delayedCall(1500, () => {
                 this.scene.start(SceneKeys.StudiosLogo, { language: this.lang })
             }, [], this)
