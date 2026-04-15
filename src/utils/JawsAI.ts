@@ -165,13 +165,13 @@ export default class JawsAI {
             case JawsMissionNames.WEST_BEACH:
                 return missionName
     
-            case JawsMissionNames.NEAREST_BEACH:
-                let minDistance = 666
+            case JawsMissionNames.NEAREST_BEACH: {
+                const minDistance = 666
                 let nearestBeaches: string[] = []
                 beaches.filter(beach => beach != this.jaws.position).forEach((beach) => {
-                    let taskConfig = {barrels: this.barrelPositions()} // TODO: review Quint (when to apply & his weight), quint: currentQuintPosition(), desiredDistanceToQuint: 2}
-                    let graph = this.dijkstraManager.buildWeightedJawsGraph(taskConfig)
-                    let distance = this.dijkstraManager.findShortestPath(graph, this.jaws.position, beach).distance
+                    const taskConfig = {barrels: this.barrelPositions()} // TODO: review Quint (when to apply & his weight), quint: currentQuintPosition(), desiredDistanceToQuint: 2}
+                    const graph = this.dijkstraManager.buildWeightedJawsGraph(taskConfig)
+                    const distance = this.dijkstraManager.findShortestPath(graph, this.jaws.position, beach).distance
                     if (distance < minDistance) {
                         nearestBeaches = [beach]
                     } else if (distance == minDistance) {
@@ -179,14 +179,15 @@ export default class JawsAI {
                     }
                 })
                 return this.pick(nearestBeaches) as string
-    
-            case JawsMissionNames.FARTHEST_BEACH:
-                let maxDistance = 0
+            }
+
+            case JawsMissionNames.FARTHEST_BEACH: {
+                const maxDistance = 0
                 let farthestBeaches: string[] = []
                 beaches.filter(beach => beach != this.jaws.position).forEach((beach) => {
-                    let taskConfig = {barrels: this.barrelPositions()} // TODO: review Quint (when to apply & his weight), quint: currentQuintPosition(), desiredDistanceToQuint: 2}
-                    let graph = this.dijkstraManager.buildWeightedJawsGraph(taskConfig)
-                    let distance = this.dijkstraManager.findShortestPath(graph, this.jaws.position, beach).distance
+                    const taskConfig = {barrels: this.barrelPositions()} // TODO: review Quint (when to apply & his weight), quint: currentQuintPosition(), desiredDistanceToQuint: 2}
+                    const graph = this.dijkstraManager.buildWeightedJawsGraph(taskConfig)
+                    const distance = this.dijkstraManager.findShortestPath(graph, this.jaws.position, beach).distance
                     if (distance > maxDistance) {
                         farthestBeaches = [beach]
                     } else if (distance == maxDistance) {
@@ -194,12 +195,13 @@ export default class JawsAI {
                     }
                 })
                 return this.pick(farthestBeaches) as string
-    
-            case JawsMissionNames.MOST_SWIMMERS:
+            }
+
+            case JawsMissionNames.MOST_SWIMMERS: {
                 let maxSwimmers = 0
                 let crowdedBeaches: string[] = []
                 beaches.filter(beach => beach != this.jaws.position).forEach((beach) => {
-                    let numSwimmers = this.findZoneBy(beach)!.numSwimmers + (this.findZoneBy(beach)!.isMichaelHere ? 2 : 0)
+                    const numSwimmers = this.findZoneBy(beach)!.numSwimmers + (this.findZoneBy(beach)!.isMichaelHere ? 2 : 0)
                     if (numSwimmers > maxSwimmers) {
                         crowdedBeaches = [beach]
                         maxSwimmers = numSwimmers
@@ -209,12 +211,13 @@ export default class JawsAI {
                     }
                 })
                 return this.pick(crowdedBeaches) as string
-    
-            case JawsMissionNames.LESS_SWIMMERS:
+            }
+
+            case JawsMissionNames.LESS_SWIMMERS: {
                 let lessSwimmers = 666
                 let emptyBeaches: string[] = []
                 beaches.filter(beach => beach != this.jaws.position).forEach((beach) => {
-                    let numSwimmers = this.findZoneBy(beach)!.numSwimmers + (this.findZoneBy(beach)!.isMichaelHere ? 2 : 0)
+                    const numSwimmers = this.findZoneBy(beach)!.numSwimmers + (this.findZoneBy(beach)!.isMichaelHere ? 2 : 0)
                     if (numSwimmers < lessSwimmers) {
                         emptyBeaches = [beach]
                         lessSwimmers = numSwimmers
@@ -224,8 +227,9 @@ export default class JawsAI {
                     }
                 })
                 return this.pick(emptyBeaches) as string
-    
-            case JawsMissionNames.SILENT_RUNNING:
+            }
+
+            case JawsMissionNames.SILENT_RUNNING: {
                 let bestOptions = deepOcean.filter((zone) => {
                     return !this.findZoneBy(zone)!.hasBarrels() && this.currentQuintPosition() != zone && zone != this.jaws.position
                 })
@@ -241,14 +245,15 @@ export default class JawsAI {
                     return this.pick(bestOptions) as string
                 }
                 return this.jaws.position
-    
+            }
+
             default:
                 return this.jaws.position
         }
     }
 
     barrelPositions(): string[] {
-        let positions: string[] = []
+        const positions: string[] = []
         this.zones.forEach((zone) => {
             if (this.findZoneBy(zone.zoneName)!.hasBarrels()) {
                 positions.push(zone.zoneName)
@@ -304,24 +309,24 @@ export default class JawsAI {
     
         this.initGame()
     
-        let quintZones = this.dijkstraManager.filterNodesByDistance(4, JawsGraph, this.currentQuintPosition()).reverse()
-        let bestOptions = quintZones[0].concat(quintZones[1])
-        let initialPos = this.pick(bestOptions) as string
+        const quintZones = this.dijkstraManager.filterNodesByDistance(4, JawsGraph, this.currentQuintPosition()).reverse()
+        const bestOptions = quintZones[0].concat(quintZones[1])
+        const initialPos = this.pick(bestOptions) as string
         this.logManager.log(this.scene.getLocale("Jaws chooses INITIAL position ") + this.scene.getLocale(initialPos), true)
         this.jaws.publicMessages.push(this.scene.getLocale("Jaws chooses INITIAL position "))
         this.jaws.position = initialPos
     }
 
     shouldAmbushAtBeach(numActions): boolean {
-        let beach = this.findZoneBy(this.jaws.position)
-        let beachName = beach.zoneName
+        const beach = this.findZoneBy(this.jaws.position)
+        const beachName = beach.zoneName
         return this.isJawsAtBeach() && beach.hasSomethingToEat() && numActions < 2 && this.jaws.lastBeachAttacked != beachName
     }
     
     shouldTakeMyChancesBecauseQuintIsFarAway(): boolean {
         if (this.jaws.turnsPlayed < 3 || this.numBarrelsInWater() < 2) return false // don't take risks at the beggining of the game
     
-        let quintIsFarSoTakeYourChances = this.oppositeBeachFromCurrent() == this.currentQuintPosition() ? this.random.realInRange(0, 10) : 0
+        const quintIsFarSoTakeYourChances = this.oppositeBeachFromCurrent() == this.currentQuintPosition() ? this.random.realInRange(0, 10) : 0
         return quintIsFarSoTakeYourChances > 4 // TO-DO: change this value if Jaws fear Quint?
     }
 
@@ -343,7 +348,7 @@ export default class JawsAI {
 
     shouldUseFeedingFrenzy(isGoingToRunAwayOrHide): boolean {
         if (!this.jaws.powerEnabledThisTurn && this.jaws.powersAvailable.includes(PowerTokens.FEEDING_FRENZY) && !isGoingToRunAwayOrHide) {
-            let beach = this.findZoneBy(this.jaws.position)
+            const beach = this.findZoneBy(this.jaws.position)
             if (this.isJawsAtBeach()) {
                 if (beach.numSwimmers > 3 || (beach.numSwimmers > 1 && beach.isMichaelHere)) {
                     this.useJawsPower(PowerTokens.FEEDING_FRENZY)
@@ -380,6 +385,14 @@ export default class JawsAI {
         this.jaws.powersAvailable = this.jaws.powersAvailable.filter((item) => {
             return item != power
         })
+        if (power === PowerTokens.FEEDING_FRENZY) {
+            this.logManager.log(this.scene.getLocale("Jaws uses FEEDING FRENZY power at ") + this.scene.getLocale(this.jaws.position), true)
+        } else if (power === PowerTokens.EVASIVE_MOVES) {
+            this.logManager.log(this.scene.getLocale("Jaws uses EVASIVE MOVES power"), true)
+        } else if (power === PowerTokens.OUT_OF_SIGHT) {
+            this.logManager.log(this.scene.getLocale("Jaws uses OUT OF SIGHT power"), true)
+        }
+        // SPEED_BURST is logged in performSpeedBurstMove() with the specific destination
     }
 
     performSpeedBurstMove(isGardnersBoat) {
@@ -408,11 +421,11 @@ export default class JawsAI {
     }
     
     calculateRouteToTarget() {
-        let taskConfig = {barrels: this.barrelPositions()} // TODO: review Quint (when to apply & his weight), quint: currentQuintPosition(), desiredDistanceToQuint: 2}
+        const taskConfig = {barrels: this.barrelPositions()} // TODO: review Quint (when to apply & his weight), quint: currentQuintPosition(), desiredDistanceToQuint: 2}
         this.logManager.log(taskConfig)
-        let graph = this.dijkstraManager.buildWeightedJawsGraph(taskConfig)
+        const graph = this.dijkstraManager.buildWeightedJawsGraph(taskConfig)
         this.logManager.log(graph)
-        let path = this.dijkstraManager.findShortestPath(graph, this.jaws.position, this.jaws.currentTarget).path
+        const path = this.dijkstraManager.findShortestPath(graph, this.jaws.position, this.jaws.currentTarget).path
         if (path[0] === this.jaws.position) path.shift()
         this.jaws.path = path
         this.logManager.log(this.scene.getLocale("Jaws' task path is: ") + this.scene.getLocale(path))
@@ -432,7 +445,7 @@ export default class JawsAI {
         this.changeJawsBehaviourIfNeeded()
     
         while (this.jaws.position === this.jaws.currentTarget || this.jaws.currentTarget == null) {
-            let task = this.pick(this.getMissionDeckForJawsStatus())
+            const task = this.pick(this.getMissionDeckForJawsStatus())
             this.logManager.log(this.scene.getLocale("Jaws current mission now is: ") + task)
             this.jaws.currentTarget = this.getJawsTargetForMission(task as string)
         }
@@ -496,7 +509,7 @@ export default class JawsAI {
             })
         }
         if (isGardnersBoat && this.jaws.huntersVisitedThisTurn.length > 0) {
-            let captains: string[] = []
+            const captains: string[] = []
             this.jaws.huntersVisitedThisTurn.forEach((captain) => {
                 captains.push(this.scene.getLocale(captain.hunterName))
             })
@@ -506,11 +519,11 @@ export default class JawsAI {
                 shouldIncreaseMessageDelay = true
             })
         }
-        for (let beachName in this.jaws.swimmersEatenThisTurn) {
+        for (const beachName in this.jaws.swimmersEatenThisTurn) {
             if (this.jaws.swimmersEatenThisTurn[beachName]["michael"]) {
                 this.jaws.publicMessages.push(this.scene.getLocale("Jaws eats Michael Brody on beach ") + this.scene.getLocale(beachName))
             }
-            let numSwimmersEaten = this.jaws.swimmersEatenThisTurn[beachName]["swimmers"]
+            const numSwimmersEaten = this.jaws.swimmersEatenThisTurn[beachName]["swimmers"]
             if (numSwimmersEaten > 0) {
                 this.jaws.publicMessages.push(this.scene.getLocale("Jaws eats ") + numSwimmersEaten + this.scene.getLocale(" swimmer(s) on beach ") + this.scene.getLocale(beachName))
             }
@@ -573,9 +586,9 @@ export default class JawsAI {
         }
     
         if (this.isJawsAtBeach()) {
-            let beach = this.findZoneBy(this.jaws.position)
-            let isGoingToRunAwayOrHide = this.shouldUseSpeedBurstPowerToRunAway(numActions) || this.shouldUseOutOfSightPower()
-            let conditionsArePositive = numActions > 1 || this.shouldTakeMyChancesBecauseQuintIsFarAway() || isGoingToRunAwayOrHide
+            const beach = this.findZoneBy(this.jaws.position)
+            const isGoingToRunAwayOrHide = this.shouldUseSpeedBurstPowerToRunAway(numActions) || this.shouldUseOutOfSightPower()
+            const conditionsArePositive = numActions > 1 || this.shouldTakeMyChancesBecauseQuintIsFarAway() || isGoingToRunAwayOrHide
             if (beach.hasSomethingToEat() && conditionsArePositive) {
                 this.jaws.lastBeachAttacked = beach.zoneName
                 

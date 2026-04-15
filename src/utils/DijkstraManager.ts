@@ -3,8 +3,8 @@ import { JawsGraph, JawsConnections } from "~/consts/Graph"
 const shortestDistanceNode = (distances, visited) => {
 	let shortest: string | undefined = undefined
 
-	for (let node in distances) {
-		let currentIsShortest = shortest === undefined || distances[node] < distances[shortest]
+	for (const node in distances) {
+		const currentIsShortest = shortest === undefined || distances[node] < distances[shortest]
 		if (currentIsShortest && !visited.includes(node)) {
 			shortest = node
 		}
@@ -19,13 +19,13 @@ const findShortestPath = (graph: any, startNode: string, endNode: string) => {
 	distances = Object.assign(distances, graph[startNode])
 
 	// track paths
-	let parents = { endNode: null }
-	for (let child in graph[startNode]) {
+	const parents = { endNode: null }
+	for (const child in graph[startNode]) {
 		parents[child] = startNode
 	}
 
 	// track nodes that have already been visited
-	let visited: string[] = []
+	const visited: string[] = []
 
 	// find the nearest node
 	let node = shortestDistanceNode(distances, visited)
@@ -33,16 +33,16 @@ const findShortestPath = (graph: any, startNode: string, endNode: string) => {
 	// for that node
 	while (node) {
 		// find its distance from the start node & its child nodes
-		let distance = distances[node]
-		let children = graph[node]
+		const distance = distances[node]
+		const children = graph[node]
 		// for each of those child nodes
-		for (let child in children) {
+		for (const child in children) {
 			// make sure each child node is not the start node
 			if (String(child) === String(startNode)) {
 				continue
 			} else {
 				// save the distance from the start node to the child node
-				let newdistance = distance + children[child];
+				const newdistance = distance + children[child];
 				// if there's no recorded distance from the start node to the child node in the distances object
 				// or if the recorded distance is shorter than the previously stored distance from the start node to the child node
 				// save the distance to the object
@@ -61,7 +61,7 @@ const findShortestPath = (graph: any, startNode: string, endNode: string) => {
 
 	// using the stored paths from start node to end node
 	// record the shortest path
-	let shortestPath = [endNode]
+	const shortestPath = [endNode]
 	let parent = parents[endNode]
 	while (parent) {
 		shortestPath.push(parent)
@@ -70,7 +70,7 @@ const findShortestPath = (graph: any, startNode: string, endNode: string) => {
 	shortestPath.reverse()
 
 	// return the shortest path from start node to end node & its distance
-	let results = {
+	const results = {
 		distance: distances[endNode],
 		path: shortestPath,
 	}
@@ -79,12 +79,12 @@ const findShortestPath = (graph: any, startNode: string, endNode: string) => {
 }
 
 const filterNodesByDistance = (dist: number, graph: any, origin: string) => {
-    let results = [[origin]]
+    const results = [[origin]]
     results.length = dist
 
-    for (let node in graph) {
+    for (const node in graph) {
         if (node === origin) continue
-        let shortestPathToNode = findShortestPath(graph, origin, node)
+        const shortestPathToNode = findShortestPath(graph, origin, node)
         if (shortestPathToNode.distance <= dist) {
             if (!results[shortestPathToNode.distance]) {
                 results[shortestPathToNode.distance] = []
@@ -106,16 +106,16 @@ const buildWeightedJawsGraph = (cfg) => {
         barrels = cfg.barrels
     }
     let quintHotZones: any[] = []
-    let desiredDistanceToQuint = cfg.desiredDistanceToQuint || 2
+    const desiredDistanceToQuint = cfg.desiredDistanceToQuint || 2
     if (cfg.quint) {
         quintHotZones = filterNodesByDistance(desiredDistanceToQuint, JawsGraph, cfg.quint)
     }
 
-    let graph = {}
-    for (let node in JawsConnections) {
-        let obj = {}
+    const graph = {}
+    for (const node in JawsConnections) {
+        const obj = {}
         JawsConnections[node].forEach((connection) => {
-            let barrelWeight = (barrels.includes(String(connection)) ? BARREL_WEIGHT : 0)
+            const barrelWeight = (barrels.includes(String(connection)) ? BARREL_WEIGHT : 0)
             let quintWeight = 0
             quintHotZones.forEach((quintZone, index) => {
                 if (quintZone.includes(String(connection))) {
@@ -133,7 +133,7 @@ export default class DijkstraManager {
 
     private static instance: DijkstraManager
 
-    private constructor() { }
+    private constructor() { /* singleton */ }
 
     public static getInstance(): DijkstraManager {
         if (!DijkstraManager.instance) {

@@ -3,9 +3,16 @@
 	"version": "1.0.0",
 	"description": "A template project for Phaser3 using Parceljs",
 	"scripts": {
-		"start": "parcel src/index.html -p 8000",
-		"build": "parcel build src/index.html --out-dir dist",
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "vite",
+		"build": "vite build",
+		"build:android": "vite build && npx cap sync android",
+		"build:ios": "vite build && npx cap sync ios",
+		"open:android": "npx cap open android",
+		"open:ios": "npx cap open ios",
+		"preview": "vite preview",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
 		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
 	},
 	"author": "supertommy",
@@ -16,24 +23,27 @@
 	},
 	"homepage": "https://github.com/ourcade/phaser3-parcel-template",
 	"devDependencies": {
+		"@capacitor/assets": "^3.0.5",
+		"@types/node": "^22.0.0",
 		"@typescript-eslint/eslint-plugin": "^2.29.0",
 		"@typescript-eslint/parser": "^2.29.0",
-		"cssnano": "^4.1.10",
+		"@vitest/coverage-v8": "^4.1.4",
 		"eslint": "^6.8.0",
+		"jsdom": "^28.1.0",
 		"minimist": ">=1.2.2",
-		"parcel-plugin-clean-easy": "^1.0.2",
-		"parcel-plugin-static-files-copy": "^2.4.3",
-		"typescript": "^3.8.3"
+		"typescript": "^3.8.3",
+		"vite": "^5.0.0",
+		"vite-tsconfig-paths": "^4.0.0",
+		"vitest": "^4.1.4"
 	},
 	"dependencies": {
-		"parcel-bundler": "^1.12.5",
-		"phaser": "^3.24.1"
-	},
-	"parcelCleanPaths": [
-		"dist"
-	],
-	"staticFiles": {
-		"staticPath": "public",
-		"watcherGlob": "**"
+		"@capacitor/android": "^8.3.0",
+		"@capacitor/cli": "^8.3.0",
+		"@capacitor/core": "^8.3.0",
+		"@capacitor/ios": "^8.3.0",
+		"@capacitor/screen-orientation": "^8.0.1",
+		"@capacitor/splash-screen": "^8.0.1",
+		"@capacitor/status-bar": "^8.0.2",
+		"phaser": "^3.90.0"
 	}
 }

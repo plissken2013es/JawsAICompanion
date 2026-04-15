@@ -5,7 +5,7 @@ import IGame from '~/objects/IGame'
 export default class TextButton extends Phaser.GameObjects.Text {
 
     readonly buttonName: string
-    public isTextButton: boolean = true
+    public isTextButton = true
 
     constructor(scene: IGame, x: number, y: number, text: string, style: any, key: string, callback: Function) {
 

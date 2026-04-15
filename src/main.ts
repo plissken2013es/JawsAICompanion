@@ -1,6 +1,14 @@
 import Phaser from 'phaser'
+import { Capacitor } from '@capacitor/core'
+import { StatusBar } from '@capacitor/status-bar'
+import { ScreenOrientation } from '@capacitor/screen-orientation'
 
 import SceneKeys from './consts/SceneKeys'
+
+if (Capacitor.isNativePlatform()) {
+	StatusBar.hide()
+	ScreenOrientation.lock({ orientation: 'landscape' })
+}
 
 import Preloader from './scenes/Preloader'
 import StudiosLogo from './scenes/StudiosLogo'
@@ -18,7 +26,7 @@ const config: Phaser.Types.Core.GameConfig = {
 	physics: {
 		default: 'arcade',
 		arcade: {
-			gravity: { y: 0 },
+			gravity: { x: 0, y: 0 },
 			debug: true
 		}
 	},

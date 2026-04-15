@@ -6,8 +6,7 @@ enum GameDataToSave {
     SWIMMER_POSITIONS = "swimmerPosittions",
     MICHAEL_POSITION = "michaelPosition",
     SAVED_LOGS = "savedLogs",
-    CURRENT_PHASE_TITLE = "currentPhaseTitle",
-    TEMPORARY_LANGUAGE = "temporaryLanguage"
+    CURRENT_PHASE_TITLE = "currentPhaseTitle"
 }
 
 const LOCALSTORAGE_STRING = "JawsAI_gamedata"

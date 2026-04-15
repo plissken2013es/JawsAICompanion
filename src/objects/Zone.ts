@@ -9,14 +9,14 @@ export default class Zone extends Phaser.GameObjects.Sprite {
 
     readonly zoneName: string
     readonly zoneCfg: IZoneCfg
-    private numBarrels: number = 0
-    private _numSwimmers: number = 0
+    private numBarrels = 0
+    private _numSwimmers = 0
     public get numSwimmers(): number {
         return this._numSwimmers
     }
     private numBarrelsText?: Phaser.GameObjects.Text
     private numSwimmersText?: Phaser.GameObjects.Text
-    private _isMichaelHere: boolean = false
+    private _isMichaelHere = false
     public get isMichaelHere(): boolean {
         return this._isMichaelHere
     }
@@ -46,7 +46,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
         const sharkAttack = this.scene.add.sprite(this.zoneCfg.swimmerX, this.zoneCfg.swimmerY, "shark_attack")
         const chompSnd = this.scene.sound.add("chomp")
         if (this.scene.audioOn) chompSnd.play({ volume: 0.25, loop: true })
-        sharkAttack.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+        sharkAttack.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             sharkAttack.destroy()
             chompSnd.destroy()
         })

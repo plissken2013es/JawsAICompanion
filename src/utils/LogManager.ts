@@ -4,7 +4,7 @@ export default class LogManager {
     public get savedLogs(): string[] {
         return this._savedLogs
     }
-    private logEnabled: boolean = false
+    private logEnabled = false
     private static instance: LogManager
 
     private constructor(logEnabled: boolean) {

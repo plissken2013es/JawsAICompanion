@@ -3,7 +3,7 @@ import SceneKeys from "~/consts/SceneKeys"
 
 export default class StudiosLogo extends Phaser.Scene {
 
-    private lang: string = "EN"
+    private lang = "EN"
 
     constructor() {
         super(SceneKeys.StudiosLogo)
@@ -14,8 +14,8 @@ export default class StudiosLogo extends Phaser.Scene {
     }
 
     create() {
-        let logo = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, "studiosLogo").setOrigin(0.5)
-        const logoAnim = this.anims.create({
+        const logo = this.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY, "studiosLogo").setOrigin(0.5)
+        this.anims.create({
             key: "logo",
             frames: this.anims.generateFrameNumbers("studiosLogo", {}),
             frameRate: 8,
@@ -32,8 +32,8 @@ export default class StudiosLogo extends Phaser.Scene {
                 break
         }
 
-        logoAnim.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 140, proudlyPresents, 
+        logo.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 140, proudlyPresents,
                 { fontFamily: "Alice", color: "#5656ee", align: "center", fontSize: 20 }).setOrigin(0.5)
             this.time.delayedCall(2000, () => {
                 this.scene.start(SceneKeys.Intro, { language: this.lang })

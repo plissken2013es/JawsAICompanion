@@ -1,10 +1,12 @@
 ﻿import Phaser from "phaser"
+import { Capacitor } from "@capacitor/core"
+import { SplashScreen } from "@capacitor/splash-screen"
 import SceneKeys from "~/consts/SceneKeys"
 import Buttons from "~/consts/Buttons"
 
 export default class Preloader extends Phaser.Scene {
     
-    private lang: string = "EN"
+    private lang = "EN"
     
     constructor() {
         super(SceneKeys.Preloader)
@@ -27,7 +29,7 @@ export default class Preloader extends Phaser.Scene {
         })
         jaws.play("jaws-swim")
 
-        let position = { x: 0 }
+        const position = { x: 0 }
         let tweenJaws
 
         this.load.on(Phaser.Loader.Events.PROGRESS, (value) => {
@@ -48,6 +50,9 @@ export default class Preloader extends Phaser.Scene {
 
         this.load.on(Phaser.Loader.Events.COMPLETE, () => {
             progress.destroy()
+            if (Capacitor.isNativePlatform()) {
+                SplashScreen.hide()
+            }
             this.time.delayedCall(1500, () => {
                 this.scene.start(SceneKeys.StudiosLogo, { language: this.lang })
             }, [], this)

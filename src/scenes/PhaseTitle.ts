@@ -82,7 +82,7 @@ export default class PhaseTitle extends Phaser.Scene {
         const phaseAudio = this.sound.add("phase_title")
         if (this.mainScene?.audioOn) phaseAudio.play({ volume: 0.4 })
 
-        const touchIconAnim = this.anims.create({
+        this.anims.create({
             key: "touchIconAnim",
             frames: this.anims.generateFrameNumbers("touch_icon", {}),
             frameRate: 6,
@@ -102,7 +102,7 @@ export default class PhaseTitle extends Phaser.Scene {
                 }
                 this.time.delayedCall(2500, () => {
                     const touchIcon = this.add.sprite(this.boardCenter.x, this.boardCenter.y + 150, "touch_icon").setOrigin(0.5)
-                    touchIcon.anims.play(touchIconAnim)
+                    touchIcon.anims.play("touchIconAnim")
                 }, [], this)
             },
             onCompleteScope: this
