@@ -89,3 +89,14 @@ Vite runs with `root: 'src'` and `publicDir: '../public'`: static assets (images
 - Play tracks (2026-10-06): production 6.0.5, internal 6.0.4, beta 4.0.0, alpha 1.1.0 (draft).
 - `src/index.html` loads Google Analytics (`gtag`, `G-0LQ57VQD5R`): keep the Play "Data safety" form consistent with it.
 - The older Cordova build (6.0.2) and the 2016–2020 sources live in `_____PROYECTOS/JawsDist/`; they are history, not the codebase.
+
+## Web version (Netlify)
+
+**https://robojaws.netlify.app** is NOT deployed from this repo. Netlify auto-deploys the **public** repo [`plissken2013es/JawsDist`](https://github.com/plissken2013es/JawsDist), cloned locally at `_____PROYECTOS/JawsDist/_WebDist/JawsDist`, which holds only a copy of `dist/`. Every release must be copied over by hand, or the web keeps the old build (in October 2026 it still served 6.0.4 with the intro freeze after the app had been fixed).
+
+1. `npm run build` here.
+2. In the JawsDist clone: `git rm` the old `assets/index-*.js` / `assets/web-*.js`, then copy `dist/index.html` and `dist/assets/*` (the audio, fonts, images and scripts only change if `public/` changed: compare with `diff -rq dist <JawsDist> -x .git -x 'privacy_policy_*'`, which must come out empty).
+3. **Keep the `privacy_policy_*.txt` files** (Jaws, Moncloa, Cuenta Atrás, Zombie Scavenger 2D): they are not in `dist/` and their Netlify URLs are registered in Play listings.
+4. Test the clone locally (watch the whole intro, console clean), then commit and push to `main`. Netlify deploys in about 20 s; check that `https://robojaws.netlify.app/` loads the new `assets/index-*.js`.
+
+Last web deploy: 6.0.5, JawsDist commit `2984b5b` (2026-10-07). `_____PROYECTOS/JawsDist/_distKeystores` is, despite its name, just an old (2022) clone of the same JawsDist repo with no keystores in it.
