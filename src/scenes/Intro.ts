@@ -75,7 +75,7 @@ export default class Intro extends Phaser.Scene {
                         duration: 666,
                         ease: Phaser.Math.Easing.Expo,
                         onComplete: this.showJawsTitle,
-                        onCompleteScope: this
+                        callbackScope: this
                     })
                 }, [], this)
             }, [], this)

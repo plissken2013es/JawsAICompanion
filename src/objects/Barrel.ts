@@ -35,7 +35,7 @@ export default class Barrel extends Phaser.GameObjects.Sprite {
             onComplete: () => {
                 sirenSnd.destroy()
             },
-            onCompleteScope: this
+            callbackScope: this
         })
     }
 

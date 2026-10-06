@@ -105,7 +105,7 @@ export default class PhaseTitle extends Phaser.Scene {
                     touchIcon.anims.play("touchIconAnim")
                 }, [], this)
             },
-            onCompleteScope: this
+            callbackScope: this
         })
 
         this.input.on(Phaser.Input.Events.POINTER_DOWN, () => {
@@ -121,7 +121,7 @@ export default class PhaseTitle extends Phaser.Scene {
                         if (this.callback) this.callback.apply(this.mainScene)
                     })
                 },
-                onCompleteScope: this
+                callbackScope: this
             })
         })
     }

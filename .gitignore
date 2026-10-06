@@ -6,5 +6,7 @@
 # Capacitor — local/generated files (android/ and ios/ folders ARE committed)
 android/.gradle/
 android/app/new-jaws-keystore.jks
+# Signing passwords for the release build (read by android/app/build.gradle). Never commit.
+android/key.properties
 ios/.xcode.env.local
 ios/App/Pods/

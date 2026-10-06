@@ -83,7 +83,7 @@ export default class Game extends Phaser.Scene implements IGame {
                 onComplete: () => {
                     this.music!.stop()
                 },
-                onCompleteScope: this
+                callbackScope: this
             })
         }
 

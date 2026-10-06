@@ -68,7 +68,7 @@ export default class Zone extends Phaser.GameObjects.Sprite {
                 jawsAppear.destroy()
                 jawsToken.destroy()
             },
-            onCompleteScope: this
+            callbackScope: this
         })
     }
 

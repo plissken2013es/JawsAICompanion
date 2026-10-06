@@ -167,7 +167,7 @@ export default class Hunter extends Phaser.GameObjects.Sprite {
             onComplete: () => {
                 splashSnd.destroy()
             },
-            onCompleteScope: this
+            callbackScope: this
         })
     }
 

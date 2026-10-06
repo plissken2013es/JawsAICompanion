@@ -13,6 +13,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- Black window background: any area not covered by the WebView (cutout, bars) is black, not white. -->
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
 
 

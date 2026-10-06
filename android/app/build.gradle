@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 
+// Release signing: android/key.properties (git-ignored) if present, otherwise the
+// JAWS_STORE_PASSWORD / JAWS_KEY_PASSWORD environment variables.
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+
 android {
     namespace = "com.netlify.JawsCompanion"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +15,8 @@ android {
         applicationId "com.netlify.JawsCompanion"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 60400
-        versionName "6.0.4"
+        versionCode 60500
+        versionName "6.0.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -18,10 +26,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("new-jaws-keystore.jks")
-            storePassword System.getenv("JAWS_STORE_PASSWORD") ?: ""
-            keyAlias "upload"
-            keyPassword System.getenv("JAWS_KEY_PASSWORD") ?: ""
+            storeFile file(keystoreProperties.getProperty("storeFile", "new-jaws-keystore.jks"))
+            storePassword keystoreProperties.getProperty("storePassword", System.getenv("JAWS_STORE_PASSWORD") ?: "")
+            keyAlias keystoreProperties.getProperty("keyAlias", "upload")
+            keyPassword keystoreProperties.getProperty("keyPassword", System.getenv("JAWS_KEY_PASSWORD") ?: "")
         }
     }
     buildTypes {

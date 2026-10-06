@@ -4,17 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**RoboJaws** is an interactive digital companion app for the Jaws board game. It's an AI-powered shark decision engine built with **Phaser 3**, **TypeScript**, and **Parcel** (v1). The shark AI guides gameplay with intelligent decision-making across a 12-zone board, with multi-language support (English, Spanish, German, Russian).
+**Jaws Companion** (repo name RoboJaws) is an interactive digital companion app for the Jaws board game. It's an AI-powered shark decision engine built with **Phaser 3.90**, **TypeScript** and **Vite**, packaged for Android and iOS with **Capacitor 8**. The shark AI guides gameplay with intelligent decision-making across a 12-zone board, with multi-language support (English, Spanish, German, Russian).
+
+Published on Google Play as `com.netlify.JawsCompanion` ("Jaws Companion App"). Current release: **6.0.5** (versionCode 60500, production, 2026-10-06).
 
 ## Commands
 
 ```bash
-npm start        # Dev server on port 8000 with hot reload (parcel src/index.html -p 8000)
-npm run build    # Production build to /dist (parcel build src/index.html --out-dir dist)
-npm run lint     # ESLint on src/ (eslint ./src --ext .js,.jsx,.ts,.tsx)
+npm start              # Vite dev server on port 8000 (root: src/)
+npm run build          # Production build to /dist
+npm test               # Vitest, 103 tests in tests/ (jsdom + Phaser stub)
+npm run lint           # ESLint on src/
+npm run build:android  # vite build + npx cap sync android
 ```
 
-There are no automated tests.
+Release AAB (signed with the upload key, see "Publishing"):
+
+```bash
+npm run build:android
+cd android && ./gradlew bundleRelease   # → android/app/build/outputs/bundle/release/app-release.aab
+```
 
 ## Architecture
 
@@ -25,13 +34,17 @@ src/scenes/   — UI flow & game loop (9 scenes)
 src/objects/  — Game entities: Board, Zone, Hunter, Swimmer, Barrel, Michael + UI widgets
 src/utils/    — Business logic: AI, pathfinding, localization, persistence, logging
 src/consts/   — Enums and config: ZoneNames, Characters, MapConfig, Graph, SceneKeys, etc.
+tests/        — Vitest suites for consts/ and utils/ (no scene tests); tests/setup/phaser.stub.ts
 ```
 
 ### Scene flow
 
-`LanguageSelection → Preloader → StudiosLogo → InitialOptions → Intro → **Game** (main loop) → FinalOptions`
+`LanguageSelection → Preloader → StudiosLogo → Intro → InitialOptions → **Game** (main loop) → FinalOptions`
 
-`PhaseTitle` and `LogScreen` are overlay/utility scenes. `Game.ts` is the primary scene handling all turn phases, UI interactions, and entity coordination.
+- The language is chosen with **flags**, not from the device locale. No code reads `navigator.language`.
+- `Intro` does **not** advance by itself: after the shark and the "JAWS COMPANION" title it waits for a tap. A tap at any time skips it.
+- `InitialOptions` only shows its buttons when there is a saved game; otherwise it goes straight to `Game`.
+- `PhaseTitle` and `LogScreen` are overlay/utility scenes. `Game.ts` is the primary scene handling all turn phases, UI interactions, and entity coordination.
 
 ### Core systems
 
@@ -51,8 +64,28 @@ src/consts/   — Enums and config: ZoneNames, Characters, MapConfig, Graph, Sce
 
 ### Assets
 
-Static assets (images, audio, fonts) live in `/public/` and are copied to `/dist/` at build time via `parcel-plugin-static-files-copy`. They are referenced by string keys set during preload in `src/scenes/Preloader.ts`.
+Vite runs with `root: 'src'` and `publicDir: '../public'`: static assets (images, audio, fonts, `scripts/webfont.js`) live in `/public/` and are copied to `/dist/` at build time. They are referenced by string keys set during preload in `src/scenes/Preloader.ts` (flags and fonts in `LanguageSelection.ts`).
 
 ### Path alias
 
-`tsconfig.json` maps `~/*` → `./src/*`. Use `~/consts/ZoneNames` style imports inside `src/`.
+`tsconfig.json` maps `~/*` → `./src/*` (resolved by `vite-tsconfig-paths` and the alias in `vitest.config.ts`). Use `~/consts/ZoneNames` style imports inside `src/`.
+
+## Phaser 3.90 pitfalls (the app was upgraded from 3.24 in April 2026)
+
+- **Tween/timer configs only accept `callbackScope`.** Phaser 3.60 removed the per-callback scopes (`onCompleteScope`, `onStartScope`, …) and ignores them silently. With a method callback (`onComplete: this.showJawsTitle`) `this` becomes the tween and the scene crashes **when the animation ends**. This shipped in 6.0.4: the app froze at the end of the intro for anyone who watched it to the end (fixed in 6.0.5). After any Phaser upgrade, run `grep -rE "on[A-Z][a-z]+Scope" src` and watch every animation to its end without tapping.
+- **An uncaught error inside the game loop kills the loop**: Phaser requests the next frame after running the current one, so nothing renders and no input is processed afterwards. Symptom: "the app freezes and taps do nothing". Look at the browser console of `npm start` (or of the APK's `assets/public/` served locally), not at logcat: release builds do not forward the WebView console.
+
+## Android (Capacitor 8)
+
+- `capacitor.config.ts`: black `backgroundColor`, `SystemBars.insetsHandling: 'disable'`, `SplashScreen.autoHide: false` (hidden from `Preloader`), `StatusBar.overlaysWebView`.
+- `android/app/src/main/java/com/netlify/JawsCompanion/MainActivity.java`: immersive mode (status and navigation bars hidden, re-hidden on focus) and `LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES` set **before** `super.onCreate()`. `styles.xml`: black `windowBackground`. Manifest: `sensorLandscape`.
+- `src/index.html` **must keep `viewport-fit=cover`** in its viewport meta. With Capacitor 8.3.0, `insetsHandling: 'disable'` only drops the safe-area CSS variables; the WebView is still padded for the camera cutout (white or black strip on the left on Android 15+) unless the page declares `viewport-fit=cover` and the WebView is ≥ 140. Check with `adb shell uiautomator dump`: the WebView bounds must be `[0,0][2400,1080]` on a Pixel 6a in landscape.
+- Target/compile SDK 36, min SDK 24 (`android/variables.gradle`). Version in `android/app/build.gradle` (`versionCode` = major·10000 + minor·100 + patch, e.g. 60500).
+
+## Publishing
+
+- **Signing**: `android/app/build.gradle` reads `android/key.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`), falling back to the `JAWS_STORE_PASSWORD` / `JAWS_KEY_PASSWORD` environment variables. Both `android/key.properties` and `android/app/new-jaws-keystore.jks` are git-ignored: **never commit them**. The keystore holds the **upload key** (alias `upload`, SHA-1 `87:42:5C:0A:30:D5:93:6B:08:1F:60:D1:D4:0A:79:46:22:0C:07:8D`); the app signing key is managed by Google (Play App Signing). A copy of the upload certificate lives in `_____PROYECTOS/JawsDist/upload_certificate.pem`.
+- **Upload**: through the Google Play Android Publisher API with the lab's service account (`___AI_experiments/000_play-publisher/`), or by hand in Play Console. Store listings exist in `en-GB` and `es-ES`; release notes go in both.
+- Play tracks (2026-10-06): production 6.0.5, internal 6.0.4, beta 4.0.0, alpha 1.1.0 (draft).
+- `src/index.html` loads Google Analytics (`gtag`, `G-0LQ57VQD5R`): keep the Play "Data safety" form consistent with it.
+- The older Cordova build (6.0.2) and the 2016–2020 sources live in `_____PROYECTOS/JawsDist/`; they are history, not the codebase.
