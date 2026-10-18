@@ -20,6 +20,8 @@ export interface AiParams {
     readonly attachedFactor: number
     /** How dangerous each card is; cards that are not listed count 0 (melee weapons never run out). */
     readonly gearThreat: Readonly<Partial<Record<GearId, number>>>
+    /** Attachables deal no wounds when they hook on: what each is worth, in wounds. */
+    readonly attachValue: Readonly<Partial<Record<GearId, number>>>
 }
 
 export const DEFAULT_PARAMS: AiParams = {
@@ -34,4 +36,6 @@ export const DEFAULT_PARAMS: AiParams = {
         pistol: 1, rifle: 1.2, harpoonGun: 1.5, ammo: 0.5,
         flare: 1, fishingNet: 0.6, fishingPole: 0.6, canister: 0.8,
     },
+    // Flare: 7/6 wounds per round it stays on; the others weaken the shark until it shakes them off.
+    attachValue: { flare: 2, fishingNet: 1, fishingPole: 1, canister: 1.5 },
 }
