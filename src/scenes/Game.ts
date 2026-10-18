@@ -673,7 +673,7 @@ export default class Game extends Phaser.Scene implements IGame {
             language: this.lang,
             callback: () => {
                 this.scene.remove(SceneKeys.LogScreen)
-                this.scene.start(SceneKeys.FinalOptions, { language: this.lang })
+                this.scene.start(SceneKeys.FinalOptions, { language: this.lang, swimmersEaten: parseInt(this.swimmersEatenText?.text || '0', 10) })
             }
         })
     }

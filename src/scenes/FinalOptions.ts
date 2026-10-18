@@ -7,12 +7,15 @@ import LocalStorage from '~/utils/LocalStorage'
 import LocaleManager from '~/utils/LocaleManager'
 import Dialog from '~/objects/Dialog'
 import DialogType from '~/consts/DialogType'
+import Act2Locale from '~/act2/i18n'
+import Act2Keys from '~/act2/scenes/Act2Keys'
 
 export default class FinalOptions extends Phaser.Scene {
     
     private lang: string = Languages.English
     private locales?: LocaleManager
     private interactiveObjects: Phaser.GameObjects.GameObject[] = []
+    private swimmersEaten = 0
 
     constructor() {
         super(SceneKeys.FinalOptions)
@@ -20,6 +23,7 @@ export default class FinalOptions extends Phaser.Scene {
 
     init(data) {
         this.lang = data.language
+        this.swimmersEaten = typeof data.swimmersEaten === 'number' && !isNaN(data.swimmersEaten) ? data.swimmersEaten : 0
         this.locales = new LocaleManager(this.lang)
     }
 
@@ -91,7 +95,15 @@ export default class FinalOptions extends Phaser.Scene {
             .setOrigin(0.5)
         this.add.existing(btnKofi)
 
-        this.interactiveObjects.push(btnCredits, btnKofi, btnPlayAgain, btnRateApp, btnSuggest)
+        const btnAct2 = new TextButton(this, this.cameras.main.centerX, this.cameras.main.height - 260,
+            new Act2Locale(this.lang).getLocale("act2.menu.continueAct2"), Object.assign({}, buttonsCfg, { backgroundColor: "#7a1010" }), "act2",
+            () => {
+                this.scene.start(Act2Keys.Setup, { language: this.lang, swimmersEaten: this.swimmersEaten })
+            })
+            .setOrigin(0.5)
+        this.add.existing(btnAct2)
+
+        this.interactiveObjects.push(btnCredits, btnKofi, btnPlayAgain, btnRateApp, btnSuggest, btnAct2)
     }
 
     enableInteractiveObjects(onOff = true) {

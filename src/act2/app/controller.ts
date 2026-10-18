@@ -258,7 +258,7 @@ export function confirmHits(s: Session): Session {
     }
     // The reveal itself was shown already: keep only what follows (Pistol shifts).
     const shown = ['act2.msg.surfaces', 'act2.msg.findAbility', 'act2.msg.shakeOff']
-    let next: Session = push(s, { state, moves: {}, lines: linesSince(before, state).filter(l => shown.indexOf(l.key) < 0) })
+    let next: Session = push(s, { state, moves: {}, lines: s.lines.concat(linesSince(before, state).filter(l => shown.indexOf(l.key) < 0)) })
     // Attachables hook on without dice: resolve them all first, then queue the dice weapons.
     const queue = s.phase.declared.filter(d => GEAR[d.weapon].dice > 0)
     for (const d of s.phase.declared.filter(x => GEAR[x.weapon].dice === 0)) {

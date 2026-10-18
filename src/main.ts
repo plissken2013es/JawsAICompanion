@@ -18,6 +18,9 @@ import LanguageSelection from './scenes/LanguageSelection'
 import FinalOptions from './scenes/FinalOptions'
 import LogScreen from './scenes/LogScreen'
 import InitialOptions from './scenes/InitialOptions'
+import Act2Setup from './act2/scenes/Act2Setup'
+import Act2Round from './act2/scenes/Act2Round'
+import Act2End from './act2/scenes/Act2End'
 
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
@@ -35,7 +38,15 @@ const config: Phaser.Types.Core.GameConfig = {
 		autoCenter: Phaser.Scale.CENTER_BOTH
 	},
 	backgroundColor: "#00001a",
-	scene: [LanguageSelection, Preloader, StudiosLogo, InitialOptions, Intro, Game, FinalOptions]
+	// Development only: ?timer runs the loop on setTimeout, because the desktop app's browser pane
+	// throttles requestAnimationFrame (taps then get lost between frames while testing).
+	fps: { forceSetTimeOut: !!(import.meta.env && import.meta.env.DEV) && new URLSearchParams(location.search).has('timer') },
+	scene: [LanguageSelection, Preloader, StudiosLogo, InitialOptions, Intro, Game, FinalOptions, Act2Setup, Act2Round, Act2End]
 }
 
-export default new Phaser.Game(config)
+const game = new Phaser.Game(config)
+
+// Development only: lets the browser tools and the e2e smoke test reach the game.
+if (import.meta.env && import.meta.env.DEV) (window as any).__jawsGame = game
+
+export default game
