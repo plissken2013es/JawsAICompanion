@@ -14,7 +14,7 @@
 - [x] P-01 Andamiaje, `tsconfig.act2.json`, override de ESLint, RNG
 - [x] P-02 Tipos y datos del catálogo
 - [x] P-03 Adyacencia (40 combinaciones + proa/popa)
-- [ ] P-04 Dados exactos
+- [x] P-04 Dados exactos
 - [ ] P-05 Estado, preparación y serialización
 - [ ] P-06 Movimiento y alcance de la tripulación
 - [ ] P-07 Ataque de la tripulación
