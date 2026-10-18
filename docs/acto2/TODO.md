@@ -29,7 +29,7 @@
   - Fuerte Oleaje: caen al agua todos los que estén en cubierta, no solo los de la pieza dañada (`abilities.ts`).
 
 ## M2 — IA
-- [ ] P-11 Valoración
+- [x] P-11 Valoración
 - [ ] P-12 Amenaza por opción
 - [ ] P-13 Ataque esperado por opción
 - [ ] P-14 D1 Reaparición
