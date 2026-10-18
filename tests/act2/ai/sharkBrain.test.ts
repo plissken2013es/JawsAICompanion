@@ -14,33 +14,25 @@ import { game, boat } from '../helpers'
 const withHand = (s: GameState, hand: AbilityId[]): GameState =>
     Object.assign({}, s, { shark: Object.assign({}, s.shark, { hand }) })
 
-describe('Act II difficulty levels (SPECS §4.8, D-3)', () => {
-    it('Normal is the default set; Easy and Hard move tau, p_min and lambda the right way', () => {
+describe('Act II difficulty levels (tuned in docs/acto2/04-ajuste.md, D-3)', () => {
+    it('Normal is the default set', () => {
         expect(paramsFor('normal')).toEqual(DEFAULT_PARAMS)
-        const [e, n, h] = LEVELS.map(paramsFor)
-        expect([e.pMin, n.pMin, h.pMin]).toEqual([0.15, 0.05, 0.02])
-        expect(e.temperature).toBeGreaterThan(n.temperature)
-        expect(n.temperature).toBeGreaterThan(h.temperature)
-        expect(e.lambdaBase).toBeGreaterThan(n.lambdaBase)
-        expect(n.lambdaBase).toBeGreaterThan(h.lambdaBase)
+        expect(LEVELS).toEqual(['easy', 'normal', 'hard'])
     })
 
-    it('Easy keeps no ability in reserve and ignores the Shark Cage; Normal and Hard anticipate it', () => {
+    it('Easy plays its abilities reluctantly, ignores the Shark Cage and is predictable', () => {
         const e = paramsFor('easy')
-        expect([e.rammingReserve, e.hardTargetReserve, e.cageDiscount]).toEqual([0, 0, 0])
-        for (const lvl of ['normal', 'hard'] as const) {
-            const q = paramsFor(lvl)
-            expect(q.rammingReserve).toBeGreaterThan(0)
-            expect(q.cageDiscount).toBeGreaterThan(0)
-        }
+        expect(e.abilityBase).toBeGreaterThan(DEFAULT_PARAMS.abilityBase)
+        expect(e.cageDiscount).toBe(0)
+        expect(e.pMin).toBeLessThan(DEFAULT_PARAMS.pMin)
     })
 
-    it('an Easy shark is more predictable to beat: flatter, never under 15 %', () => {
+    it('Hard keeps every option alive: harder to read', () => {
+        const h = paramsFor('hard')
+        expect(h.pMin).toBeGreaterThan(DEFAULT_PARAMS.pMin)
         const s = setOptions(game(), ['R03', 'R07', 'R13'])
-        const easy = analyzeResurface(s, paramsFor('easy')).probs
-        const hard = analyzeResurface(s, paramsFor('hard')).probs
-        expect(Math.min(...easy)).toBeGreaterThanOrEqual(0.15 - 1e-12)
-        expect(Math.max(...easy)).toBeLessThanOrEqual(Math.max(...hard) + 1e-12)
+        expect(Math.min(...analyzeResurface(s, h).probs)).toBeGreaterThanOrEqual(h.pMin - 1e-12)
+        expect(Math.max(...analyzeResurface(s, h).probs)).toBeLessThanOrEqual(Math.max(...analyzeResurface(s, paramsFor('easy')).probs) + 1e-12)
     })
 })
 

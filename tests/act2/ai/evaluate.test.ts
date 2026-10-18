@@ -96,13 +96,15 @@ describe('Act II AI valuation: shape', () => {
         expect(V(board({ sharkWounds: 18 }))).toBe(-WIN_VALUE)
     })
 
-    it('the parts add up, and the starting position is close to 0', () => {
+    it('the parts add up; at the start only the arsenal of the crew counts', () => {
         const p = evaluateParts(board({ tiles: { 3: 'damaged' }, wounds: { hooper: 3 }, sharkWounds: 5, at: { hooper: water(3) } }), DEFAULT_PARAMS)
         expect(p.value).toBeCloseTo(p.progress - p.risk - p.threat, 12)
         const start = evaluateParts(board({}), DEFAULT_PARAMS)
         expect(start.progress).toBe(0)
         expect(start.risk).toBe(0)
-        expect(Math.abs(start.value)).toBeLessThan(0.5)
+        expect(start.value).toBeCloseTo(-start.threat, 12)
+        expect(start.threat).toBeGreaterThan(0)
+        expect(start.threat).toBeLessThanOrEqual(DEFAULT_PARAMS.threatWeight)
     })
 
     it('every part is finite, even past 18 shark wounds', () => {

@@ -49,10 +49,10 @@ export interface AiParams {
 export const DEFAULT_PARAMS: AiParams = {
     minWeight: 0.25,
     crewCurve: 1.5,
-    riskCurve: 2,
-    lambdaBase: 0.5,
-    lambdaGrowth: 2,
-    threatWeight: 0.3,
+    riskCurve: 1.2,
+    lambdaBase: 1,
+    lambdaGrowth: 0.5,
+    threatWeight: 1,
     attachedFactor: 1.5,
     gearThreat: {
         pistol: 1, rifle: 1.2, harpoonGun: 1.5, ammo: 0.5,
@@ -61,7 +61,7 @@ export const DEFAULT_PARAMS: AiParams = {
     // Flare: 7/6 wounds per round it stays on; the others weaken the shark until it shakes them off.
     attachValue: { flare: 2, fishingNet: 1, fishingPole: 1, canister: 1.5 },
     climbDiscount: 0.5,
-    temperature: 0.02,
+    temperature: 0.1,
     pMin: 0.05,
     fpIterations: 20,
     stallFactor: 0.8,
@@ -79,19 +79,14 @@ export type Level = 'easy' | 'normal' | 'hard'
 export const LEVELS: readonly Level[] = ['easy', 'normal', 'hard']
 
 /**
- * Normal is DEFAULT_PARAMS. Easy: a blurrier, more cautious shark that keeps nothing in reserve and
- * ignores the Shark Cage. Hard: sharper and bolder. The simulator (P-20) tunes the numbers.
+ * Normal is DEFAULT_PARAMS. Tuned with the simulator (docs/acto2/04-ajuste.md), which overturned the
+ * first guess of SPECS §4.8: blurring the shark's choice makes it HARDER to read, not easier, and
+ * what weakens it most is a careless use of its abilities. So Easy plays abilities reluctantly,
+ * ignores the Shark Cage and is predictable; Hard keeps every option alive (p_min 20 %).
  */
 export function paramsFor(level: Level): AiParams {
     const p = DEFAULT_PARAMS
-    if (level === 'easy') {
-        return Object.assign({}, p, {
-            temperature: p.temperature * 3, pMin: 0.15, lambdaBase: p.lambdaBase * 1.5,
-            rammingReserve: 0, hardTargetReserve: 0, cageDiscount: 0,
-        })
-    }
-    if (level === 'hard') {
-        return Object.assign({}, p, { temperature: p.temperature * 0.5, pMin: 0.02, lambdaBase: p.lambdaBase * 0.75 })
-    }
+    if (level === 'easy') return Object.assign({}, p, { abilityBase: 0.1, cageDiscount: 0, pMin: 0.02 })
+    if (level === 'hard') return Object.assign({}, p, { pMin: 0.2 })
     return p
 }

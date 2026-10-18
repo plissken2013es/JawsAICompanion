@@ -19,5 +19,5 @@
 		},
 		"types": []
 	},
-	"include": ["src/act2/core/**/*", "tools/act2/**/*"]
+	"include": ["src/act2/core/**/*", "src/act2/app/**/*", "tools/act2/**/*"]
 }

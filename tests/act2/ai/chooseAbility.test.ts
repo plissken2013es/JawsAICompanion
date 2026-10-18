@@ -87,14 +87,18 @@ describe('Act II AI abilities: Hard Target when the risk is high', () => {
         expect(decideAbility(hand({ at: AWAY, sharkWounds: 14 }, ['hardTarget'].concat(FILLERS) as AbilityId[], rifles), R03, p).ability).toBe('hardTarget')
     })
 
-    it('held by a healthy shark', () => {
-        expect(decideAbility(hand({ at: AWAY }, ['hardTarget'].concat(FILLERS) as AbilityId[], rifles), R03, p).ability).toBe(null)
+    it('is worth more the more wounded the shark is', () => {
+        const gain = (w: number) => abilityGains(hand({ at: AWAY, sharkWounds: w }, ['hardTarget'], rifles), R03, p).hardTarget || 0
+        expect(gain(8)).toBeGreaterThan(gain(0))
+        expect(gain(14)).toBeGreaterThan(gain(8))
     })
 
-    it('the reserve is what keeps a healthy shark from using it late with a big hand', () => {
-        const late = hand({ at: AWAY }, ['hardTarget', 'hardTarget'].concat(FILLERS, ['bigMouth']) as AbilityId[], rifles, 8)
-        expect(decideAbility(late, R03, Object.assign({}, p, { hardTargetReserve: 0 })).ability).toBe('hardTarget')
-        expect(decideAbility(late, R03, p).ability).toBe(null)
+    it('a big enough reserve keeps it while the shark is healthy (the tuned reserve is small: P-20)', () => {
+        const keep = Object.assign({}, p, { hardTargetReserve: 0.15 })
+        const cards = ['hardTarget', 'hardTarget'].concat(FILLERS, ['bigMouth']) as AbilityId[]
+        expect(decideAbility(hand({ at: AWAY }, cards, rifles, 8), R03, keep).ability).toBe(null)
+        expect(decideAbility(hand({ at: AWAY }, cards, rifles, 8), R03, Object.assign({}, keep, { hardTargetReserve: 0 })).ability).toBe('hardTarget')
+        expect(decideAbility(hand({ at: AWAY, sharkWounds: 14 }, cards, rifles, 8), R03, keep).ability).toBe('hardTarget')
     })
 })
 
@@ -106,7 +110,8 @@ describe('Act II AI abilities: the threshold', () => {
     })
 
     it('a card worth just between the two thresholds is played from the big hand only', () => {
-        const fillers: AbilityId[] = ['bigMouth', 'bigMouth', 'makingWaves', 'makingWaves', 'hardTarget', 'hardTarget']
+        // cards worth exactly 0 here (nobody near the attack), so only Extra Strength is in question
+        const fillers: AbilityId[] = ['bigMouth', 'bigMouth', 'makingWaves', 'makingWaves', 'bigMouth', 'makingWaves']
         const g = abilityGains(hand({ at: AWAY }, ['extraStrength']), R03, p).extraStrength || 0
         const rounds = Math.max(1, p.expectedRounds - 1 + 1)
         // pick a base so that threshold(7 cards) < g < threshold(2 cards)

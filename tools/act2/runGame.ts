@@ -15,9 +15,9 @@ import {
 import { mainAttackDice, bonusAttackDice, bonusAttackTargets, rollDice } from '../../src/act2/core/sharkAttack'
 import { needsReroll } from '../../src/act2/core/crewAttack'
 import { maulAgain, sharkAttackBoat, secondHelpingDice } from '../../src/act2/core/abilities'
-import { AiParams, Level, DEFAULT_PARAMS } from '../../src/act2/core/ai/params'
+import { AiParams, Level } from '../../src/act2/core/ai/params'
 import { createSharkBrain } from '../../src/act2/core/ai/sharkBrain'
-import { botSetupGear, botChum, botPrepare, botCage, botPistolShift, BOT_START } from './crewBot'
+import { botSetupGear, botChum, botPrepare, botCage, botPistolShift, BOT_START, CREW_MODEL } from './crewBot'
 
 const ALL_IDS: readonly ResurfaceId[] = RESURFACE_CARDS.map(c => c.id)
 
@@ -90,7 +90,7 @@ function report(seed: number, s: GameState): GameReport {
 
 export function runGame(seed: number, opts: RunOptions = {}): GameReport {
     const brain = createSharkBrain(opts.shark || 'normal')
-    const model = opts.crewModel || DEFAULT_PARAMS
+    const model = opts.crewModel || CREW_MODEL
     const variant = !!opts.variant
     const maxRounds = opts.maxRounds || 60
     const table = createRng((seed ^ 0x9e3779b9) >>> 0)

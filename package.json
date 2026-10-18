@@ -14,7 +14,8 @@
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
-		"typecheck:act2": "tsc -p tsconfig.act2.json"
+		"typecheck:act2": "tsc -p tsconfig.act2.json",
+		"sim:act2": "esbuild tools/act2/sim.ts --bundle --platform=node --outfile=node_modules/.cache/act2/sim.cjs --log-level=warning && node node_modules/.cache/act2/sim.cjs"
 	},
 	"author": "supertommy",
 	"license": "MIT",

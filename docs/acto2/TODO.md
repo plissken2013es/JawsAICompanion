@@ -40,7 +40,8 @@
 
 ## M3 — Simulador
 - [x] P-19 Tripulación-bot y partida completa
-- [ ] P-20 `npm run sim:act2` y ajuste (`04-ajuste.md`)
+- [x] P-20 `npm run sim:act2` y ajuste (`04-ajuste.md`): anti-bloqueo cumplido; Normal 16,9 % (Fácil 7,8 %, Difícil 17,4 %)
+- [!] **Decisión del autor**: el 40-50 % de Normal no se alcanza en el Acto II suelto con reglas oficiales (techo ~20 %; 9 bañistas 39 %, variante 45 %). Opciones en `04-ajuste.md` §3
 
 ## M4 — Interfaz
 - [ ] P-21 Esquema de la Orca

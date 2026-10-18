@@ -11,9 +11,18 @@ import { adjacentSpaces } from '../../src/act2/core/adjacency'
 import { reachableSpaces, targetableZones, coveredZones } from '../../src/act2/core/movement'
 import { bonusAttackTargets } from '../../src/act2/core/sharkAttack'
 import { PrepareInput, PrepareEntry } from '../../src/act2/core/round'
-import { AiParams } from '../../src/act2/core/ai/params'
+import { AiParams, DEFAULT_PARAMS } from '../../src/act2/core/ai/params'
 import { analyzeResurface } from '../../src/act2/core/ai/chooseResurface'
 import { weaponWounds } from '../../src/act2/core/ai/threat'
+
+/**
+ * The crew's own model of the shark: the AI's starting parameters (before tuning), never the shark's
+ * actual ones. A crew that knew the shark's exact parameters would read it perfectly, which no table
+ * of humans can do (measured: Normal drops from ~20 % to ~10 % shark wins).
+ */
+export const CREW_MODEL: AiParams = Object.assign({}, DEFAULT_PARAMS, {
+    riskCurve: 2, lambdaBase: 0.5, lambdaGrowth: 2, threatWeight: 0.3, temperature: 0.02,
+})
 
 const SINGLE_USE_COST = 0.3
 const WATER_DANGER = 0.5
