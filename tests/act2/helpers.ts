@@ -30,6 +30,7 @@ export interface Tweak {
     tranquilized?: boolean
     ability?: AbilityId
     abilityUsed?: boolean
+    sharkWounds?: number
 }
 
 /** Test-only shortcut to a board position (the real moves come from the round, P-10). */
@@ -51,6 +52,7 @@ export function board(t: Tweak): GameState {
             tranquilized: !!t.tranquilized,
             ability: t.ability || null,
             abilityUsed: !!t.abilityUsed,
+            wounds: t.sharkWounds || 0,
         }),
     })
 }

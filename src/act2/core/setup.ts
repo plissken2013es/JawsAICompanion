@@ -9,7 +9,7 @@ import {
 } from './data'
 import { ALL_OK } from './adjacency'
 import { createRng } from './rng'
-import { GameState, CrewState, STATE_VERSION, CREW_IDS, deepFreeze } from './state'
+import { GameState, CrewState, STATE_VERSION, CREW_IDS, NEW_TURN, deepFreeze } from './state'
 
 export interface SetupInput {
     readonly seed: number
@@ -59,6 +59,8 @@ export function setupGame(input: SetupInput): GameState {
         version: STATE_VERSION,
         setup: { swimmersEaten: input.swimmersEaten, abilities: counts.abilities, commonGear: counts.commonGear },
         round: 1,
+        turn: NEW_TURN,
+        winner: null,
         tiles: Object.assign({}, ALL_OK),
         crew,
         shark: { wounds: 0, space: null, hand, played: [], attached: [], tranquilized: false, ability: null, abilityUsed: false },

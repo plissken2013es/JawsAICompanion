@@ -20,7 +20,13 @@
 - [x] P-07 Ataque de la tripulación
 - [x] P-08 Ataque del Tiburón
 - [x] P-09 Habilidades
-- [ ] P-10 Ronda completa y finales
+- [x] P-10 Ronda completa y finales
+- [ ] Confirmar con las cartas físicas cinco interpretaciones del motor (cambiar test + código si alguna no cuadra):
+  - Arpón Tranquilizante: se descarta siempre tras atacar, hiera o no (`crewAttack.ts`).
+  - Munición: la gasta solo el propio tirador, no la de otro tripulante (`crewAttack.ts`).
+  - Bate: «si el ataque falla» = no causa ninguna Herida (`crewAttack.ts`).
+  - Efecto Dominó: «pieza adyacente» = vecina en la cuadrícula del barco, aunque el Tiburón no llegue a ella (`abilities.ts`).
+  - Fuerte Oleaje: caen al agua todos los que estén en cubierta, no solo los de la pieza dañada (`abilities.ts`).
 
 ## M2 — IA
 - [ ] P-11 Valoración

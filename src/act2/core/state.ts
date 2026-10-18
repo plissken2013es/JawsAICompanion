@@ -2,7 +2,7 @@
  * Act II game state (SPECS §3, §5): plain, frozen data. Rules return a new state instead of
  * changing the old one, which gives undo and saving after every step for free.
  */
-import type { Space, CrewId, GearId, AbilityId, ResurfaceId, SetupCounts } from './types'
+import type { Zone, Space, CrewId, GearId, AbilityId, ResurfaceId, SetupCounts } from './types'
 import type { Tiles } from './adjacency'
 
 /** Bump when the saved shape changes; old saves are then refused instead of misread. */
@@ -46,6 +46,34 @@ export interface LogEntry {
     readonly args?: readonly (string | number)[]
 }
 
+/** Steps of a round (SPECS §3.3); 'over' once someone has won. */
+export type Step = 'options' | 'choose' | 'prepare' | 'reveal' | 'crewAttacks' | 'sharkAttacks' | 'endRound' | 'over'
+
+/** What a crew member set up in step 3. */
+export interface CrewPlan {
+    readonly weapon: GearId
+    readonly target: Zone
+    /** The Pistol already moved its token this round. */
+    readonly shifted: boolean
+    readonly attacked: boolean
+}
+
+export interface TurnState {
+    readonly step: Step
+    /** The three Resurface cards A, B, C. */
+    readonly options: readonly ResurfaceId[]
+    /** Index of the shark's secret choice: hidden from the players until step 4. */
+    readonly choice: number | null
+    readonly chum: { readonly by: CrewId; readonly revealed: number } | null
+    readonly plans: Readonly<Partial<Record<CrewId, CrewPlan>>>
+    /** The main attack happened (or was skipped). */
+    readonly sharkAttacked: boolean
+}
+
+export const NEW_TURN: TurnState = {
+    step: 'options', options: [], choice: null, chum: null, plans: {}, sharkAttacked: false,
+}
+
 export interface GameSetup extends SetupCounts {
     /** null when Act II is played on its own. */
     readonly swimmersEaten: number | null
@@ -55,6 +83,8 @@ export interface GameState {
     readonly version: number
     readonly setup: GameSetup
     readonly round: number
+    readonly turn: TurnState
+    readonly winner: 'shark' | 'crew' | null
     readonly tiles: Tiles
     readonly crew: Readonly<Record<CrewId, CrewState>>
     readonly shark: SharkState
@@ -76,7 +106,7 @@ export function serialize(state: GameState): string {
     return JSON.stringify(state)
 }
 
-const REQUIRED_KEYS: readonly (keyof GameState)[] = ['setup', 'round', 'tiles', 'crew', 'shark', 'resurfaceDiscard', 'log', 'rngState']
+const REQUIRED_KEYS: readonly (keyof GameState)[] = ['setup', 'round', 'turn', 'winner', 'tiles', 'crew', 'shark', 'resurfaceDiscard', 'log', 'rngState']
 
 export function deserialize(text: string): GameState {
     const data: unknown = JSON.parse(text)
