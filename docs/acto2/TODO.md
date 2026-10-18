@@ -52,7 +52,9 @@
 
 ## M5 — Publicación
 - [x] P-26 Idiomas: ES/EN completos (`src/act2/i18n.ts`), DE/RU/IT caen al inglés; test de paridad de claves
-- [ ] P-27 Partidas reales y prueba de humo e2e
+- [~] P-27 Partidas reales y prueba de humo e2e
+  - [x] Prueba de humo e2e: `PLAYWRIGHT_CORE=<ruta a playwright-core> npm run e2e:act2` (una ronda completa en Edge, consola limpia)
+  - [ ] **Partidas reales del autor con la copia física** (y los arreglos que salgan)
 - [ ] P-28 Versión 7.0.0
 
 ## Notas
