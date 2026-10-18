@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Jaws Companion** (repo name RoboJaws) is an interactive digital companion app for the Jaws board game. It's an AI-powered shark decision engine built with **Phaser 3.90**, **TypeScript** and **Vite**, packaged for Android and iOS with **Capacitor 8**. The shark AI guides gameplay with intelligent decision-making across a 12-zone board, with multi-language support (English, Spanish, German, Russian).
 
+**Act II (The Orca)** is being added on the branch **`acto2`** (not merged, not released): the app plays the shark in solo/cooperative games of the second act, with its secret Resurface choice, its hidden ability hand and its attacks, while all the randomness and components stay physical (players still need their copy). Design, rules and progress: `docs/acto2/` (`SPECS.md`, `BLUEPRINT.md`, `TODO.md`, tuning in `04-ajuste.md`).
+
 Published on Google Play as `com.netlify.JawsCompanion` ("Jaws Companion App"). Current release: **6.0.5** (versionCode 60500, production, 2026-10-06).
 
 ## Commands
@@ -13,10 +15,15 @@ Published on Google Play as `com.netlify.JawsCompanion` ("Jaws Companion App"). 
 ```bash
 npm start              # Vite dev server on port 8000 (root: src/)
 npm run build          # Production build to /dist
-npm test               # Vitest, 103 tests in tests/ (jsdom + Phaser stub)
+npm test               # Vitest: Act I (103 tests) + Act II (tests/act2, ~360 tests)
 npm run lint           # ESLint on src/
 npm run build:android  # vite build + npx cap sync android
+npm run typecheck:act2 # strict tsc for src/act2/core, src/act2/app and tools/act2 (the rest of the repo does not pass tsc)
+npm run sim:act2 -- --games 1000 --level normal   # Act II simulator (see docs/acto2/04-ajuste.md)
+PLAYWRIGHT_CORE=<path to playwright-core> npm run e2e:act2   # Act II smoke test in the system Edge
 ```
+
+Development only: `http://localhost:8000/?timer` runs Phaser on `setTimeout` (the desktop app's browser pane throttles `requestAnimationFrame` and taps get lost), and `window.__jawsGame` exposes the game (e.g. `__jawsGame.scene.start('act2Setup', { language: 'ES' })`).
 
 Release AAB (signed with the upload key, see "Publishing"):
 
@@ -35,15 +42,37 @@ src/objects/  — Game entities: Board, Zone, Hunter, Swimmer, Barrel, Michael +
 src/utils/    — Business logic: AI, pathfinding, localization, persistence, logging
 src/consts/   — Enums and config: ZoneNames, Characters, MapConfig, Graph, SceneKeys, etc.
 tests/        — Vitest suites for consts/ and utils/ (no scene tests); tests/setup/phaser.stub.ts
+src/act2/     — Act II (branch acto2), see below
 ```
+
+### Act II (`src/act2/`, branch `acto2`)
+
+```
+core/        — pure TS rules engine, no Phaser: data, adjacency, dice, state, setup, movement,
+               crewAttack, sharkAttack, abilities, round (step machine). Seeded RNG; ESLint bans
+               Math.random/Date here. Immutable frozen GameState, versioned save.
+core/ai/     — the shark: evaluate (V), threat, offense, chooseResurface (guessing game, fictitious
+               play), chooseAbility, respondChum, rammingMove, chooseAttack, sharkBrain (facade),
+               params (AiParams + Easy/Normal/Hard, tuned with the simulator)
+app/         — controller.ts: the game as the app runs it (which question to ask the table next,
+               table instructions, undo, save) — pure TS, unit-tested
+ui/, scenes/ — Phaser: OrcaSchematic, widgets, Act2Setup, Act2Round, Act2End (thin: they draw the
+               controller's phase)
+i18n.ts      — Act II texts (ES/EN, official card names; DE/RU/IT fall back to English)
+tools/act2/  — crew bot, game runner, simulator CLI, e2e smoke test
+```
+
+Rules canon: the Spanish rulebook and physical copy, then FilmWise's BGG rulings (cited by thread), then the validated Adjacency Checker. Five rule interpretations are still to be checked against the physical cards (listed in `docs/acto2/TODO.md`).
 
 ### Scene flow
 
 `LanguageSelection → Preloader → StudiosLogo → Intro → InitialOptions → **Game** (main loop) → FinalOptions`
 
+Act II: `InitialOptions → Act2Setup → Act2Round → Act2End`, or `FinalOptions → "Continue to Act II" → Act2Setup` with the swimmers eaten in Act I.
+
 - The language is chosen with **flags**, not from the device locale. No code reads `navigator.language`.
 - `Intro` does **not** advance by itself: after the shark and the "JAWS COMPANION" title it waits for a tap. A tap at any time skips it.
-- `InitialOptions` only shows its buttons when there is a saved game; otherwise it goes straight to `Game`.
+- `InitialOptions` always shows a menu (on `acto2`): continue Act I (if saved), new game, play Act II only, continue Act II (if saved). On `main` it still goes straight to `Game` when there is no saved game.
 - `PhaseTitle` and `LogScreen` are overlay/utility scenes. `Game.ts` is the primary scene handling all turn phases, UI interactions, and entity coordination.
 
 ### Core systems
