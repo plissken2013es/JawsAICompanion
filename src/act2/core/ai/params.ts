@@ -22,6 +22,8 @@ export interface AiParams {
     readonly gearThreat: Readonly<Partial<Record<GearId, number>>>
     /** Attachables deal no wounds when they hook on: what each is worth, in wounds. */
     readonly attachValue: Readonly<Partial<Record<GearId, number>>>
+    /** Share of an attack's value lost on a crew member in the water who can climb back aboard first. */
+    readonly climbDiscount: number
 }
 
 export const DEFAULT_PARAMS: AiParams = {
@@ -38,4 +40,5 @@ export const DEFAULT_PARAMS: AiParams = {
     },
     // Flare: 7/6 wounds per round it stays on; the others weaken the shark until it shakes them off.
     attachValue: { flare: 2, fishingNet: 1, fishingPole: 1, canister: 1.5 },
+    climbDiscount: 0.5,
 }

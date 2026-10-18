@@ -54,8 +54,17 @@ export function evaluateParts(state: GameState, p: AiParams): ValueParts {
     return { boat, crew, progress, risk, threat, value: progress - risk - threat }
 }
 
+/** Who has won by the rules (SPECS §3.4), whether or not the engine has marked it yet. */
+function winnerOf(state: GameState): GameState['winner'] {
+    if (state.winner) return state.winner
+    if (state.shark.wounds >= SHARK_HEALTH) return 'crew'
+    if (CREW_IDS.every(id => !state.crew[id].space) || ZONES.every(z => state.tiles[z] === 'gone')) return 'shark'
+    return null
+}
+
 export function evaluate(state: GameState, p: AiParams): number {
-    if (state.winner === 'shark') return WIN_VALUE
-    if (state.winner === 'crew') return -WIN_VALUE
+    const winner = winnerOf(state)
+    if (winner === 'shark') return WIN_VALUE
+    if (winner === 'crew') return -WIN_VALUE
     return evaluateParts(state, p).value
 }

@@ -83,6 +83,19 @@ describe('Act II AI valuation: shape', () => {
         expect(V(Object.assign({}, s, { winner: 'crew' }))).toBe(-WIN_VALUE)
     })
 
+    it('a position that is over by the rules counts as won before the engine marks it', () => {
+        const s = board({})
+        const crewGone = Object.assign({}, s, { crew: Object.assign({}, s.crew, {
+            brody: Object.assign({}, s.crew.brody, { space: null }),
+            quint: Object.assign({}, s.crew.quint, { space: null }),
+            hooper: Object.assign({}, s.crew.hooper, { space: null }),
+        }) })
+        expect(V(crewGone)).toBe(WIN_VALUE)
+        const all = { 1: 'gone', 2: 'gone', 3: 'gone', 4: 'gone', 5: 'gone', 6: 'gone', 7: 'gone', 8: 'gone' } as const
+        expect(V(board({ tiles: all }))).toBe(WIN_VALUE)
+        expect(V(board({ sharkWounds: 18 }))).toBe(-WIN_VALUE)
+    })
+
     it('the parts add up, and the starting position is close to 0', () => {
         const p = evaluateParts(board({ tiles: { 3: 'damaged' }, wounds: { hooper: 3 }, sharkWounds: 5, at: { hooper: water(3) } }), DEFAULT_PARAMS)
         expect(p.value).toBeCloseTo(p.progress - p.risk - p.threat, 12)
