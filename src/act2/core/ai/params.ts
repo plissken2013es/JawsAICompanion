@@ -32,6 +32,16 @@ export interface AiParams {
     readonly fpIterations: number
     /** Anti-stall (D-4): the risk weight is multiplied by this once per round in a row without attacking; 1 = off. */
     readonly stallFactor: number
+    /** D2: play an ability when its gain beats abilityBase · (1 + roundsLeft / handSize). */
+    readonly abilityBase: number
+    /** Rough length of an Act II game, to estimate the rounds left. */
+    readonly expectedRounds: number
+    /** Extra value of keeping Ramming Speed, scaled by how early the game is. */
+    readonly rammingReserve: number
+    /** Extra value of keeping Hard Target, scaled by the shark's health left. */
+    readonly hardTargetReserve: number
+    /** Share of the crew's threat expected to land when D1 gives no estimate. */
+    readonly hitShare: number
 }
 
 export const DEFAULT_PARAMS: AiParams = {
@@ -53,4 +63,9 @@ export const DEFAULT_PARAMS: AiParams = {
     pMin: 0.05,
     fpIterations: 20,
     stallFactor: 0.8,
+    abilityBase: 0.01,
+    expectedRounds: 10,
+    rammingReserve: 0.05,
+    hardTargetReserve: 0.05,
+    hitShare: 0.5,
 }
