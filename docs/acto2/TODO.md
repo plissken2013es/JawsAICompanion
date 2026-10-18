@@ -44,17 +44,17 @@
 - [!] **Decisión del autor**: el 40-50 % de Normal no se alcanza en el Acto II suelto con reglas oficiales (techo ~20 %; 9 bañistas 39 %, variante 45 %). Opciones en `04-ajuste.md` §3
 
 ## M4 — Interfaz
-- [ ] P-21 Esquema de la Orca
-- [ ] P-22 `Act2Setup`
-- [ ] P-23 `Act2Round` pasos 1-4
-- [ ] P-24 `Act2Round` pasos 5-7 ← MVP
-- [ ] P-25 `Act2End`, ajustes y accesos
+- [x] P-21 Esquema de la Orca (`ui/OrcaSchematic.ts`)
+- [x] P-22 `Act2Setup`
+- [x] P-23 `Act2Round` pasos 1-4 (lógica en `app/controller.ts`, sin Phaser)
+- [x] P-24 `Act2Round` pasos 5-7 ← MVP (partida completa probada en el navegador; mediana 10 toques/ronda con dados de mesa, 8 con dados de la app)
+- [x] P-25 `Act2End`, ajustes y accesos (menú inicial siempre visible; «Continuar al Acto II» al final del Acto I)
 
 ## M5 — Publicación
-- [ ] P-26 Idiomas
+- [x] P-26 Idiomas: ES/EN completos (`src/act2/i18n.ts`), DE/RU/IT caen al inglés; test de paridad de claves
 - [ ] P-27 Partidas reales y prueba de humo e2e
 - [ ] P-28 Versión 7.0.0
 
 ## Notas
 - `main` lleva el `.gitignore` de `reference/` (commit `633f57f`, sin push).
-- Si entra la traducción italiana del Acto I en `main`, traerla a `acto2` antes de P-26.
+- La traducción italiana del Acto I (PR #1) aún no está en `origin/main` (comprobado el 2026-10-19). Cuando entre: traerla a `acto2` y añadir la columna `IT` a `src/act2/i18n.ts`.
