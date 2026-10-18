@@ -39,7 +39,7 @@
 - [x] P-18 Fachada `SharkBrain` y niveles
 
 ## M3 — Simulador
-- [ ] P-19 Tripulación-bot y partida completa
+- [x] P-19 Tripulación-bot y partida completa
 - [ ] P-20 `npm run sim:act2` y ajuste (`04-ajuste.md`)
 
 ## M4 — Interfaz
