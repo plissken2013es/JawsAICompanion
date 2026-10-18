@@ -9,7 +9,7 @@
 
 ## Restricciones del proyecto (comprobadas el 2026-10-18)
 - **TypeScript 3.8.3**: nada de sintaxis posterior (tipos de plantilla, tuplas etiquetadas, `satisfies`, `override`…). Sí valen `?.`, `??`, `import type`, `as const`, `readonly`.
-- **El proyecto no pasa `tsc` hoy** (errores antiguos del Acto I). El Acto II tiene su propio `tsconfig.act2.json` **estricto** (`strict`, `noImplicitAny: true`) solo para `src/act2/core/` y `tests/act2/`, y el script `npm run typecheck:act2`. No se arreglan errores del Acto I en esta rama.
+- **El proyecto no pasa `tsc` hoy** (errores antiguos del Acto I). El Acto II tiene su propio `tsconfig.act2.json` **estricto** (`strict`, `noImplicitAny`, `noUnused*`, `noImplicitReturns`) solo para `src/act2/core/`, y el script `npm run typecheck:act2`. **Los tests no se comprueban con `tsc`**: TypeScript 3.8 no sabe leer los tipos de Vitest 4 (comprobado en P-01); Vitest los ejecuta igual. No se arreglan errores del Acto I en esta rama.
 - **ESLint 6** + `@typescript-eslint` 2: regla `no-restricted-properties`/`no-restricted-globals` para `Math.random` y `Date` en `src/act2/core/` (override por ruta en `.eslintrc.js`).
 - **Vitest 4** con `tests/**/*.test.ts` y `tests/setup/phaser.stub.ts`: los tests del núcleo **no** importan Phaser.
 - Textos nuevos solo por `LocaleManager`. Nombres de cartas en castellano oficial e inglés original (`02-catalogo.md`).
@@ -62,7 +62,7 @@ Formato de cada prompt: **Objetivo** · **Ficheros** · **Tests primero (rojo)**
 
 #### P-01 — Andamiaje y RNG
 - **Objetivo**: carpeta del Acto II lista para TDD estricto.
-- **Ficheros**: `src/act2/core/rng.ts`, `tsconfig.act2.json`, `.eslintrc.js` (override), `package.json` (scripts `typecheck:act2`, más adelante `sim:act2`), `tests/act2/rng.test.ts`.
+- **Ficheros**: `src/act2/core/rng.ts`, `tsconfig.act2.json`, `.eslintrc.js` (override), `package.json` (script `typecheck:act2`; `sim:act2` llega en P-20), `tests/act2/rng.test.ts`.
 - **Tests primero**: `mulberry32(seed)` es determinista (misma semilla, misma secuencia), devuelve `[0,1)`, `int(a,b)` cubre los extremos, `shuffle` es una permutación y reproducible.
 - **Implementación**: `createRng(seed)` → `{ next, int, pick, shuffle }`. Override de ESLint: en `src/act2/core/**` prohibidos `Math.random` y `Date`.
 - **Hecho cuando**: tests verdes; `typecheck:act2` limpio; `lint` falla si se mete `Math.random` en el núcleo (comprobado a mano y revertido).

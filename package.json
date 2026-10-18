@@ -13,7 +13,8 @@
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
-		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx"
+		"lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+		"typecheck:act2": "tsc -p tsconfig.act2.json"
 	},
 	"author": "supertommy",
 	"license": "MIT",
