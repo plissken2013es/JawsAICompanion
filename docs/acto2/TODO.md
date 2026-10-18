@@ -16,7 +16,7 @@
 - [x] P-03 Adyacencia (40 combinaciones + proa/popa)
 - [x] P-04 Dados exactos
 - [x] P-05 Estado, preparación y serialización
-- [ ] P-06 Movimiento y alcance de la tripulación
+- [x] P-06 Movimiento y alcance de la tripulación
 - [ ] P-07 Ataque de la tripulación
 - [ ] P-08 Ataque del Tiburón
 - [ ] P-09 Habilidades
