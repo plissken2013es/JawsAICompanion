@@ -3,58 +3,8 @@ import {
     sharkTargets, mainAttackDice, bonusAttackDice, bonusAttackTargets, attackHits,
     attackBoat, attackCrew, bonusAttacks, playSharkCage, woundCrew, rollDice,
 } from '~/act2/core/sharkAttack'
-import { setupGame } from '~/act2/core/setup'
-import { RESURFACE_CARDS } from '~/act2/core/data'
 import { createRng } from '~/act2/core/rng'
-import type { GameState } from '~/act2/core/state'
-import type { Zone, TileState, CrewId, Space, ResurfaceId, GearId } from '~/act2/core/types'
-
-const card = (id: ResurfaceId) => RESURFACE_CARDS.filter(c => c.id === id)[0]
-const R01 = card('R01') // zone 1, 1 die
-const R02 = card('R02') // zone 1, 2 dice
-const R03 = card('R03') // zone 2, 3 dice
-const R04 = card('R04') // zone 2, 2 dice
-
-const boat = (zone: Zone): Space => ({ kind: 'boat', zone })
-const water = (zone: Zone): Space => ({ kind: 'water', zone })
-
-/** Brody holds the Shark Cage. Everyone on the boat unless moved. */
-const game = () => setupGame({
-    seed: 3,
-    swimmersEaten: 7,
-    commonGear: { brody: ['ammo', 'sharkCage'], quint: ['harpoonGun', 'chum'], hooper: ['canister'] },
-    positions: { brody: 2, quint: 6, hooper: 3 },
-})
-
-interface Tweak {
-    shark?: Zone
-    tiles?: Partial<Record<Zone, TileState>>
-    at?: Partial<Record<CrewId, Space>>
-    wounds?: Partial<Record<CrewId, number>>
-    attached?: GearId[]
-    tranquilized?: boolean
-}
-
-/** Test-only shortcut to a board position (the real moves come from the round, P-10). */
-function board(t: Tweak): GameState {
-    const s = game()
-    const crew = Object.assign({}, s.crew)
-    for (const id of ['brody', 'quint', 'hooper'] as CrewId[]) {
-        crew[id] = Object.assign({}, crew[id], {
-            space: (t.at && t.at[id]) || crew[id].space,
-            wounds: (t.wounds && t.wounds[id]) || 0,
-        })
-    }
-    return Object.assign({}, s, {
-        tiles: Object.assign({}, s.tiles, t.tiles || {}),
-        crew,
-        shark: Object.assign({}, s.shark, {
-            space: t.shark ? water(t.shark) : null,
-            attached: t.attached || [],
-            tranquilized: !!t.tranquilized,
-        }),
-    })
-}
+import { R01, R02, R03, R04, boat, water, game, board } from './helpers'
 
 describe('Act II shark targets [M p.10]', () => {
     it('a boat space next to its water, or a crew member in the water of its space or next to it', () => {

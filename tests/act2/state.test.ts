@@ -119,7 +119,7 @@ describe('Act II setup: the rest of the starting state', () => {
         expect(s.version).toBe(STATE_VERSION)
         expect(s.round).toBe(1)
         expect(s.tiles).toEqual(ALL_OK)
-        expect(s.shark).toEqual(expect.objectContaining({ wounds: 0, space: null, attached: [], played: [], tranquilized: false }))
+        expect(s.shark).toEqual(expect.objectContaining({ wounds: 0, space: null, attached: [], played: [], tranquilized: false, ability: null, abilityUsed: false }))
         expect(s.resurfaceDiscard).toEqual([])
     })
 

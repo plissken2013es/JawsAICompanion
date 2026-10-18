@@ -19,7 +19,7 @@
 - [x] P-06 Movimiento y alcance de la tripulación
 - [x] P-07 Ataque de la tripulación
 - [x] P-08 Ataque del Tiburón
-- [ ] P-09 Habilidades
+- [x] P-09 Habilidades
 - [ ] P-10 Ronda completa y finales
 
 ## M2 — IA

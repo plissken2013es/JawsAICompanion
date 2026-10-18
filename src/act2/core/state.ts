@@ -33,6 +33,10 @@ export interface SharkState {
     readonly attached: readonly GearId[]
     /** Wounded by the Tranq Spear this round: it rolls only 1 die when attacking [C]. */
     readonly tranquilized: boolean
+    /** Ability played this round (at most one), out of the game when the round ends [M p.8]. */
+    readonly ability: AbilityId | null
+    /** Its one-off effect already happened (moved, rerolled, second attack, domino). */
+    readonly abilityUsed: boolean
 }
 
 /** One line of the game log: a LocaleManager key suffix and its arguments. Public information only. */

@@ -61,7 +61,7 @@ export function setupGame(input: SetupInput): GameState {
         round: 1,
         tiles: Object.assign({}, ALL_OK),
         crew,
-        shark: { wounds: 0, space: null, hand, played: [], attached: [], tranquilized: false },
+        shark: { wounds: 0, space: null, hand, played: [], attached: [], tranquilized: false, ability: null, abilityUsed: false },
         resurfaceDiscard: [],
         log: [{ round: 0, event: 'setup', args: [counts.abilities, counts.commonGear] }],
         rngState: rng.state(),
