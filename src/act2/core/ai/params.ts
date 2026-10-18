@@ -24,6 +24,14 @@ export interface AiParams {
     readonly attachValue: Readonly<Partial<Record<GearId, number>>>
     /** Share of an attack's value lost on a crew member in the water who can climb back aboard first. */
     readonly climbDiscount: number
+    /** Softmax temperature of the Resurface mix: lower is sharper (D-3 levels). */
+    readonly temperature: number
+    /** Every option still allowed keeps at least this probability. */
+    readonly pMin: number
+    /** Fictitious play rounds of the guessing game. */
+    readonly fpIterations: number
+    /** Anti-stall (D-4): the risk weight is multiplied by this once per round in a row without attacking; 1 = off. */
+    readonly stallFactor: number
 }
 
 export const DEFAULT_PARAMS: AiParams = {
@@ -41,4 +49,8 @@ export const DEFAULT_PARAMS: AiParams = {
     // Flare: 7/6 wounds per round it stays on; the others weaken the shark until it shakes them off.
     attachValue: { flare: 2, fishingNet: 1, fishingPole: 1, canister: 1.5 },
     climbDiscount: 0.5,
+    temperature: 0.02,
+    pMin: 0.05,
+    fpIterations: 20,
+    stallFactor: 0.8,
 }

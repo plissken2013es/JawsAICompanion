@@ -37,7 +37,8 @@ export function expectedWounds(weapon: GearId, cardEvade: number, hardTarget: bo
     return expectedValue(dist) + (canister ? CANISTER_WOUNDS * (1 - dist[0]) : 0)
 }
 
-function weaponThreat(state: GameState, weapon: GearId, card: ResurfaceCard, hardTarget: boolean, p: AiParams): number {
+/** Expected wounds (or wound-equivalent, for attachables) of one weapon if the shark surfaces on `card`. */
+export function weaponWounds(state: GameState, weapon: GearId, card: ResurfaceCard, hardTarget: boolean, p: AiParams): number {
     const g = GEAR[weapon]
     if (g.kind === 'accessory') return 0
     if (g.kind === 'attachable') return state.shark.attached.indexOf(weapon) >= 0 ? 0 : (p.attachValue[weapon] || 0)
@@ -53,7 +54,7 @@ export function crewThreats(state: GameState, card: ResurfaceCard, opts: ThreatO
         let best: CrewThreat = { crew: id, weapon: null, wounds: 0 }
         for (const weapon of member.gear) {
             if (reachableTargets(state.tiles, member.space, weapon).indexOf(card.zone) < 0) continue
-            const wounds = weaponThreat(state, weapon, card, hardTarget, p)
+            const wounds = weaponWounds(state, weapon, card, hardTarget, p)
             if (wounds > best.wounds) best = { crew: id, weapon, wounds }
         }
         out.push(best)

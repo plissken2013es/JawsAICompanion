@@ -32,7 +32,7 @@
 - [x] P-11 Valoración
 - [x] P-12 Amenaza por opción
 - [x] P-13 Ataque esperado por opción
-- [ ] P-14 D1 Reaparición
+- [x] P-14 D1 Reaparición
 - [ ] P-15 D2 Habilidad
 - [ ] P-16 D3 Carnada y D4 Embestida
 - [ ] P-17 D5 Ataque y repeticiones
