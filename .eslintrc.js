@@ -28,6 +28,13 @@ module.exports = {
 				],
 				'no-restricted-globals': ['error', { name: 'Date', message: 'Not allowed in the Act II core: it must be deterministic.' }]
 			}
+		},
+		{
+			// The Act II app controller is a set of mutually recursive steps; function declarations are hoisted.
+			files: ['src/act2/app/**/*.ts'],
+			rules: {
+				'@typescript-eslint/no-use-before-define': ['error', { functions: false }]
+			}
 		}
 	]
 }
