@@ -18,7 +18,7 @@
 - [x] P-05 Estado, preparación y serialización
 - [x] P-06 Movimiento y alcance de la tripulación
 - [x] P-07 Ataque de la tripulación
-- [ ] P-08 Ataque del Tiburón
+- [x] P-08 Ataque del Tiburón
 - [ ] P-09 Habilidades
 - [ ] P-10 Ronda completa y finales
 

@@ -101,7 +101,7 @@ describe('Act II setup: crew', () => {
         expect(s.crew.brody.space).toEqual({ kind: 'boat', zone: 2 })
         expect(s.crew.quint.space).toEqual({ kind: 'boat', zone: 6 })
         expect(s.crew.hooper.space).toEqual({ kind: 'boat', zone: 3 })
-        for (const id of CREW_IDS) expect(s.crew[id].wounds).toBe(0)
+        for (const id of CREW_IDS) expect(s.crew[id]).toEqual(expect.objectContaining({ wounds: 0, caged: false }))
     })
 
     it('two crew members may share a space', () => {

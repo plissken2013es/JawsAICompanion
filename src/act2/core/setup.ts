@@ -48,6 +48,7 @@ export function setupGame(input: SetupInput): GameState {
             space: { kind: 'boat', zone },
             wounds: 0,
             gear: PERSONAL_GEAR[id].concat(input.commonGear[id] || []),
+            caged: false,
         }
     }
 

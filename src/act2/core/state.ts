@@ -17,6 +17,8 @@ export interface CrewState {
     readonly wounds: number
     /** What the crew member holds, as declared at the table (D-2). */
     readonly gear: readonly GearId[]
+    /** Played the Shark Cage this round: takes no wounds until the round ends [C]. */
+    readonly caged: boolean
 }
 
 export interface SharkState {
