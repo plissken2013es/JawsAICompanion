@@ -105,7 +105,7 @@ export default class FinalOptions extends Phaser.Scene {
     } 
 
     launchCredits() {
-        const creditsMsg = this.getLocale("CREDITS:\n\n\nCode:\n@impactophaser (Twitter)\n\nGerman translation:\nDennis Beck (BGG: Joelllenbecker)\n\nRussian translation:\nShapkin Roman Anatolievich\n\n\nGame testers:\nJeff Rowley, Seattle, WA, USA\njrowley (boardgamegeek.com)\n\nQuimérico Inquilino\n(Spain, labsk.net)")
+        const creditsMsg = this.getLocale("CREDITS:\n\n\nCode:\n@impactophaser (Twitter)\n\nGerman translation:\nDennis Beck (BGG: Joelllenbecker)\n\nItalian translation:\nAdriano Barsali\n\nRussian translation:\nShapkin Roman Anatolievich\n\n\nGame testers:\nJeff Rowley, Seattle, WA, USA\njrowley (boardgamegeek.com)\n\nQuimérico Inquilino\n(Spain, labsk.net)")
 
         const callback = (button, index) => {
             console.log("credits callback!")

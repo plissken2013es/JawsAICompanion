@@ -1,4 +1,4 @@
-﻿import Phaser from "phaser"
+import Phaser from "phaser"
 import { Capacitor } from "@capacitor/core"
 import { SplashScreen } from "@capacitor/splash-screen"
 import SceneKeys from "~/consts/SceneKeys"
@@ -294,6 +294,28 @@ export default class Preloader extends Phaser.Scene {
             "Наслаждайтесь"
         ]
 
+        const legalTextIT = [
+            "Questa APP è uno strumento SENZA FINI DI LUCRO a solo scopo di intrattenimento ed educativo.",
+            "",
+            "È necessario POSSEDERE fisicamente il gioco da tavolo affinché questo strumento sia utile.",
+            "",
+            "Tutti i PERSONAGGI, i MARCHI correlati, i LOGHI, i NOMI associati e i RIFERIMENTI sono",
+            "copyright e marchi registrati dei rispettivi titolari.",
+            "",
+            "Questa PRODUZIONE DI FAN non include PUBBLICITÀ e non è destinata alla vendita di alcun tipo.",
+            "",
+            "Non è consentita alcuna esposizione o distribuzione commerciale (né di questa APP",
+            "né del suo CODICE SORGENTE).",
+            "",
+            "Il contenuto di questa APP (o del suo CODICE SORGENTE) non può essere venduto, noleggiato o",
+            "utilizzato in alcun modo per attività commerciali.",
+            "",
+            "Questa APP è gratuita e SENZA PUBBLICITÀ. E rimarrà tale per sempre.",
+            "",
+            "",
+            "Buon divertimento."
+        ]
+
         let legalText = legalTextEN
         switch (this.lang) {
             case "ES":
@@ -304,6 +326,9 @@ export default class Preloader extends Phaser.Scene {
                 break        
             case "RU":
                 legalText = legalTextRU
+                break
+            case "IT":
+                legalText = legalTextIT
                 break
         }
 
