@@ -29,6 +29,8 @@ export interface SharkState {
     readonly played: readonly AbilityId[]
     /** Attachable gear stuck to the shark. */
     readonly attached: readonly GearId[]
+    /** Wounded by the Tranq Spear this round: it rolls only 1 die when attacking [C]. */
+    readonly tranquilized: boolean
 }
 
 /** One line of the game log: a LocaleManager key suffix and its arguments. Public information only. */
