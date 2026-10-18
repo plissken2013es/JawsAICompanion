@@ -3,7 +3,6 @@ import type { CrewId, GearId, Zone, Space } from '~/act2/core/types'
 import { COMMON_GEAR_DECK, PERSONAL_GEAR, ZONES, setupFromSwimmersEaten, STANDALONE_SETUP } from '~/act2/core/data'
 import { CREW_IDS } from '~/act2/core/state'
 import { ALL_OK } from '~/act2/core/adjacency'
-import { LEVELS } from '~/act2/core/ai/params'
 import { newSession, serializeSession, Settings, DEFAULT_SETTINGS } from '~/act2/app/controller'
 import Act2Locale from '~/act2/i18n'
 import OrcaSchematic from '~/act2/ui/OrcaSchematic'
@@ -15,8 +14,8 @@ const count = <T>(xs: readonly T[], x: T): number => xs.filter(y => y === x).len
 
 /**
  * Act II setup (BLUEPRINT P-22): from Act I (swimmers eaten) or on its own (6/7, or a 0-9 selector
- * as difficulty, D-6); the common gear each crew member drew; starting boat spaces; level and
- * settings. Then the game starts in Act2Round.
+ * as difficulty, D-6); the common gear each crew member drew; starting boat spaces; dice
+ * setting. Then the game starts in Act2Round.
  */
 export default class Act2Setup extends Phaser.Scene {
     private lang = 'EN'
@@ -97,10 +96,7 @@ export default class Act2Setup extends Phaser.Scene {
 
         // Settings
         const s = this.settings
-        L.add(button(this, 196, 218, t.getLocale('act2.settings.level', [t.getLocale(`act2.level.${s.level}`)]), () => {
-            this.settings = Object.assign({}, s, { level: LEVELS[(LEVELS.indexOf(s.level) + 1) % LEVELS.length] }); this.render()
-        }, { fontSize: 16, width: 300 }))
-        L.add(button(this, 196, 262, t.getLocale('act2.settings.appDice', [t.getLocale(s.appDice ? 'act2.settings.dice.app' : 'act2.settings.dice.table')]), () => {
+        L.add(button(this, 196, 230, t.getLocale('act2.settings.appDice', [t.getLocale(s.appDice ? 'act2.settings.dice.app' : 'act2.settings.dice.table')]), () => {
             this.settings = Object.assign({}, s, { appDice: !s.appDice }); this.render()
         }, { fontSize: 16, width: 300 }))
         L.add(label(this, 36, 296, t.getLocale('act2.setup.positions'), 15, UI.dim, 370))

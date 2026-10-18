@@ -11,7 +11,7 @@ import { adjacentSpaces } from '../../src/act2/core/adjacency'
 import { reachableSpaces, targetableZones, coveredZones } from '../../src/act2/core/movement'
 import { bonusAttackTargets } from '../../src/act2/core/sharkAttack'
 import { PrepareInput, PrepareEntry } from '../../src/act2/core/round'
-import { AiParams, DEFAULT_PARAMS } from '../../src/act2/core/ai/params'
+import { AiParams } from '../../src/act2/core/ai/params'
 import { analyzeResurface } from '../../src/act2/core/ai/chooseResurface'
 import { weaponWounds } from '../../src/act2/core/ai/threat'
 
@@ -19,10 +19,17 @@ import { weaponWounds } from '../../src/act2/core/ai/threat'
  * The crew's own model of the shark: the AI's starting parameters (before tuning), never the shark's
  * actual ones. A crew that knew the shark's exact parameters would read it perfectly, which no table
  * of humans can do (measured: Normal drops from ~20 % to ~10 % shark wins).
+ * A full literal on purpose: it must not follow the shark's parameters when they are tuned (inheriting
+ * p_min once did, and the bot "learned" the shark: 17 % → 14 %).
  */
-export const CREW_MODEL: AiParams = Object.assign({}, DEFAULT_PARAMS, {
-    riskCurve: 2, lambdaBase: 0.5, lambdaGrowth: 2, threatWeight: 0.3, temperature: 0.02,
-})
+export const CREW_MODEL: AiParams = {
+    minWeight: 0.25, crewCurve: 1.5, riskCurve: 2, lambdaBase: 0.5, lambdaGrowth: 2, threatWeight: 0.3,
+    attachedFactor: 1.5,
+    gearThreat: { pistol: 1, rifle: 1.2, harpoonGun: 1.5, ammo: 0.5, flare: 1, fishingNet: 0.6, fishingPole: 0.6, canister: 0.8 },
+    attachValue: { flare: 2, fishingNet: 1, fishingPole: 1, canister: 1.5 },
+    climbDiscount: 0.5, temperature: 0.02, pMin: 0.05, fpIterations: 20, stallFactor: 0.8,
+    abilityBase: 0.01, expectedRounds: 10, rammingReserve: 0.05, hardTargetReserve: 0.05, hitShare: 0.5, cageDiscount: 0.8,
+}
 
 const SINGLE_USE_COST = 0.3
 const WATER_DANGER = 0.5

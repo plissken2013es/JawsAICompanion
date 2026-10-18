@@ -19,7 +19,7 @@ npm test               # Vitest: Act I (103 tests) + Act II (tests/act2, ~360 te
 npm run lint           # ESLint on src/
 npm run build:android  # vite build + npx cap sync android
 npm run typecheck:act2 # strict tsc for src/act2/core, src/act2/app and tools/act2 (the rest of the repo does not pass tsc)
-npm run sim:act2 -- --games 1000 --level normal   # Act II simulator (see docs/acto2/04-ajuste.md)
+npm run sim:act2 -- --games 1000   # Act II simulator (see docs/acto2/04-ajuste.md)
 PLAYWRIGHT_CORE=<path to playwright-core> npm run e2e:act2   # Act II smoke test in the system Edge
 ```
 
@@ -53,7 +53,7 @@ core/        — pure TS rules engine, no Phaser: data, adjacency, dice, state, 
                Math.random/Date here. Immutable frozen GameState, versioned save.
 core/ai/     — the shark: evaluate (V), threat, offense, chooseResurface (guessing game, fictitious
                play), chooseAbility, respondChum, rammingMove, chooseAttack, sharkBrain (facade),
-               params (AiParams + Easy/Normal/Hard, tuned with the simulator)
+               params (AiParams: a single level, the strongest one measured with the simulator)
 app/         — controller.ts: the game as the app runs it (which question to ask the table next,
                table instructions, undo, save) — pure TS, unit-tested
 ui/, scenes/ — Phaser: OrcaSchematic, widgets, Act2Setup, Act2Round, Act2End (thin: they draw the

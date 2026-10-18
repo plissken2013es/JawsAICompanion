@@ -36,12 +36,12 @@
 - [x] P-15 D2 Habilidad
 - [x] P-16 D3 Carnada y D4 Embestida
 - [x] P-17 D5 Ataque y repeticiones
-- [x] P-18 Fachada `SharkBrain` y niveles
+- [x] P-18 Fachada `SharkBrain` (los niveles se quitaron el 2026-10-19: un único Tiburón, el más fuerte)
 
 ## M3 — Simulador
 - [x] P-19 Tripulación-bot y partida completa
-- [x] P-20 `npm run sim:act2` y ajuste (`04-ajuste.md`): anti-bloqueo cumplido; Normal 16,9 % (Fácil 7,8 %, Difícil 17,4 %)
-- [!] **Decisión del autor**: el 40-50 % de Normal no se alcanza en el Acto II suelto con reglas oficiales (techo ~20 %; 9 bañistas 39 %, variante 45 %). Opciones en `04-ajuste.md` §3
+- [x] P-20 `npm run sim:act2` y ajuste (`04-ajuste.md`): anti-bloqueo cumplido; un único nivel, el Tiburón gana el 17,7 % (Acto II suelto)
+- [x] **Decisión del autor (2026-10-19)**: un único nivel, el máximo; la dificultad la dan los bañistas comidos y la variante no oficial (`04-ajuste.md` §3)
 
 ## M4 — Interfaz
 - [x] P-21 Esquema de la Orca (`ui/OrcaSchematic.ts`)

@@ -4,7 +4,6 @@ import { RESURFACE_CARDS, GEAR } from '~/act2/core/data'
 import { CREW_IDS } from '~/act2/core/state'
 import { currentCard } from '~/act2/core/round'
 import { reachableSpaces } from '~/act2/core/movement'
-import { LEVELS } from '~/act2/core/ai/params'
 import {
     Session, deserializeSession, serializeSession, enterOptions, chumHolders, useChum, moveCrew, positionOf,
     revealShark, hitWeapons, declareHit, confirmHits, enterCrewHits, answerCage, enterSharkRoll, nextRound,
@@ -254,11 +253,9 @@ export default class Act2Round extends Phaser.Scene {
         L.add(label(this, PANEL_X, 70, t.getLocale('act2.ui.settings'), 24, UI.accent))
         L.add(button(this, x, 140, t.getLocale('act2.settings.appDice', [t.getLocale(set.appDice ? 'act2.settings.dice.app' : 'act2.settings.dice.table')]),
             () => this.apply(s => changeSettings(s, { appDice: !set.appDice }), true), { fontSize: 16, width: 460 }))
-        L.add(button(this, x, 200, t.getLocale('act2.settings.level', [t.getLocale(`act2.level.${set.level}`)]),
-            () => this.apply(s => changeSettings(s, { level: LEVELS[(LEVELS.indexOf(set.level) + 1) % LEVELS.length] }), true), { fontSize: 16, width: 460 }))
-        L.add(button(this, x, 260, t.getLocale('act2.settings.variant', [onOff(set.variant)]),
+        L.add(button(this, x, 200, t.getLocale('act2.settings.variant', [onOff(set.variant)]),
             () => this.apply(s => changeSettings(s, { variant: !set.variant }), true), { fontSize: 15, width: 460 }))
-        L.add(button(this, x, 320, t.getLocale('act2.settings.antiStall', [onOff(set.antiStall)]),
+        L.add(button(this, x, 260, t.getLocale('act2.settings.antiStall', [onOff(set.antiStall)]),
             () => this.apply(s => changeSettings(s, { antiStall: !set.antiStall }), true), { fontSize: 16, width: 460 }))
         L.add(button(this, x, 560, t.getLocale('act2.ui.back'), () => { this.showSettings = false; this.render() }, { fontSize: 22, width: 240 }))
     }

@@ -9,7 +9,7 @@
 |---|---|
 | D-1 | Dados del Tiburón: **por defecto en la mesa**; ajuste para que los tire la app. Con dados físicos, el jugador marca cada dado (0/1/2) y la app decide igual las repeticiones |
 | D-2 | Equipamiento: se marca al empezar y después **solo los cambios** tras el paso 5. Si no se anota, la IA asume que la tripulación aún lo tiene |
-| D-3 | Niveles Fácil / Normal / Difícil + variante **no oficial** opcional: Ataques Extra con los dados de la carta |
+| D-3 | **Un único nivel: el Tiburón más fuerte medido** (revisado el 2026-10-19 tras el simulador: aun en su mejor versión pierde la mayoría de partidas del Acto II suelto, así que un nivel más flojo no sirve a nadie). La dificultad la dan los bañistas comidos en el Acto I (o el selector 0-9) y la variante **no oficial** opcional: Ataques Extra con los dados de la carta |
 | D-4 | Anti-bloqueo **activado** (suave), desactivable en ajustes |
 | D-5 | Mano de Habilidades **virtual**: la app no dice qué cartas tiene; la carta física se busca al jugarla |
 | D-6 | Acto II suelto: 6 Habilidades y 7 de Equipamiento por defecto; opción de elegir "bañistas comidos" 0-9 |
@@ -87,7 +87,7 @@ Solo la pública y la propia: estado de losetas, posiciones y Heridas de la trip
 1. Para cada opción *o* y cada tripulante *c*: zonas que *c* puede atacar (fuego: todas; Pistola: blanco y aguas adyacentes; cuerpo a cuerpo y adherible: las que alcanza moviendo ≤ 2 con la regla agua→barco) y su daño esperado exacto con su mejor arma contra la Evasión de *o*.
 2. Valor de ataque esperado desde *o* con las posiciones actuales (descontando a quien pueda subir al barco) y valor de sacudirse.
 3. Juego de adivinar: la tripulación reparte sus blancos (≤ 3³ combinaciones) como mejor respuesta a la mezcla del Tiburón; el Tiburón ajusta su mezcla (softmax de su utilidad esperada con temperatura `τ`). 20 iteraciones de *fictitious play*.
-4. Suelo: cada opción distinta conserva al menos `p_min` (Normal 5 %). Se sortea con el RNG.
+4. Suelo: cada opción distinta conserva al menos `p_min` (valor ajustado con el simulador, `04-ajuste.md`). Se sortea con el RNG.
 5. Anti-bloqueo (D-4): por cada ronda seguida sin poder atacar nada, `λ ← λ · 0,8` en esta decisión.
 6. Restricción: nunca elige una opción sin objetivo posible si otra lo tiene **y** su riesgo no es mayor.
 
@@ -106,20 +106,15 @@ Si se jugó, tras los ataques compara quedarse frente a cada agua adyacente (+2)
 - `secondHelping` y `dominoEffect`: segundo objetivo por el mismo criterio.
 - Ataques Extra: automáticos.
 
-### 4.8 Niveles (D-3)
-| | τ | p_min | λ base | Reserva de Habilidades | Jaula |
-|---|---|---|---|---|---|
-| Fácil | alta | 15 % | alta | no | ignora |
-| Normal | media | 5 % | media | sí | anticipa |
-| Difícil | baja | 2 % | baja | sí | anticipa |
-Valores numéricos: se fijan con el simulador. Objetivo Normal: el Tiburón gana el 40-50 % contra la tripulación-bot.
+### 4.8 Nivel (D-3, revisado el 2026-10-19)
+Un solo nivel, el más fuerte que ha medido el simulador; valores y mediciones en `04-ajuste.md`. La primera idea (Fácil / Normal / Difícil con τ, `p_min` y λ distintos) se descartó con datos: los niveles apenas se distinguían (Normal 16,9 %, Difícil 17,4 %), una elección más difusa hace al Tiburón *más* difícil de leer, y el objetivo de 40-50 % no es alcanzable en el Acto II suelto con las reglas oficiales. La dificultad real es el reparto inicial (0 bañistas comidos: ~3 %; 9: ~39 %) y la variante no oficial (~45 %).
 
 ## 5. Interfaz
 - **Escenas**: `Act2Setup` → `Act2Round` (pasos 1-7 de §3.3) → `Act2End`. Accesos: "Continuar al Acto II" en `FinalOptions` y "Jugar solo el Acto II" al inicio.
 - **Esquema de la Orca** (2 × 4, sin arte del juego) para: elegir zona de cada carta de Reaparición, mover fichas de tripulantes, mostrar estado de losetas y lo que hace el Tiburón.
 - **Entrada por ronda** (objetivo ≤ 10 toques): 3 cartas (zona + 1 de 2), posiciones cambiadas, Heridas al Tiburón, cambios de Equipamiento, Jaula sí/no, dados (si son físicos).
 - **Salida**: instrucciones de mesa en frases cortas ("Daña la pieza 3", "Quint cae al agua", "Busca la carta *Gran Mordida* y déjala a la vista").
-- Ajustes: dados mesa/app, nivel, variante no oficial, anti-bloqueo.
+- Ajustes: dados mesa/app, variante no oficial, anti-bloqueo.
 - Deshacer el último paso; guardado tras cada paso (clave propia en `LocalStorage`, con versión); registro de la partida.
 - Todos los textos por `LocaleManager`; nombres de cartas en castellano oficial e inglés original [C].
 
@@ -138,6 +133,6 @@ RNG `mulberry32` sembrable; ESLint prohíbe `Math.random` y `Date` en `src/act2/
 |---|---|
 | M1 motor | Tests de: las 40 combinaciones de adyacencia validadas y proa/popa; umbrales y caída al agua; cada Habilidad y cada arma según §3.3; distribuciones exactas de 1-3 dados con y sin Caña; finales de partida |
 | M2 IA | Tests de escenarios: remata a un tripulante a 1 Herida en el agua; prefiere sacudirse con Bengala adherida; Carnada revela el duplicado; Ataque Bifásico repite solo lo que mejora; nunca elige una opción imposible |
-| M3 simulador | ≥ 5.000 partidas por nivel; Normal 40-50 %; rondas seguidas sin ataque ≤ 3 en el 95 % de partidas |
+| M3 simulador | ≥ 5.000 partidas; el Tiburón más fuerte medido (el 40-50 % inicial se revisó: ver §4.8); rondas seguidas sin ataque ≤ 3 en el 95 % de partidas |
 | M4 interfaz | Partida completa jugable en el navegador con entrada ≤ 10 toques por ronda normal; deshacer y reanudar funcionan |
 | M5 publicación | Enlace con el Acto I; ES/EN; probado en emulador y móvil real; 7.0.0 en Play y web |

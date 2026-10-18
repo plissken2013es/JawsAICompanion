@@ -1,6 +1,8 @@
 /**
- * Tunable coefficients of the shark AI (SPECS §4). Starting values only: the simulator (P-20)
- * tunes them, and the difficulty levels (P-18) derive from them.
+ * Coefficients of the shark AI (SPECS §4), tuned with the simulator (docs/acto2/04-ajuste.md).
+ * There is a single level, the strongest one measured: even at its best the shark loses most games
+ * of a standalone Act II, so a weaker shark would serve nobody. The difficulty comes from the game
+ * itself (swimmers eaten in Act I, or the 0-9 selector) and the optional unofficial variant (D-3).
  */
 import type { GearId } from '../types'
 
@@ -61,32 +63,14 @@ export const DEFAULT_PARAMS: AiParams = {
     // Flare: 7/6 wounds per round it stays on; the others weaken the shark until it shakes them off.
     attachValue: { flare: 2, fishingNet: 1, fishingPole: 1, canister: 1.5 },
     climbDiscount: 0.5,
-    temperature: 0.1,
-    pMin: 0.05,
+    temperature: 0.3,
+    pMin: 0.2,
     fpIterations: 20,
     stallFactor: 0.8,
-    abilityBase: 0.01,
+    abilityBase: 0.005,
     expectedRounds: 10,
     rammingReserve: 0.05,
     hardTargetReserve: 0.05,
     hitShare: 0.5,
     cageDiscount: 0.8,
-}
-
-// ---------------------------------------------------------------- difficulty levels (SPECS §4.8, D-3)
-
-export type Level = 'easy' | 'normal' | 'hard'
-export const LEVELS: readonly Level[] = ['easy', 'normal', 'hard']
-
-/**
- * Normal is DEFAULT_PARAMS. Tuned with the simulator (docs/acto2/04-ajuste.md), which overturned the
- * first guess of SPECS §4.8: blurring the shark's choice makes it HARDER to read, not easier, and
- * what weakens it most is a careless use of its abilities. So Easy plays abilities reluctantly,
- * ignores the Shark Cage and is predictable; Hard keeps every option alive (p_min 20 %).
- */
-export function paramsFor(level: Level): AiParams {
-    const p = DEFAULT_PARAMS
-    if (level === 'easy') return Object.assign({}, p, { abilityBase: 0.1, cageDiscount: 0, pMin: 0.02 })
-    if (level === 'hard') return Object.assign({}, p, { pMin: 0.2 })
-    return p
 }

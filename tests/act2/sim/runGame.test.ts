@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { runGame, createResurfaceDeck, dealCommonGear } from '../../../tools/act2/runGame'
-import { botPrepare, botSetupGear, publicView } from '../../../tools/act2/crewBot'
+import { botPrepare, botSetupGear, publicView, CREW_MODEL } from '../../../tools/act2/crewBot'
 import { COMMON_GEAR_DECK, RESURFACE_CARDS } from '~/act2/core/data'
 import { createRng } from '~/act2/core/rng'
 import { setOptions, sharkChoose } from '~/act2/core/round'
@@ -42,6 +42,14 @@ describe('Act II simulator: the crew bot only uses public information', () => {
         expect(publicView(a).turn.choice).toBe(null)
     })
 
+    it('its model of the shark is its own: retuning the shark does not teach the bot', () => {
+        // A full literal with the pre-tuning values: inheriting from DEFAULT_PARAMS once let the bot
+        // follow the shark's p_min and read it better (17 % -> 14 % shark wins).
+        expect(CREW_MODEL.pMin).toBe(0.05)
+        expect(CREW_MODEL.temperature).toBe(0.02)
+        expect(CREW_MODEL).not.toEqual(DEFAULT_PARAMS)
+    })
+
     it('a badly wounded crew member in the water climbs back aboard', () => {
         const s = sharkChoose(setOptions(board({ at: { quint: water(2) }, wounds: { quint: 4 } }), ['R03', 'R07', 'R13']), 0)
         const plan = botPrepare(s, DEFAULT_PARAMS).quint
@@ -65,6 +73,6 @@ describe('Act II simulator: whole games', () => {
 
     it('runs from an Act I result and with the unofficial variant too', () => {
         expect(['shark', 'crew']).toContain(runGame(3, { swimmersEaten: 2 }).winner)
-        expect(['shark', 'crew']).toContain(runGame(3, { variant: true, shark: 'hard' }).winner)
+        expect(['shark', 'crew']).toContain(runGame(3, { variant: true }).winner)
     })
 })

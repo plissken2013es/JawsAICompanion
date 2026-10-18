@@ -20,15 +20,14 @@ import { needsReroll } from '../core/crewAttack'
 import { SharkTarget, mainAttackDice, bonusAttackDice, bonusAttackTargets, rollDice } from '../core/sharkAttack'
 import { maulAgain, sharkAttackBoat, secondHelpingDice } from '../core/abilities'
 import { adjacentSpaces } from '../core/adjacency'
-import { Level, paramsFor } from '../core/ai/params'
+import { DEFAULT_PARAMS } from '../core/ai/params'
 import { createSharkBrain, SharkBrain } from '../core/ai/sharkBrain'
 import { crewThreats } from '../core/ai/threat'
 
-export const SESSION_VERSION = 1
+export const SESSION_VERSION = 2
 const HISTORY_LIMIT = 40
 
 export interface Settings {
-    readonly level: Level
     /** D-1: the app rolls the shark's dice (default: at the table). */
     readonly appDice: boolean
     /** D-3: unofficial variant, bonus attacks roll the card dice. */
@@ -37,7 +36,7 @@ export interface Settings {
     readonly antiStall: boolean
 }
 
-export const DEFAULT_SETTINGS: Settings = { level: 'normal', appDice: false, variant: false, antiStall: true }
+export const DEFAULT_SETTINGS: Settings = { appDice: false, variant: false, antiStall: true }
 
 /** One line for the table: an i18n key and its arguments. */
 export interface Line {
@@ -89,8 +88,7 @@ export interface Session {
 export const cardById = (id: ResurfaceId): ResurfaceCard => RESURFACE_CARDS.filter(c => c.id === id)[0]
 
 const brainOf = (s: Session): SharkBrain => {
-    const p = paramsFor(s.settings.level)
-    return createSharkBrain(s.settings.antiStall ? p : Object.assign({}, p, { stallFactor: 1 }))
+    return createSharkBrain(s.settings.antiStall ? DEFAULT_PARAMS : Object.assign({}, DEFAULT_PARAMS, { stallFactor: 1 }))
 }
 
 /** Faces for a total entered at the table (the dice show 2s first, then 1s). */
@@ -224,7 +222,7 @@ export function hitWeapons(s: Session, crewId: CrewId): GearId[] {
     if (!where) return []
     const card = currentCard(s.state)
     const zone = card.zone
-    const best = crewThreats(Object.assign({}, s.state, { crew: Object.assign({}, s.state.crew, { [crewId]: Object.assign({}, s.state.crew[crewId], { space: where }) }) }), card, {}, paramsFor('normal'))
+    const best = crewThreats(Object.assign({}, s.state, { crew: Object.assign({}, s.state.crew, { [crewId]: Object.assign({}, s.state.crew[crewId], { space: where }) }) }), card, {}, DEFAULT_PARAMS)
         .filter(t => t.crew === crewId)[0]
     const list = s.state.crew[crewId].gear.filter((g, i, all) => all.indexOf(g) === i && GEAR[g].kind !== 'accessory' &&
         (targetableZones(s.state.tiles, where, g).indexOf(zone) >= 0 || g === 'pistol'))

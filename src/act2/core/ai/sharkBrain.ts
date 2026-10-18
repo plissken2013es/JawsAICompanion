@@ -7,7 +7,7 @@ import type { Zone, AbilityId } from '../types'
 import { GameState } from '../state'
 import { SharkTarget } from '../sharkAttack'
 import { currentCard } from '../round'
-import { AiParams, Level, paramsFor } from './params'
+import { AiParams, DEFAULT_PARAMS } from './params'
 import { chooseResurface, analyzeResurface } from './chooseResurface'
 import { decideAbility } from './chooseAbility'
 import { respondChum } from './respondChum'
@@ -39,8 +39,7 @@ export interface SharkBrain {
     decideDomino(state: GameState, damagedZone: Zone): Zone | null
 }
 
-export function createSharkBrain(levelOrParams: Level | AiParams): SharkBrain {
-    const p = typeof levelOrParams === 'string' ? paramsFor(levelOrParams) : levelOrParams
+export function createSharkBrain(p: AiParams = DEFAULT_PARAMS): SharkBrain {
     return {
         params: p,
         decideStep2(state) {

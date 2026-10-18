@@ -15,7 +15,7 @@ import {
 import { mainAttackDice, bonusAttackDice, bonusAttackTargets, rollDice } from '../../src/act2/core/sharkAttack'
 import { needsReroll } from '../../src/act2/core/crewAttack'
 import { maulAgain, sharkAttackBoat, secondHelpingDice } from '../../src/act2/core/abilities'
-import { AiParams, Level } from '../../src/act2/core/ai/params'
+import { AiParams, DEFAULT_PARAMS } from '../../src/act2/core/ai/params'
 import { createSharkBrain } from '../../src/act2/core/ai/sharkBrain'
 import { botSetupGear, botChum, botPrepare, botCage, botPistolShift, BOT_START, CREW_MODEL } from './crewBot'
 
@@ -41,7 +41,7 @@ export function dealCommonGear(rng: Rng, count: number): GearId[] {
 }
 
 export interface RunOptions {
-    readonly shark?: Level | AiParams
+    readonly shark?: AiParams
     /** The crew bot's model of the shark. */
     readonly crewModel?: AiParams
     /** Act I swimmers eaten (0-9), null = Act II on its own. */
@@ -89,7 +89,7 @@ function report(seed: number, s: GameState): GameReport {
 }
 
 export function runGame(seed: number, opts: RunOptions = {}): GameReport {
-    const brain = createSharkBrain(opts.shark || 'normal')
+    const brain = createSharkBrain(opts.shark || DEFAULT_PARAMS)
     const model = opts.crewModel || CREW_MODEL
     const variant = !!opts.variant
     const maxRounds = opts.maxRounds || 60

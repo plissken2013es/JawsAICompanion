@@ -131,7 +131,7 @@ describe('Act II app: whole games without getting stuck', () => {
     })
 
     it('the unofficial variant and anti-stall off work too', () => {
-        const s = start(Object.assign({}, DEFAULT_SETTINGS, { variant: true, antiStall: false, appDice: true, level: 'hard' as const }))
+        const s = start(Object.assign({}, DEFAULT_SETTINGS, { variant: true, antiStall: false, appDice: true }))
         expect(autoplay(s, 30).taps.length).toBeGreaterThan(0)
     })
 })

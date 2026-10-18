@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { createSharkBrain } from '~/act2/core/ai/sharkBrain'
-import { paramsFor, LEVELS, DEFAULT_PARAMS } from '~/act2/core/ai/params'
+import { DEFAULT_PARAMS } from '~/act2/core/ai/params'
 import { analyzeResurface } from '~/act2/core/ai/chooseResurface'
 import {
     setOptions, sharkChoose, crewPrepare, reveal, crewAttack, endCrewAttacks, ram, sharkMain, sharkBonus, endRound,
@@ -14,30 +14,25 @@ import { game, boat } from '../helpers'
 const withHand = (s: GameState, hand: AbilityId[]): GameState =>
     Object.assign({}, s, { shark: Object.assign({}, s.shark, { hand }) })
 
-describe('Act II difficulty levels (tuned in docs/acto2/04-ajuste.md, D-3)', () => {
-    it('Normal is the default set', () => {
-        expect(paramsFor('normal')).toEqual(DEFAULT_PARAMS)
-        expect(LEVELS).toEqual(['easy', 'normal', 'hard'])
+describe('Act II: a single shark, the strongest measured (docs/acto2/04-ajuste.md)', () => {
+    it('keeps every option alive (p_min 20 %): the hardest to read', () => {
+        expect(DEFAULT_PARAMS.pMin).toBe(0.2)
+        const probs = analyzeResurface(setOptions(game(), ['R03', 'R07', 'R13']), DEFAULT_PARAMS).probs
+        expect(Math.min(...probs)).toBeGreaterThanOrEqual(0.2 - 1e-12)
     })
 
-    it('Easy plays its abilities reluctantly, ignores the Shark Cage and is predictable', () => {
-        const e = paramsFor('easy')
-        expect(e.abilityBase).toBeGreaterThan(DEFAULT_PARAMS.abilityBase)
-        expect(e.cageDiscount).toBe(0)
-        expect(e.pMin).toBeLessThan(DEFAULT_PARAMS.pMin)
+    it('anticipates the Shark Cage and keeps its reserves', () => {
+        expect(DEFAULT_PARAMS.cageDiscount).toBeGreaterThan(0)
+        expect(DEFAULT_PARAMS.rammingReserve).toBeGreaterThan(0)
     })
 
-    it('Hard keeps every option alive: harder to read', () => {
-        const h = paramsFor('hard')
-        expect(h.pMin).toBeGreaterThan(DEFAULT_PARAMS.pMin)
-        const s = setOptions(game(), ['R03', 'R07', 'R13'])
-        expect(Math.min(...analyzeResurface(s, h).probs)).toBeGreaterThanOrEqual(h.pMin - 1e-12)
-        expect(Math.max(...analyzeResurface(s, h).probs)).toBeLessThanOrEqual(Math.max(...analyzeResurface(s, paramsFor('easy')).probs) + 1e-12)
+    it('a brain without arguments is that shark', () => {
+        expect(createSharkBrain().params).toEqual(DEFAULT_PARAMS)
     })
 })
 
 describe('Act II SharkBrain: one call per decision, never changing the state it is given', () => {
-    const brain = createSharkBrain('normal')
+    const brain = createSharkBrain()
 
     it('step 2: picks an option and maybe an ability from its hand', () => {
         const s = setOptions(withHand(game(), ['extraStrength', 'hardTarget', 'bigMouth', 'bigMouth', 'makingWaves', 'makingWaves']), ['R03', 'R07', 'R13'])
@@ -90,7 +85,6 @@ describe('Act II SharkBrain: one call per decision, never changing the state it 
     it('a brain can also be built from explicit parameters (for the simulator)', () => {
         const custom = createSharkBrain(Object.assign({}, DEFAULT_PARAMS, { pMin: 0.3 }))
         expect(custom.params.pMin).toBe(0.3)
-        expect(createSharkBrain('hard').params).toEqual(paramsFor('hard'))
     })
 })
 

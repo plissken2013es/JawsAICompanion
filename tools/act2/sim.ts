@@ -1,23 +1,22 @@
 /**
- * npm run sim:act2 -- [--games 5000] [--level normal|easy|hard|all] [--seed 1] [--variant] [--swimmers b]
+ * npm run sim:act2 -- [--games 5000] [--seed 1] [--variant] [--swimmers b]
  *                      [--set key=value ...]   (override AI parameters, for tuning)
- * Plays simulated games and prints, per level: shark wins, rounds, stalls, ability use and the
+ * Plays simulated games and prints: shark wins, rounds, stalls, ability use and the
  * wounds the shark took by source (BLUEPRINT P-20, SPECS §7 M3).
  */
 import { runGame, GameReport } from './runGame'
-import { AiParams, Level, LEVELS, paramsFor } from '../../src/act2/core/ai/params'
+import { AiParams, DEFAULT_PARAMS } from '../../src/act2/core/ai/params'
 
 // Node globals, declared here so the strict Act II typecheck needs no @types/node.
 declare const process: { argv: string[]; stdout: { write(s: string): void }; hrtime(t?: [number, number]): [number, number] }
 
-interface Args { games: number; levels: Level[]; seed: number; variant: boolean; swimmers: number | null; set: Record<string, number> }
+interface Args { games: number; seed: number; variant: boolean; swimmers: number | null; set: Record<string, number> }
 
 function parse(argv: readonly string[]): Args {
     const get = (name: string): string | undefined => {
         const i = argv.indexOf(`--${name}`)
         return i >= 0 ? argv[i + 1] : undefined
     }
-    const level = get('level') || 'all'
     const set: Record<string, number> = {}
     argv.forEach((a, i) => {
         if (a !== '--set') return
@@ -27,7 +26,6 @@ function parse(argv: readonly string[]): Args {
     return {
         set,
         games: Number(get('games') || 5000),
-        levels: level === 'all' ? LEVELS.slice() : [level as Level],
         seed: Number(get('seed') || 1),
         variant: argv.indexOf('--variant') >= 0,
         swimmers: get('swimmers') === undefined ? null : Number(get('swimmers')),
@@ -36,7 +34,7 @@ function parse(argv: readonly string[]): Args {
 
 const pct = (x: number, n: number): string => `${((100 * x) / n).toFixed(1)} %`
 
-function summary(level: Level, reports: readonly GameReport[]): string {
+function summary(reports: readonly GameReport[]): string {
     const n = reports.length
     const shark = reports.filter(r => r.winner === 'shark').length
     const none = reports.filter(r => r.winner === 'none').length
@@ -52,7 +50,7 @@ function summary(level: Level, reports: readonly GameReport[]): string {
     const boatWins = byShark.filter(r => Object.keys(r.state.tiles).every(z => (r.state.tiles as Record<string, string>)[z] === 'gone')).length
     const fmt = (o: Record<string, number>) => Object.keys(o).sort((a, b) => o[b] - o[a]).map(k => `${k} ${(o[k] / n).toFixed(2)}`).join(', ')
     return [
-        `== ${level} (${n} partidas)`,
+        `== ${n} partidas`,
         `Tiburón gana ${pct(shark, n)} (por barco ${pct(boatWins, Math.max(1, shark))} de sus victorias) · sin final ${none}`,
         `Rondas: media ${(rounds.reduce((s, x) => s + x, 0) / n).toFixed(1)}, mediana ${rounds[Math.floor(n / 2)]}, p95 ${rounds[Math.floor(n * 0.95)]}`,
         `Bloqueo ≤ 3 rondas seguidas sin atacar: ${pct(stallOk, n)}`,
@@ -62,14 +60,10 @@ function summary(level: Level, reports: readonly GameReport[]): string {
 }
 
 const args = parse(process.argv.slice(2))
-for (const level of args.levels) {
-    const reports: GameReport[] = []
-    const t0 = process.hrtime()
-    for (let i = 0; i < args.games; i++) {
-        const shark: AiParams = Object.assign({}, paramsFor(level), args.set)
-        reports.push(runGame(args.seed + i, { shark, variant: args.variant, swimmersEaten: args.swimmers }))
-    }
-    const [sec] = process.hrtime(t0)
-    const tweaks = Object.keys(args.set).map(k => `${k}=${args.set[k]}`).join(' ')
-    process.stdout.write(summary(level, reports) + `\n(${sec} s${tweaks ? ', ' + tweaks : ''})\n\n`)
-}
+const shark: AiParams = Object.assign({}, DEFAULT_PARAMS, args.set)
+const reports: GameReport[] = []
+const t0 = process.hrtime()
+for (let i = 0; i < args.games; i++) reports.push(runGame(args.seed + i, { shark, variant: args.variant, swimmersEaten: args.swimmers }))
+const [sec] = process.hrtime(t0)
+const tweaks = Object.keys(args.set).map(k => `${k}=${args.set[k]}`).join(' ')
+process.stdout.write(summary(reports) + `\n(${sec} s${tweaks ? ', ' + tweaks : ''})\n\n`)
