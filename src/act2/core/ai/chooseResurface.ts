@@ -109,8 +109,9 @@ export function analyzeResurface(state: GameState, p: AiParams, opts: ResurfaceO
 }
 
 /** Draws the option with the game's RNG. The caller then plays it with round.sharkChoose. */
-export function chooseResurface(state: GameState, p: AiParams, opts: ResurfaceOptions = {}): { choice: number; probs: readonly number[]; state: GameState } {
-    const { probs } = analyzeResurface(state, p, opts)
+export function chooseResurface(state: GameState, p: AiParams, opts: ResurfaceOptions = {},
+    analysis?: ResurfaceAnalysis): { choice: number; probs: readonly number[]; state: GameState } {
+    const { probs } = analysis || analyzeResurface(state, p, opts)
     const rng = createRng(state.rngState)
     const r = rng.next()
     let acc = 0

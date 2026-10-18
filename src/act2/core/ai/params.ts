@@ -72,3 +72,26 @@ export const DEFAULT_PARAMS: AiParams = {
     hitShare: 0.5,
     cageDiscount: 0.8,
 }
+
+// ---------------------------------------------------------------- difficulty levels (SPECS §4.8, D-3)
+
+export type Level = 'easy' | 'normal' | 'hard'
+export const LEVELS: readonly Level[] = ['easy', 'normal', 'hard']
+
+/**
+ * Normal is DEFAULT_PARAMS. Easy: a blurrier, more cautious shark that keeps nothing in reserve and
+ * ignores the Shark Cage. Hard: sharper and bolder. The simulator (P-20) tunes the numbers.
+ */
+export function paramsFor(level: Level): AiParams {
+    const p = DEFAULT_PARAMS
+    if (level === 'easy') {
+        return Object.assign({}, p, {
+            temperature: p.temperature * 3, pMin: 0.15, lambdaBase: p.lambdaBase * 1.5,
+            rammingReserve: 0, hardTargetReserve: 0, cageDiscount: 0,
+        })
+    }
+    if (level === 'hard') {
+        return Object.assign({}, p, { temperature: p.temperature * 0.5, pMin: 0.02, lambdaBase: p.lambdaBase * 0.75 })
+    }
+    return p
+}

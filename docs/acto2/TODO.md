@@ -36,7 +36,7 @@
 - [x] P-15 D2 Habilidad
 - [x] P-16 D3 Carnada y D4 Embestida
 - [x] P-17 D5 Ataque y repeticiones
-- [ ] P-18 Fachada `SharkBrain` y niveles
+- [x] P-18 Fachada `SharkBrain` y niveles
 
 ## M3 — Simulador
 - [ ] P-19 Tripulación-bot y partida completa
