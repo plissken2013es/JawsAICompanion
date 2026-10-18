@@ -42,6 +42,8 @@ export interface AiParams {
     readonly hardTargetReserve: number
     /** Share of the crew's threat expected to land when D1 gives no estimate. */
     readonly hitShare: number
+    /** D5: share of an attack's value lost on a crew member holding the Shark Cage (0 = ignore it). */
+    readonly cageDiscount: number
 }
 
 export const DEFAULT_PARAMS: AiParams = {
@@ -68,4 +70,5 @@ export const DEFAULT_PARAMS: AiParams = {
     rammingReserve: 0.05,
     hardTargetReserve: 0.05,
     hitShare: 0.5,
+    cageDiscount: 0.8,
 }

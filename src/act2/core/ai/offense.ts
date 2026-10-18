@@ -38,15 +38,18 @@ function hitTarget(state: GameState, target: SharkTarget, hits: number): GameSta
     return target.kind === 'boat' ? damageTile(state, target.zone, hits, 'ai').state : woundCrew(state, target.crew, hits)
 }
 
-/** Expected ΔV of one attack with `dice` dice (+bonus hits) on a target, from a placed shark. */
-export function attackValue(state: GameState, target: SharkTarget, dice: number, p: AiParams, bonusHits = 0): number {
+/**
+ * Expected ΔV of one attack with `dice` dice (+bonus hits) on a target, from a placed shark.
+ * `planning`: positions are today's (before step 3), so someone who can climb aboard is discounted.
+ */
+export function attackValue(state: GameState, target: SharkTarget, dice: number, p: AiParams, bonusHits = 0, planning = true): number {
     const before = evaluate(state, p)
     const fishingPole = state.shark.attached.indexOf('fishingPole') >= 0
     let gain = 0
     hitsDistribution(dice, { fishingPole }).forEach((prob, hits) => {
         if (prob > 0) gain += prob * (evaluate(hitTarget(state, target, hits + bonusHits), p) - before)
     })
-    const climbs = target.kind === 'crew' && canClimbAboard(state, target.crew)
+    const climbs = planning && target.kind === 'crew' && canClimbAboard(state, target.crew)
     return climbs ? gain * (1 - p.climbDiscount) : gain
 }
 

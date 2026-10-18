@@ -39,9 +39,13 @@ export function afterMainAttack(state: GameState, target: SharkTarget, hits: num
     return s
 }
 
-/** One die against each crew member in the water nearby. */
-export function bonusValue(state: GameState, p: AiParams): number {
-    return bonusAttackTargets(state).reduce((s, id) => s + attackValue(state, { kind: 'crew', crew: id }, 1, p), 0)
+const holdsCage = (state: GameState, id: CrewId): boolean =>
+    !state.crew[id].caged && state.crew[id].gear.indexOf('sharkCage') >= 0
+
+/** One die against each crew member in the water nearby (the Shark Cage protects from these too). */
+export function bonusValue(state: GameState, p: AiParams, planning = true, cageDiscount = 0): number {
+    return bonusAttackTargets(state).reduce((s, id) =>
+        s + attackValue(state, { kind: 'crew', crew: id }, 1, p, 0, planning) * (holdsCage(state, id) ? 1 - cageDiscount : 1), 0)
 }
 
 export interface HitValueOptions {
@@ -49,16 +53,24 @@ export interface HitValueOptions {
     readonly ability?: AbilityId | null
     /** Extra value after the main attack (Domino Effect, Second Helping). */
     readonly extra?: (after: GameState) => number
+    /** Step 6: positions are real, nobody gets out of the water before the roll. */
+    readonly real?: boolean
+    /** Share of the value lost on a crew member who may play the Shark Cage first. */
+    readonly cageDiscount?: number
 }
 
 /** vh[h] = value of the round's attacks when the main attack's dice show h hits. */
 export function hitValues(state: GameState, target: SharkTarget, dice: number, p: AiParams, opts: HitValueOptions = {}): number[] {
     const v0 = evaluate(state, p)
-    const discount = target.kind === 'crew' && canClimbAboard(state, target.crew) ? 1 - p.climbDiscount : 1
+    const planning = !opts.real
+    const climbs = planning && target.kind === 'crew' && canClimbAboard(state, target.crew)
+    const cage = opts.cageDiscount || 0
+    const caged = target.kind === 'crew' && holdsCage(state, target.crew)
+    const discount = (climbs ? 1 - p.climbDiscount : 1) * (caged ? 1 - cage : 1)
     const out: number[] = []
     for (let h = 0; h <= 2 * dice; h++) {
         const s = afterMainAttack(state, target, h + (opts.bonusHits || 0), opts.ability || null)
-        out.push(discount * (evaluate(s, p) - v0) + bonusValue(s, p) + (opts.extra ? opts.extra(s) : 0))
+        out.push(discount * (evaluate(s, p) - v0) + bonusValue(s, p, planning, cage) + (opts.extra ? opts.extra(s) : 0))
     }
     return out
 }

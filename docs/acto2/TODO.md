@@ -35,7 +35,7 @@
 - [x] P-14 D1 Reaparición
 - [x] P-15 D2 Habilidad
 - [x] P-16 D3 Carnada y D4 Embestida
-- [ ] P-17 D5 Ataque y repeticiones
+- [x] P-17 D5 Ataque y repeticiones
 - [ ] P-18 Fachada `SharkBrain` y niveles
 
 ## M3 — Simulador
