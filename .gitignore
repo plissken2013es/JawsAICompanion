@@ -10,3 +10,7 @@ android/app/new-jaws-keystore.jks
 android/key.properties
 ios/.xcode.env.local
 ios/App/Pods/
+
+# Copyrighted reference material (rulebook, BGG forum dumps, fan variants, scans): never commit.
+/reference/
+/*.pdf
