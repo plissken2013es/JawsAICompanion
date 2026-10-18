@@ -34,7 +34,7 @@
 - [x] P-13 Ataque esperado por opción
 - [x] P-14 D1 Reaparición
 - [x] P-15 D2 Habilidad
-- [ ] P-16 D3 Carnada y D4 Embestida
+- [x] P-16 D3 Carnada y D4 Embestida
 - [ ] P-17 D5 Ataque y repeticiones
 - [ ] P-18 Fachada `SharkBrain` y niveles
 
