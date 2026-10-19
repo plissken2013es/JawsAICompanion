@@ -30,6 +30,9 @@ export default class StudiosLogo extends Phaser.Scene {
             case "DE":
                 proudlyPresents = "Präsentiert stolz"
                 break
+            case "IT":
+                proudlyPresents = "Presenta con orgoglio..."
+                break
         }
 
         logo.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {

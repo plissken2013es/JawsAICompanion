@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Jaws Companion** (repo name RoboJaws) is an interactive digital companion app for the Jaws board game. It's an AI-powered shark decision engine built with **Phaser 3.90**, **TypeScript** and **Vite**, packaged for Android and iOS with **Capacitor 8**. The shark AI guides gameplay with intelligent decision-making across a 12-zone board, with multi-language support (English, Spanish, German, Russian).
+**Jaws Companion** (repo name RoboJaws) is an interactive digital companion app for the Jaws board game. It's an AI-powered shark decision engine built with **Phaser 3.90**, **TypeScript** and **Vite**, packaged for Android and iOS with **Capacitor 8**. The shark AI guides gameplay with intelligent decision-making across a 12-zone board, with multi-language support (English, Spanish, German, Russian, Italian).
 
 **Act II (The Orca)** is being added on the branch **`acto2`** (not merged, not released): the app plays the shark in solo/cooperative games of the second act, with its secret Resurface choice, its hidden ability hand and its attacks, while all the randomness and components stay physical (players still need their copy). Design, rules and progress: `docs/acto2/` (`SPECS.md`, `BLUEPRINT.md`, `TODO.md`, tuning in `04-ajuste.md`).
 
-Published on Google Play as `com.netlify.JawsCompanion` ("Jaws Companion App"). Current release: **6.0.5** (versionCode 60500, production, 2026-10-06).
+Published on Google Play as `com.netlify.JawsCompanion` ("Jaws Companion App"). Current release: **6.0.6** (versionCode 60600, production, 2026-10-19: Italian translation).
 
 ## Commands
 
@@ -83,7 +83,7 @@ Act II: `InitialOptions → Act2Setup → Act2Round → Act2End`, or `FinalOptio
 
 **Board / Zone** (`src/objects/`) — `Board` holds 12 `Zone` objects (zones 1–8 are ocean; N/S/E/W are beaches). Each `Zone` tracks swimmer count, barrel count, and whether Michael (decoy hunter) is present. Zone coordinates and swimmer spawn positions live in `src/consts/MapConfig.ts`.
 
-**LocaleManager** (`src/utils/LocaleManager.ts`) — All UI strings are looked up via key; never hardcoded. Supports EN/ES/DE/RU. Must be used for any new user-facing text.
+**LocaleManager** (`src/utils/LocaleManager.ts`) — All UI strings are looked up via key; never hardcoded. Supports EN/ES/DE/RU/IT. Must be used for any new user-facing text. Adding a language touches several files (flavor texts, disclaimer, logo line, flag, credits): the checklist for contributors is the "Translating the app" section of `readme.md`; the Italian one (PR #1, Adriano Barsali, 2026-10-19) is the model.
 
 **Singletons** — `LocalStorage.getInstance()`, `DijkstraManager.getInstance()`, `LogManager.getInstance(logEnabled)`. These are shared state; access only through getInstance.
 
@@ -115,7 +115,7 @@ Vite runs with `root: 'src'` and `publicDir: '../public'`: static assets (images
 
 - **Signing**: `android/app/build.gradle` reads `android/key.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`), falling back to the `JAWS_STORE_PASSWORD` / `JAWS_KEY_PASSWORD` environment variables. Both `android/key.properties` and `android/app/new-jaws-keystore.jks` are git-ignored: **never commit them**. The keystore holds the **upload key** (alias `upload`, SHA-1 `87:42:5C:0A:30:D5:93:6B:08:1F:60:D1:D4:0A:79:46:22:0C:07:8D`); the app signing key is managed by Google (Play App Signing). A copy of the upload certificate lives in `_____PROYECTOS/JawsDist/upload_certificate.pem`.
 - **Upload**: through the Google Play Android Publisher API with the lab's service account (`___AI_experiments/000_play-publisher/`), or by hand in Play Console. Store listings exist in `en-GB` and `es-ES`; release notes go in both.
-- Play tracks (2026-10-06): production 6.0.5, internal 6.0.4, beta 4.0.0, alpha 1.1.0 (draft).
+- Play tracks (2026-10-19): production 6.0.6, internal 6.0.4, beta 4.0.0, alpha 1.1.0 (draft).
 - `src/index.html` loads Google Analytics (`gtag`, `G-0LQ57VQD5R`): keep the Play "Data safety" form consistent with it.
 - The older Cordova build (6.0.2) and the 2016–2020 sources live in `_____PROYECTOS/JawsDist/`; they are history, not the codebase.
 
@@ -128,4 +128,4 @@ Vite runs with `root: 'src'` and `publicDir: '../public'`: static assets (images
 3. **Keep the `privacy_policy_*.txt` files** (Jaws, Moncloa, Cuenta Atrás, Zombie Scavenger 2D): they are not in `dist/` and their Netlify URLs are registered in Play listings.
 4. Test the clone locally (watch the whole intro, console clean), then commit and push to `main`. Netlify deploys in about 20 s; check that `https://robojaws.netlify.app/` loads the new `assets/index-*.js`.
 
-Last web deploy: 6.0.5, JawsDist commit `2984b5b` (2026-10-07). `_____PROYECTOS/JawsDist/_distKeystores` is, despite its name, just an old (2022) clone of the same JawsDist repo with no keystores in it.
+Last web deploy: 6.0.6, JawsDist commit `2de29be` (2026-10-19). `_____PROYECTOS/JawsDist/_distKeystores` is, despite its name, just an old (2022) clone of the same JawsDist repo with no keystores in it.
