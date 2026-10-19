@@ -74,6 +74,34 @@ describe('LocaleManager.getLocale — Russian', () => {
     })
 })
 
+describe('LocaleManager.getLocale — Italian', () => {
+    const itLang = new LocaleManager(Languages.Italian)
+
+    it('translates "End Turn" to Italian', () => {
+        expect(itLang.getLocale('End Turn')).toBe('Fine Turno')
+    })
+
+    it('translates "Yes" to Italian', () => {
+        expect(itLang.getLocale('Yes')).toBe('Sì')
+    })
+
+    it('"W" translates to "O" in Italian (Ovest)', () => {
+        expect(itLang.getLocale('W')).toBe('O')
+    })
+
+    it('"N" stays "N" in Italian (Nord)', () => {
+        expect(itLang.getLocale('N')).toBe('N')
+    })
+
+    it('"E" stays "E" in Italian (Est)', () => {
+        expect(itLang.getLocale('E')).toBe('E')
+    })
+
+    it('"S" stays "S" in Italian (Sud)', () => {
+        expect(itLang.getLocale('S')).toBe('S')
+    })
+})
+
 describe('LocaleManager.getLocale — array input', () => {
     it('translates each element independently in Russian', () => {
         const ru = new LocaleManager(Languages.Russian)
