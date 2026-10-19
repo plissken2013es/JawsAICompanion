@@ -128,4 +128,15 @@ Vite runs with `root: 'src'` and `publicDir: '../public'`: static assets (images
 3. **Keep the `privacy_policy_*.txt` files** (Jaws, Moncloa, Cuenta Atrás, Zombie Scavenger 2D): they are not in `dist/` and their Netlify URLs are registered in Play listings.
 4. Test the clone locally (watch the whole intro, console clean), then commit and push to `main`. Netlify deploys in about 20 s; check that `https://robojaws.netlify.app/` loads the new `assets/index-*.js`.
 
-Last web deploy: 6.0.6, JawsDist commit `2de29be` (2026-10-19). `_____PROYECTOS/JawsDist/_distKeystores` is, despite its name, just an old (2022) clone of the same JawsDist repo with no keystores in it.
+Last web deploy: 6.0.6, JawsDist commit `2de29be` (2026-10-19). ### Act II beta (hidden subfolder)
+
+**https://robojaws.netlify.app/acto2-beta/** serves a build of the `acto2` branch for beta testers (Adriano Barsali, 2026-10-19); nothing links to it and it carries `noindex`, but the JawsDist repo is public, so it is hidden, not private. It shares the domain, hence the browser storage, with the public app. To update it:
+
+1. On `acto2`: `npx vite build --base=./ --outDir <tmp>/acto2-beta --emptyOutDir` (relative paths, so it runs from the subfolder; do **not** touch `dist/`).
+2. Add `<meta name="robots" content="noindex, nofollow">` after `<head>` in `<tmp>/acto2-beta/index.html`.
+3. Serve `<tmp>` locally and open `/acto2-beta/`: every request must stay under `/acto2-beta/` (only the browser's own `/favicon.ico` 404s).
+4. In the JawsDist clone, replace the `acto2-beta/` folder only, commit and push. First beta: JawsDist `7efd1e1` (RoboJaws `8dda1ea`).
+
+Italian Act II texts are a draft for him to review: `docs/acto2/italiano-da-rivedere.md` (in Italian: how to test, feedback wanted, terms to check).
+
+`_____PROYECTOS/JawsDist/_distKeystores` is, despite its name, just an old (2022) clone of the same JawsDist repo with no keystores in it.
