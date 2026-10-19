@@ -83,7 +83,7 @@ Act II: `InitialOptions → Act2Setup → Act2Round → Act2End`, or `FinalOptio
 
 **Board / Zone** (`src/objects/`) — `Board` holds 12 `Zone` objects (zones 1–8 are ocean; N/S/E/W are beaches). Each `Zone` tracks swimmer count, barrel count, and whether Michael (decoy hunter) is present. Zone coordinates and swimmer spawn positions live in `src/consts/MapConfig.ts`.
 
-**LocaleManager** (`src/utils/LocaleManager.ts`) — All UI strings are looked up via key; never hardcoded. Supports EN/ES/DE/RU/IT. Must be used for any new user-facing text. Adding a language touches several files (flavor texts, disclaimer, logo line, flag, credits): the checklist for contributors is the "Translating the app" section of `readme.md`; the Italian one (PR #1, Adriano Barsali, 2026-10-19) is the model.
+**LocaleManager** (`src/utils/LocaleManager.ts`) — All UI strings are looked up via key; never hardcoded. Supports EN/ES/DE/RU/IT. Must be used for any new user-facing text. Adding a language touches several files (flavor texts, disclaimer, logo line, flag, credits): the checklist for contributors is the "Translating the app" section of `README.md`; the Italian one (PR #1, Adriano Barsali, 2026-10-19) is the model.
 
 **Singletons** — `LocalStorage.getInstance()`, `DijkstraManager.getInstance()`, `LogManager.getInstance(logEnabled)`. These are shared state; access only through getInstance.
 
