@@ -26,12 +26,14 @@ function keysUsedIn(dir: string): string[] {
 }
 
 describe('Act II texts (D-8)', () => {
-    it('every entry has English and Spanish with the same placeholders', () => {
+    it('every entry has English, Spanish and Italian with the same placeholders', () => {
         for (const key of Object.keys(ACT2_STRINGS)) {
             const e = ACT2_STRINGS[key]
             expect(e.EN, key).toBeTruthy()
             expect(e.ES, key).toBeTruthy()
+            expect(e.IT, key).toBeTruthy()
             expect(placeholders(e.ES), key).toBe(placeholders(e.EN))
+            expect(placeholders(e.IT), key).toBe(placeholders(e.EN))
         }
     })
 
@@ -59,8 +61,10 @@ describe('Act II texts (D-8)', () => {
         expect(translate('EN', 'act2.msg.crewAttack', ['act2.crew.quint', 2, 9])).toBe('Quint deals 2 wounds (shark: 9).')
     })
 
-    it('German, Russian and Italian fall back to English for now', () => {
-        for (const lang of ['DE', 'RU', 'IT']) expect(translate(lang, 'act2.title')).toBe('ACT II: THE ORCA')
+    it('Italian has its own texts; German and Russian fall back to English for now', () => {
+        expect(translate('IT', 'act2.title')).toBe("ATTO II: L'ORCA")
+        expect(translate('IT', 'act2.msg.findAbility', ['act2.ability.bigMouth'])).toBe('Cerca la carta Boccone Grosso e lasciala scoperta.')
+        for (const lang of ['DE', 'RU']) expect(translate(lang, 'act2.title')).toBe('ACT II: THE ORCA')
     })
 
     it('a list argument is joined', () => {
