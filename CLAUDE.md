@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Jaws Companion** (repo name RoboJaws) is an interactive digital companion app for the Jaws board game. It's an AI-powered shark decision engine built with **Phaser 3.90**, **TypeScript** and **Vite**, packaged for Android and iOS with **Capacitor 8**. The shark AI guides gameplay with intelligent decision-making across a 12-zone board, with multi-language support (English, Spanish, German, Russian, Italian).
 
-**Act II (The Orca)** is being added on the branch **`acto2`** (not merged, not released): the app plays the shark in solo/cooperative games of the second act, with its secret Resurface choice, its hidden ability hand and its attacks, while all the randomness and components stay physical (players still need their copy). Design, rules and progress: `docs/acto2/` (`SPECS.md`, `BLUEPRINT.md`, `TODO.md`, tuning in `04-ajuste.md`).
+**Act II (The Orca)** is being added on the branch **`acto2`** (pushed to GitHub, not merged into `main`, not released on Play; a hidden web beta is online, see "Act II beta"): the app plays the shark in solo/cooperative games of the second act, with its secret Resurface choice, its hidden ability hand and its attacks, while all the randomness and components stay physical (players still need their copy). Design, rules and progress: `docs/acto2/` (`SPECS.md`, `BLUEPRINT.md`, `TODO.md`, tuning in `04-ajuste.md`).
 
 Published on Google Play as `com.netlify.JawsCompanion` ("Jaws Companion App"). Current release: **6.0.6** (versionCode 60600, production, 2026-10-19: Italian translation).
 
@@ -58,7 +58,7 @@ app/         — controller.ts: the game as the app runs it (which question to a
                table instructions, undo, save) — pure TS, unit-tested
 ui/, scenes/ — Phaser: OrcaSchematic, widgets, Act2Setup, Act2Round, Act2End (thin: they draw the
                controller's phase)
-i18n.ts      — Act II texts (ES/EN, official card names; DE/RU/IT fall back to English)
+i18n.ts      — Act II texts (ES/EN with official card names; IT draft to be reviewed; DE/RU fall back to English)
 tools/act2/  — crew bot, game runner, simulator CLI, e2e smoke test
 ```
 
@@ -137,6 +137,6 @@ Last web deploy: 6.0.6, JawsDist commit `2de29be` (2026-10-19). ### Act II beta 
 3. Serve `<tmp>` locally and open `/acto2-beta/`: every request must stay under `/acto2-beta/` (only the browser's own `/favicon.ico` 404s).
 4. In the JawsDist clone, replace the `acto2-beta/` folder only, commit and push. First beta: JawsDist `7efd1e1` (RoboJaws `8dda1ea`).
 
-Italian Act II texts are a draft for him to review: `docs/acto2/italiano-da-rivedere.md` (in Italian: how to test, feedback wanted, terms to check).
+Italian Act II texts are a draft for him to review: `docs/acto2/italiano-da-rivedere.md` (in Italian: how to test, feedback wanted, terms to check). The `acto2` branch is on GitHub (`origin/acto2`, since 2026-10-19) so he can send corrections as a PR **against `acto2`**, not `main`. `main` keeps the released 6.0.6 until Act II is merged for 7.0.0.
 
 `_____PROYECTOS/JawsDist/_distKeystores` is, despite its name, just an old (2022) clone of the same JawsDist repo with no keystores in it.
